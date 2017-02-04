@@ -13,6 +13,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "PluginProcessor.h"
+#include "DraggableLabel.hpp"
 
 
 //==============================================================================
@@ -37,7 +38,7 @@ private:
     double bpm;
     void timerCallback() override;
     
-    Label bpmLabel;
+    DraggableLabel bpmLabel;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MusicCalculatorAudioProcessorEditor)
 };

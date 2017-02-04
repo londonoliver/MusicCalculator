@@ -10,6 +10,11 @@
 
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+#include <iostream>
+#include <sstream>
+#include <iomanip>
+
+using namespace std;
 
 
 //==============================================================================
@@ -23,13 +28,12 @@ MusicCalculatorAudioProcessorEditor::MusicCalculatorAudioProcessorEditor (MusicC
     
     
     bpm = processor.getBpm();
-    bpmLabel.setText(String::String(bpm), dontSendNotification);
+    stringstream bpmString;
+    bpmString << fixed << setprecision(2) << bpm;
+    String labelText = bpmString.str();
+    bpmLabel.setText(labelText, dontSendNotification);
     bpmLabel.setEditable(false, true, true);
     bpmLabel.setColour(Label::outlineColourId, Colour(0,0,0));
-    
-    
-    
-    
     
     addAndMakeVisible(bpmLabel);
 }
@@ -42,7 +46,7 @@ MusicCalculatorAudioProcessorEditor::~MusicCalculatorAudioProcessorEditor()
 void MusicCalculatorAudioProcessorEditor::paint (Graphics& g)
 {
     g.fillAll (Colours::white);
-
+    
     g.setColour (Colours::black);
     g.setFont (15.0f);
     
