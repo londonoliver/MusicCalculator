@@ -57,7 +57,7 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
     
     //==============================================================================
-    double getBpm() const;
+    double getBpm();
 
 private:
     //==============================================================================

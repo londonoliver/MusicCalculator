@@ -18,9 +18,13 @@ public:
     DraggableLabel();
     ~DraggableLabel();
     
+    static String format(double d);
+    
 private:
     void mouseDown(const juce::MouseEvent &event) override;
     void mouseDrag(const juce::MouseEvent &event) override;
+    void mouseEnter(const juce::MouseEvent &event) override;
+    void mouseExit(const juce::MouseEvent &event) override;
     double valid(double d);
     Point<int> mousePoint;
     bool enabled;
