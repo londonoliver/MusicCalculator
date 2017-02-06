@@ -12,10 +12,10 @@
               jucerVersion="4.3.1">
   <MAINGROUP id="QSE8F7" name="MusicCalculator">
     <GROUP id="{8E453A34-B25A-3B41-04E5-C3C5747C63C8}" name="Source">
-      <FILE id="xAnqBz" name="DraggableLabel.cpp" compile="1" resource="0"
-            file="Source/DraggableLabel.cpp"/>
-      <FILE id="k1XBsb" name="DraggableLabel.hpp" compile="0" resource="0"
-            file="Source/DraggableLabel.hpp"/>
+      <GROUP id="{58A78106-4634-B7C7-F8EA-609AF28EC997}" name="Resources">
+        <FILE id="tQqbTZ" name="delay times data.xml" compile="0" resource="1"
+              file="Source/delay times data.xml"/>
+      </GROUP>
       <FILE id="lS3fey" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
       <FILE id="wN6EYw" name="PluginProcessor.h" compile="0" resource="0"
@@ -23,6 +23,10 @@
       <FILE id="fDHbuU" name="PluginEditor.cpp" compile="1" resource="0"
             file="Source/PluginEditor.cpp"/>
       <FILE id="K1e628" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
+      <FILE id="Ll3Win" name="LabelComponent.cpp" compile="1" resource="0"
+            file="Source/LabelComponent.cpp"/>
+      <FILE id="DNFMfE" name="TableComponent.cpp" compile="1" resource="0"
+            file="Source/TableComponent.cpp"/>
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>

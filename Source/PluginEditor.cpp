@@ -28,24 +28,17 @@ MusicCalculatorAudioProcessorEditor::MusicCalculatorAudioProcessorEditor (MusicC
     
     
     double bpm = processor.getBpm();
-    bpmLabel.setText(DraggableLabel::format(bpm), sendNotification);
+    bpmLabel.setFormattedText(bpm, sendNotification);
     bpmLabel.setEditable(false, true, true);
     bpmLabel.setColour(Label::outlineColourId, Colour(0,0,0));
     bpmLabel.addListener(this);
-    
+    bpmLabel.setName("bpmLabel");
     
     msLabel.setText(String(bpmToMs(bpm)), sendNotification);
     msLabel.setColour(Label::outlineColourId, Colour(0,0,0));
     
-    table.setOutlineThickness(1);
-    table.getHeader().addColumn("note", 1, 50);
-    table.getHeader().addColumn("ms", 2, 50);
-    table.getHeader().setStretchToFitActive(true);
-    
-    
-    
+
     addAndMakeVisible(bpmLabel);
-    addAndMakeVisible(msLabel);
     addAndMakeVisible(table);
 }
 
@@ -68,9 +61,8 @@ void MusicCalculatorAudioProcessorEditor::resized()
     // This is generally where you'll want to lay out the positions of any
     // subcomponents in your editor..
     Font f = bpmLabel.getFont();
-    bpmLabel.setBounds(40, 30, f.getStringWidth("120.000"), f.getHeight());
-    msLabel.setBounds(40, 200, f.getStringWidth("111"), f.getHeight());
-    table.setBounds(200, 100, 100, 100);
+    bpmLabel.setBounds(30, 20, f.getStringWidth("120.000"), f.getHeight());
+    table.setBounds(30, 70, 200, 200);
 }
 
 void MusicCalculatorAudioProcessorEditor::timerCallback()
@@ -78,7 +70,7 @@ void MusicCalculatorAudioProcessorEditor::timerCallback()
     if(sync)
     {
         double bpm = processor.getBpm();
-        bpmLabel.setText(DraggableLabel::format(bpm), sendNotification);
+        bpmLabel.setFormattedText(bpm, sendNotification);
     }
 }
 
@@ -87,9 +79,18 @@ double MusicCalculatorAudioProcessorEditor::bpmToMs(double bpm)
     return 1000.0 / (bpm / 60.0);
 }
 
-void MusicCalculatorAudioProcessorEditor::labelTextChanged(juce::Label *labelThatHasChanged)
+void MusicCalculatorAudioProcessorEditor::labelTextChanged(Label *labelThatHasChanged)
 {
-    double bpm = bpmLabel.getTextValue().getValue();
-    double ms = bpmToMs(bpm);
-    msLabel.setText(String(ms), sendNotification);
+    
+    String s =  labelThatHasChanged->getName();
+    if(s == bpmLabel.getName())
+    {
+        double bpm = bpmLabel.getTextValue().getValue();
+        double ms = bpmToMs(bpm);
+        for (int i = 0; i < table.getNumRows(); i++ )
+        {
+            table.setText(2, i, String(ms));
+            ms = ms/2;
+        }
+    }
 }

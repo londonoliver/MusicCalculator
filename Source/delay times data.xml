@@ -1,0 +1,15 @@
+<DELAY_TIMES_DATA>
+	<COLUMNS>
+		<COLUMN columnId="1" name="Note" width="50"/>
+		<COLUMN columnId="2" name="Ms" width="50"/>
+    </COLUMNS>
+    <DATA>
+        <ITEM Note="1/2" Ms="-" />
+        <ITEM Note="1/4" Ms="-" />
+        <ITEM Note="1/8" Ms="-" />
+        <ITEM Note="1/16" Ms="-" />
+        <ITEM Note="1/32" Ms="-" />
+        <ITEM Note="1/64" Ms="-" />
+        <ITEM Note="1/128" Ms="-" />
+    </DATA>
+</DELAY_TIMES_DATA>

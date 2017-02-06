@@ -13,7 +13,8 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "PluginProcessor.h"
-#include "DraggableLabel.hpp"
+#include "LabelComponent.cpp"
+#include "TableComponent.cpp"
 
 
 //==============================================================================
@@ -21,7 +22,7 @@
 */
 class MusicCalculatorAudioProcessorEditor : public AudioProcessorEditor,
                                             private Timer,
-                                            private Label::Listener
+                                            private LabelListener
 {
 public:
     MusicCalculatorAudioProcessorEditor (MusicCalculatorAudioProcessor&);
@@ -38,12 +39,12 @@ private:
     MusicCalculatorAudioProcessor& processor;
     
     bool sync;
-    DraggableLabel bpmLabel;
+    LabelComponent bpmLabel;
     Label msLabel;
     void timerCallback() override;
     double bpmToMs(double bpm);
     void labelTextChanged(Label *labelThatHasChanged) override;
-    TableListBox table;
+    TableComponent table;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MusicCalculatorAudioProcessorEditor)
 };
