@@ -18,7 +18,8 @@
 
 using namespace std;
 
-class LabelComponent :  public Label
+class LabelComponent :  public Label,
+                        private LabelListener
 {
 public:
     LabelComponent()
@@ -26,6 +27,7 @@ public:
         setColour(ColourIds::backgroundWhenEditingColourId, Colours::lightblue);
         setFont(Font("Roboto", 50, Font::plain));
         setJustificationType(Justification::centred);
+        addListener(this);
     }
     
     void setFormattedText(double d, NotificationType notification)
@@ -36,7 +38,32 @@ public:
 private:
     Point<int> mousePoint;
     bool enabled, draggable;
-        
+    String oldText;
+    
+    void labelTextChanged(Label* labelThatHAsChanged) override
+    {
+        string s = getText().trim().toStdString();
+        regex r ("(\\d*)((\\.)(\\d*)?)?");
+        if (regex_match (s, r))
+        {
+            double d = getTextValue().getValue();
+            setFormattedText(d, sendNotification);
+        }
+        else
+        {
+            setText(oldText, sendNotification);
+        }
+    }
+    
+    void editorShown(Label* lablel, TextEditor& editor) override
+    {
+        oldText = getText();
+    }
+    
+    void editorHidden(Label* label, TextEditor& editor) override
+    {
+    }
+    
     void mouseEnter(const juce::MouseEvent &event) override
     {
         setColour(ColourIds::backgroundColourId, Colours::lightblue);
@@ -105,7 +132,6 @@ private:
                 if(delta < 0.0) value -= 1.0;
                 else value += 1.0;
             }
-            value = valid(value);
             setText(format(value), sendNotification);
         }
         mousePoint.setY(event.y);
@@ -119,11 +145,11 @@ private:
         else return d;
     }
     
-    // Formats a double with a precision of two decimal places
+    // Formats a valid double with a precision of two decimal places
     String format(double d)
     {
         stringstream ss;
-        ss << fixed << setprecision(2) << d;
+        ss << fixed << setprecision(2) << valid(d);
         return ss.str();
     }
     
