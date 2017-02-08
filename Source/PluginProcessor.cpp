@@ -131,7 +131,6 @@ void MusicCalculatorAudioProcessor::processBlock (AudioSampleBuffer& buffer, Mid
     playHead = this->getPlayHead();
     playHead->getCurrentPosition (currentPositionInfo);
     bpm = currentPositionInfo.bpm;
-    if (bpm < 5.0 || bpm > 990.0) bpm = 120.0;
     
     const int totalNumInputChannels  = getTotalNumInputChannels();
     const int totalNumOutputChannels = getTotalNumOutputChannels();

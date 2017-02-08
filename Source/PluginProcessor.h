@@ -60,13 +60,16 @@ public:
     double getBpm();
 
 private:
+    
+    double bpm;
+    
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MusicCalculatorAudioProcessor)
     
     //==============================================================================
     AudioPlayHead* playHead;
     AudioPlayHead::CurrentPositionInfo currentPositionInfo;
-    double bpm;
+    //double bpm;
 };
 
 

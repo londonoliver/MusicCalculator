@@ -15,6 +15,7 @@
 #include "PluginProcessor.h"
 #include "LabelComponent.cpp"
 #include "TableComponent.cpp"
+#include "AlertComponent.cpp"
 
 
 //==============================================================================
@@ -22,7 +23,8 @@
 */
 class MusicCalculatorAudioProcessorEditor : public AudioProcessorEditor,
                                             private Timer,
-                                            private LabelListener
+                                            private LabelListener,
+                                            private ButtonListener
 {
 public:
     MusicCalculatorAudioProcessorEditor (MusicCalculatorAudioProcessor&);
@@ -39,12 +41,25 @@ private:
     MusicCalculatorAudioProcessor& processor;
     
     bool sync;
+    
     LabelComponent bpmLabel;
     Label msLabel;
+    void labelTextChanged(Label *labelThatHasChanged) override;
+    
     void timerCallback() override;
     double bpmToMs(double bpm);
-    void labelTextChanged(Label *labelThatHasChanged) override;
+    
+    
     TableComponent table;
+    
+    TextButton syncButton;
+    void buttonClicked(Button *button) override;
+    
+    double bpm;
+    
+    bool hostHasTempoInformation();
+    
+    AlertComponent alert;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MusicCalculatorAudioProcessorEditor)
 };

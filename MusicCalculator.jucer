@@ -27,6 +27,8 @@
             file="Source/LabelComponent.cpp"/>
       <FILE id="DNFMfE" name="TableComponent.cpp" compile="1" resource="0"
             file="Source/TableComponent.cpp"/>
+      <FILE id="dEScLY" name="AlertComponent.cpp" compile="1" resource="0"
+            file="Source/AlertComponent.cpp"/>
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>

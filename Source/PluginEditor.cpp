@@ -27,7 +27,8 @@ MusicCalculatorAudioProcessorEditor::MusicCalculatorAudioProcessorEditor (MusicC
     startTimer (100);
     
     
-    double bpm = processor.getBpm();
+    bpm = 120;
+    
     bpmLabel.setFormattedText(bpm, sendNotification);
     bpmLabel.setEditable(false, true, true);
     bpmLabel.setColour(Label::outlineColourId, Colour(0,0,0));
@@ -37,9 +38,19 @@ MusicCalculatorAudioProcessorEditor::MusicCalculatorAudioProcessorEditor (MusicC
     msLabel.setText(String(bpmToMs(bpm)), sendNotification);
     msLabel.setColour(Label::outlineColourId, Colour(0,0,0));
     
-
+    
+    syncButton.setButtonText("Sync");
+    syncButton.setClickingTogglesState(true);
+    syncButton.addListener(this);
+    
+    
+    
+    
     addAndMakeVisible(bpmLabel);
     addAndMakeVisible(table);
+    addAndMakeVisible(syncButton);
+    addAndMakeVisible(alert);
+
 }
 
 MusicCalculatorAudioProcessorEditor::~MusicCalculatorAudioProcessorEditor()
@@ -63,15 +74,29 @@ void MusicCalculatorAudioProcessorEditor::resized()
     Font f = bpmLabel.getFont();
     bpmLabel.setBounds(30, 20, f.getStringWidth("120.000"), f.getHeight());
     table.setBounds(30, 70, 200, 200);
+    syncButton.setBounds(200, 20, 50, 50);
+    alert.setBounds(getWidth()/2, getHeight()/2, 150, 50);
 }
 
 void MusicCalculatorAudioProcessorEditor::timerCallback()
 {
-    if(sync)
+    //v.setValue(i + 1);
+    if(syncButton.getToggleState())
     {
-        double bpm = processor.getBpm();
-        bpmLabel.setFormattedText(bpm, sendNotification);
+        // Sync on
+        if (hostHasTempoInformation())
+        {
+            double bpm = processor.getBpm();
+            bpmLabel.setFormattedText(bpm, sendNotification);
+        }
     }
+    else if(!syncButton.getToggleState())
+    {
+        // Sync off
+    }
+
+    
+    
 }
 
 double MusicCalculatorAudioProcessorEditor::bpmToMs(double bpm)
@@ -93,4 +118,35 @@ void MusicCalculatorAudioProcessorEditor::labelTextChanged(Label *labelThatHasCh
             ms = ms/2;
         }
     }
+}
+
+void MusicCalculatorAudioProcessorEditor::buttonClicked(juce::Button *button)
+{
+    if(syncButton.getToggleState())
+    {
+        // Sync on
+        
+        if (hostHasTempoInformation())
+            bpmLabel.setEnabled(false);
+        else
+        {
+            alert.doIt();
+            syncButton.setToggleState(false, dontSendNotification);
+        }
+    }
+    else if(!syncButton.getToggleState())
+    {
+        // Sync off
+        
+        bpmLabel.setEnabled(true);
+    }
+}
+
+bool MusicCalculatorAudioProcessorEditor::hostHasTempoInformation()
+{
+    double d = processor.getBpm();
+    if (d >= 5.0 && d <= 990.0)
+        return true;
+    else
+        return false;
 }
