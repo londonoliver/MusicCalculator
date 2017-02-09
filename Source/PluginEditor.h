@@ -13,9 +13,9 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "PluginProcessor.h"
-#include "LabelComponent.cpp"
+#include "LabelComponent.hpp"
 #include "TableComponent.cpp"
-#include "AlertComponent.cpp"
+#include "AlertCompnent.cpp"
 
 
 //==============================================================================
@@ -24,7 +24,8 @@
 class MusicCalculatorAudioProcessorEditor : public AudioProcessorEditor,
                                             private Timer,
                                             private LabelListener,
-                                            private ButtonListener
+                                            private ButtonListener,
+                                            private ChangeListener
 {
 public:
     MusicCalculatorAudioProcessorEditor (MusicCalculatorAudioProcessor&);
@@ -60,6 +61,9 @@ private:
     bool hostHasTempoInformation();
     
     AlertComponent alert;
+    
+    void changeListenerCallback (ChangeBroadcaster *source) override;
+
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MusicCalculatorAudioProcessorEditor)
 };

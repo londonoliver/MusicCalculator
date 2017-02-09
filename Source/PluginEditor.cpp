@@ -24,8 +24,6 @@ MusicCalculatorAudioProcessorEditor::MusicCalculatorAudioProcessorEditor (MusicC
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
     setSize (400, 300);
-    startTimer (100);
-    
     
     bpm = 120;
     
@@ -43,13 +41,15 @@ MusicCalculatorAudioProcessorEditor::MusicCalculatorAudioProcessorEditor (MusicC
     syncButton.setClickingTogglesState(true);
     syncButton.addListener(this);
     
-    
+    table.addChangeListener(this);
+    table.setName("table");
     
     
     addAndMakeVisible(bpmLabel);
     addAndMakeVisible(table);
     addAndMakeVisible(syncButton);
     addAndMakeVisible(alert);
+    alert.setVisible(false);
 
 }
 
@@ -75,7 +75,9 @@ void MusicCalculatorAudioProcessorEditor::resized()
     bpmLabel.setBounds(30, 20, f.getStringWidth("120.000"), f.getHeight());
     table.setBounds(30, 70, 200, 200);
     syncButton.setBounds(200, 20, 50, 50);
-    alert.setBounds(getWidth()/2, getHeight()/2, 150, 50);
+    alert.setBounds((getWidth() - alert.getWidth())/2,
+                    (getHeight() - alert.getHeight())/2,
+                    alert.getWidth(), alert.getHeight());
 }
 
 void MusicCalculatorAudioProcessorEditor::timerCallback()
@@ -94,9 +96,6 @@ void MusicCalculatorAudioProcessorEditor::timerCallback()
     {
         // Sync off
     }
-
-    
-    
 }
 
 double MusicCalculatorAudioProcessorEditor::bpmToMs(double bpm)
@@ -126,17 +125,23 @@ void MusicCalculatorAudioProcessorEditor::buttonClicked(juce::Button *button)
     {
         // Sync on
         
+        startTimer (100);
+        
         if (hostHasTempoInformation())
             bpmLabel.setEnabled(false);
         else
         {
-            alert.doIt();
+            alert.flash();
+            
+            
             syncButton.setToggleState(false, dontSendNotification);
         }
     }
     else if(!syncButton.getToggleState())
     {
         // Sync off
+        
+        stopTimer();
         
         bpmLabel.setEnabled(true);
     }
@@ -150,3 +155,52 @@ bool MusicCalculatorAudioProcessorEditor::hostHasTempoInformation()
     else
         return false;
 }
+
+void MusicCalculatorAudioProcessorEditor::changeListenerCallback(juce::ChangeBroadcaster *source)
+{
+    double bpm = bpmLabel.getTextValue().getValue();
+    double ms = 1000.0 / (bpm / 60.0);
+    int noteType = table.getNoteType();
+    
+    switch (noteType) {
+        case 1:
+        {
+            for (int i = 0; i < table.getNumRows(); i++ )
+            {
+                table.setText(2, i, String(ms));
+                ms = ms/2.0;
+            }
+            
+            table.setNoteType(2);
+            
+            break;
+        }
+        case 2:
+        {
+            for (int i = 0; i < table.getNumRows(); i++ )
+            {
+                table.setText(2, i, String(ms));
+                ms = ms * (3.0/2.0);
+            }
+            
+            table.setNoteType(3);
+            
+            break;
+        }
+        case 3:
+        {
+            for (int i = 0; i < table.getNumRows(); i++ )
+            {
+                table.setText(2, i, String(ms));
+                ms = ms * (2.0/3.0);
+            }
+            
+            table.setNoteType(1);
+            
+            break;
+        }
+        default:
+            break;
+    } // end switch
+}
+

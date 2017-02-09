@@ -7,14 +7,19 @@
 //
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "LabelComponent.hpp"
+#include <iostream>
 
+using namespace std;
 
 //==============================================================================
 /**
  This class shows how to implement a TableListBoxModel to show in a TableListBox.
  */
 class TableComponent   :    public Component,
-                            public TableListBoxModel
+                            public TableListBoxModel,
+                            public ChangeBroadcaster,
+                            public LookAndFeel_V3
 {
 public:
     TableComponent()   : font (14.0f)
@@ -31,20 +36,37 @@ public:
         table.setOutlineThickness (1);
         
         // Add some columns to the table header, based on the column list in our database..
+        int i = 0;
         forEachXmlChildElement (*columnList, columnXml)
         {
-            table.getHeader().addColumn (columnXml->getStringAttribute ("name"),
-                                         columnXml->getIntAttribute ("columnId"),
-                                         columnXml->getIntAttribute ("width"),
-                                         30, 100,
-                                         TableHeaderComponent::visible);
+            if (i++ == 0) // make the first column sortable
+            {
+                table.getHeader().addColumn (columnXml->getStringAttribute ("name"),
+                                             columnXml->getIntAttribute ("columnId"),
+                                             columnXml->getIntAttribute ("width"),
+                                             30, 100,
+                                             TableHeaderComponent::defaultFlags);
+            }
+            else // second column is not sortable
+            {
+                table.getHeader().addColumn (columnXml->getStringAttribute ("name"),
+                                             columnXml->getIntAttribute ("columnId"),
+                                             columnXml->getIntAttribute ("width"),
+                                             30, 100,
+                                             TableHeaderComponent::visible);
+            }
         }
-        
         
         // un-comment this line to have a go of stretch-to-fit mode
         table.getHeader().setStretchToFitActive (true);
         
         table.setMultipleSelectionEnabled (true);
+        
+        noteType = 1;
+        
+        setLookAndFeel(this);
+        
+        
     }
     
     // This is overloaded from TableListBoxModel, and must return the total number of rows in our table
@@ -92,6 +114,7 @@ public:
             
             table.updateContent();
         }*/
+        sendChangeMessage();
     }
     
     // This is overloaded from TableListBoxModel, and must update any custom components that we're using
@@ -142,6 +165,16 @@ public:
         table.updateContent();
     }
     
+    int getNoteType ()
+    {
+        return noteType;
+    }
+    
+    void setNoteType (int i)
+    {
+        noteType = i;
+    }
+    
     //==============================================================================
     void resized() override
     {
@@ -159,6 +192,8 @@ private:
     XmlElement* dataList;   // A pointer to the sub-node of demoData that contains the list of data rows
     int numRows;            // The number of rows of data we've got
     
+    int noteType;       // State of the note column: 1 = whole, 2 = dotted, 3 = triplet
+
     //==============================================================================
     // This is a custom Label component, which we use for the table's editable text columns.
     class EditableTextCustomComponent  : public Label
@@ -247,6 +282,64 @@ private:
         }
         
         return String();
+    }
+    
+    //==============================================================================
+    // The folling methods implement the custom look and feel
+    
+    // Overloaded from LookAndFeel_V3
+    void drawTableHeaderColumn(Graphics &g,
+                               const String & columnName,
+                               int 	columnId,
+                               int 	width,
+                               int 	height,
+                               bool isMouseOver,
+                               bool isMouseDown,
+                               int 	columnFlags 
+                               ) override
+    {
+        if(columnId == 1)
+        {
+            if (isMouseDown)
+                g.fillAll (Colour (0x8899aadd));
+            else if (isMouseOver)
+                g.fillAll (Colour (0x5599aadd));
+        }
+        
+        Rectangle<int> area (width, height);
+        area.reduce (4, 0);
+        
+        if ((columnFlags & (TableHeaderComponent::sortedForwards | TableHeaderComponent::sortedBackwards)) != 0)
+        {
+            Path sortArrow;
+            sortArrow.addTriangle (0.0f, 0.0f,
+                                   0.5f, (columnFlags & TableHeaderComponent::sortedForwards) != 0 ? -0.8f : 0.8f,
+                                   1.0f, 0.0f);
+            
+            g.setColour (Colour (0x99000000));
+            g.fillPath (sortArrow, sortArrow.getTransformToScaleToFit (area.removeFromRight (height / 2).reduced (2).toFloat(), true));
+        }
+        
+        g.setColour (Colours::black);
+        g.setFont (Font (height * 0.5f, Font::bold));
+        g.drawFittedText (columnName, area, Justification::centredLeft, 1);
+    }
+    
+    // Overloaded from LookAndFeel_V3
+    void drawTableHeaderBackground (Graphics& g, TableHeaderComponent& header) override
+    {
+        Rectangle<int> r (header.getLocalBounds());
+        
+        g.setColour (Colours::black.withAlpha (0.5f));
+        g.fillRect (r.removeFromBottom (1));
+        
+        g.setColour (Colours::white.withAlpha (0.6f));
+        g.fillRect (r);
+        
+        g.setColour (Colours::black.withAlpha (0.5f));
+        
+        for (int i = header.getNumColumns (true); --i >= 0;)
+            g.fillRect (header.getColumnPosition (i).removeFromRight (1));
     }
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TableComponent)

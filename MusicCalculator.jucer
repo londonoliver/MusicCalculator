@@ -23,12 +23,14 @@
       <FILE id="fDHbuU" name="PluginEditor.cpp" compile="1" resource="0"
             file="Source/PluginEditor.cpp"/>
       <FILE id="K1e628" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
-      <FILE id="Ll3Win" name="LabelComponent.cpp" compile="1" resource="0"
-            file="Source/LabelComponent.cpp"/>
       <FILE id="DNFMfE" name="TableComponent.cpp" compile="1" resource="0"
             file="Source/TableComponent.cpp"/>
-      <FILE id="dEScLY" name="AlertComponent.cpp" compile="1" resource="0"
-            file="Source/AlertComponent.cpp"/>
+      <FILE id="ODwIRW" name="AlertCompnent.cpp" compile="1" resource="0"
+            file="Source/AlertCompnent.cpp"/>
+      <FILE id="QyKPvi" name="LabelComponent.cpp" compile="1" resource="0"
+            file="Source/LabelComponent.cpp"/>
+      <FILE id="lzpfmq" name="LabelComponent.hpp" compile="0" resource="0"
+            file="Source/LabelComponent.hpp"/>
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>
