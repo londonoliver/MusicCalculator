@@ -15,6 +15,8 @@
       <GROUP id="{58A78106-4634-B7C7-F8EA-609AF28EC997}" name="Resources">
         <FILE id="tQqbTZ" name="delay times data.xml" compile="0" resource="1"
               file="Source/delay times data.xml"/>
+        <FILE id="XaxJbT" name="delay times data2.xml" compile="0" resource="1"
+              file="Source/delay times data2.xml"/>
       </GROUP>
       <FILE id="lS3fey" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>

@@ -242,6 +242,7 @@
 		261108606882C1D0445D5E67 = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "juce_RelativePoint.h"; path = "../../../../JUCE/modules/juce_gui_basics/positioning/juce_RelativePoint.h"; sourceTree = "SOURCE_ROOT"; };
 		261A8ECD29329E6C89FC929C = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = "juce_InterprocessConnectionServer.cpp"; path = "../../../../JUCE/modules/juce_events/interprocess/juce_InterprocessConnectionServer.cpp"; sourceTree = "SOURCE_ROOT"; };
 		26466A29DB8A9F747E63C41D = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = AUOutputElement.cpp; path = "../../../../JUCE/modules/juce_audio_plugin_client/AU/CoreAudioUtilityClasses/AUOutputElement.cpp"; sourceTree = "SOURCE_ROOT"; };
+		2688FC98028C54A3A0285AB2 = {isa = PBXFileReference; lastKnownFileType = file.xml; name = "delay times data2.xml"; path = "../../Source/delay times data2.xml"; sourceTree = "SOURCE_ROOT"; };
 		269A596D7AC81DABDDE23632 = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "juce_ResizableWindow.h"; path = "../../../../JUCE/modules/juce_gui_basics/windows/juce_ResizableWindow.h"; sourceTree = "SOURCE_ROOT"; };
 		26C06ECC6F499A00B31F3947 = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "juce_GZIPDecompressorInputStream.h"; path = "../../../../JUCE/modules/juce_core/zip/juce_GZIPDecompressorInputStream.h"; sourceTree = "SOURCE_ROOT"; };
 		2737273869ACEC8A6C89C10A = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "juce_VST3PluginFormat.h"; path = "../../../../JUCE/modules/juce_audio_processors/format_types/juce_VST3PluginFormat.h"; sourceTree = "SOURCE_ROOT"; };
@@ -1330,7 +1331,8 @@
 		FFEF687297A4037010F8044A = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "juce_TemporaryFile.h"; path = "../../../../JUCE/modules/juce_core/files/juce_TemporaryFile.h"; sourceTree = "SOURCE_ROOT"; };
 		FFFB6D044BE45B74ACFD1E80 = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = "juce_CatmullRomInterpolator.cpp"; path = "../../../../JUCE/modules/juce_audio_basics/effects/juce_CatmullRomInterpolator.cpp"; sourceTree = "SOURCE_ROOT"; };
 		29347C4CC075FA1AD1D1D430 = {isa = PBXGroup; children = (
-					4F4D03AD4FE044A6874DBC99, ); name = Resources; sourceTree = "<group>"; };
+					4F4D03AD4FE044A6874DBC99,
+					2688FC98028C54A3A0285AB2, ); name = Resources; sourceTree = "<group>"; };
 		270DB6DDE5AF360566FB6202 = {isa = PBXGroup; children = (
 					29347C4CC075FA1AD1D1D430,
 					D9658649B53E47331B6A7843,

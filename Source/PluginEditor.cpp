@@ -50,6 +50,8 @@ MusicCalculatorAudioProcessorEditor::MusicCalculatorAudioProcessorEditor (MusicC
     addAndMakeVisible(syncButton);
     addAndMakeVisible(alert);
     alert.setVisible(false);
+    
+    setMilliseconds(false);
 
 }
 
@@ -61,10 +63,8 @@ MusicCalculatorAudioProcessorEditor::~MusicCalculatorAudioProcessorEditor()
 void MusicCalculatorAudioProcessorEditor::paint (Graphics& g)
 {
     g.fillAll (Colours::white);
-    
     g.setColour (Colours::black);
     g.setFont (15.0f);
-    
 }
 
 void MusicCalculatorAudioProcessorEditor::resized()
@@ -109,13 +109,70 @@ void MusicCalculatorAudioProcessorEditor::labelTextChanged(Label *labelThatHasCh
     String s =  labelThatHasChanged->getName();
     if(s == bpmLabel.getName())
     {
-        double bpm = bpmLabel.getTextValue().getValue();
-        double ms = bpmToMs(bpm);
-        for (int i = 0; i < table.getNumRows(); i++ )
-        {
-            table.setText(2, i, String(ms));
-            ms = ms/2;
+        setMilliseconds(false);
+    }
+}
+
+// Sets the millisecond value given the current bpm. If change is true then this will also
+// change the note value from whole to dotted to triplet etc.
+void MusicCalculatorAudioProcessorEditor::setMilliseconds(bool change)
+{
+    double bpm = bpmLabel.getTextValue().getValue();
+    double ms = 1000.0 / (bpm / 60.0); // ms for whole quarter note
+    int noteType = table.getNoteType();
+    int noteDenominator, noteNumerator;
+    
+    if (change)
+    {
+        switch (noteType) {
+            case 1:
+                noteType = 2;
+                table.setNoteType(2);
+                break;
+            case 2:
+                noteType = 3;
+                table.setNoteType(3);
+                break;
+            case 3:
+                noteType = 1;
+                table.setNoteType(1);
+                break;
+            default:
+                break;
         }
+    }
+    
+    switch (noteType) {
+        case 1:     // whole note
+        {
+            noteNumerator = 1;
+            noteDenominator = 4;
+            break;
+        }
+        case 2:     // dotted note
+        {
+            ms = ms * (3.0/2.0);
+            noteNumerator = 3;
+            noteDenominator = 8;
+            break;
+        }
+        case 3:     // triplet note
+        {
+            ms = ms * (2.0/3.0);
+            noteNumerator = 1;
+            noteDenominator = 6;
+            break;
+        }
+        default:
+            break;
+    } // end switch
+    
+    for (int i = 0; i < table.getNumRows(); i++ )
+    {
+        table.setText(1, i, String(noteNumerator) + "/" + String(noteDenominator));
+        table.setText(2, i, String(ms));
+        ms = ms/2.0;
+        noteDenominator = noteDenominator * 2;
     }
 }
 
@@ -158,49 +215,6 @@ bool MusicCalculatorAudioProcessorEditor::hostHasTempoInformation()
 
 void MusicCalculatorAudioProcessorEditor::changeListenerCallback(juce::ChangeBroadcaster *source)
 {
-    double bpm = bpmLabel.getTextValue().getValue();
-    double ms = 1000.0 / (bpm / 60.0);
-    int noteType = table.getNoteType();
-    
-    switch (noteType) {
-        case 1:
-        {
-            for (int i = 0; i < table.getNumRows(); i++ )
-            {
-                table.setText(2, i, String(ms));
-                ms = ms/2.0;
-            }
-            
-            table.setNoteType(2);
-            
-            break;
-        }
-        case 2:
-        {
-            for (int i = 0; i < table.getNumRows(); i++ )
-            {
-                table.setText(2, i, String(ms));
-                ms = ms * (3.0/2.0);
-            }
-            
-            table.setNoteType(3);
-            
-            break;
-        }
-        case 3:
-        {
-            for (int i = 0; i < table.getNumRows(); i++ )
-            {
-                table.setText(2, i, String(ms));
-                ms = ms * (2.0/3.0);
-            }
-            
-            table.setNoteType(1);
-            
-            break;
-        }
-        default:
-            break;
-    } // end switch
+    setMilliseconds(true);
 }
 

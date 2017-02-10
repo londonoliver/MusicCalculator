@@ -45,7 +45,7 @@ private:
     
     LabelComponent bpmLabel;
     Label msLabel;
-    void labelTextChanged(Label *labelThatHasChanged) override;
+    void labelTextChanged (Label *labelThatHasChanged) override;
     
     void timerCallback() override;
     double bpmToMs(double bpm);
@@ -54,7 +54,7 @@ private:
     TableComponent table;
     
     TextButton syncButton;
-    void buttonClicked(Button *button) override;
+    void buttonClicked (Button *button) override;
     
     double bpm;
     
@@ -63,6 +63,8 @@ private:
     AlertComponent alert;
     
     void changeListenerCallback (ChangeBroadcaster *source) override;
+    
+    void setMilliseconds (bool change);
 
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MusicCalculatorAudioProcessorEditor)
