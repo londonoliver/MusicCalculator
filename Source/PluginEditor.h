@@ -24,8 +24,7 @@
 class MusicCalculatorAudioProcessorEditor : public AudioProcessorEditor,
                                             private Timer,
                                             private LabelListener,
-                                            private ButtonListener,
-                                            private ChangeListener
+                                            private ButtonListener
 {
 public:
     MusicCalculatorAudioProcessorEditor (MusicCalculatorAudioProcessor&);
@@ -61,10 +60,6 @@ private:
     bool hostHasTempoInformation();
     
     AlertComponent alert;
-    
-    void changeListenerCallback (ChangeBroadcaster *source) override;
-    
-    void setMilliseconds (bool change);
 
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MusicCalculatorAudioProcessorEditor)

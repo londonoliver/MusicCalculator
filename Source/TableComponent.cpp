@@ -18,7 +18,6 @@ using namespace std;
  */
 class TableComponent   :    public Component,
                             public TableListBoxModel,
-                            public ChangeBroadcaster,
                             public LookAndFeel_V3
 {
 public:
@@ -36,25 +35,13 @@ public:
         table.setOutlineThickness (1);
         
         // Add some columns to the table header, based on the column list in our database..
-        int i = 0;
         forEachXmlChildElement (*columnList, columnXml)
         {
-            if (i++ == 0) // make the first column sortable
-            {
-                table.getHeader().addColumn (columnXml->getStringAttribute ("name"),
-                                             columnXml->getIntAttribute ("columnId"),
-                                             columnXml->getIntAttribute ("width"),
-                                             30, 100,
-                                             TableHeaderComponent::defaultFlags);
-            }
-            else // second column is not sortable
-            {
-                table.getHeader().addColumn (columnXml->getStringAttribute ("name"),
-                                             columnXml->getIntAttribute ("columnId"),
-                                             columnXml->getIntAttribute ("width"),
-                                             30, 100,
-                                             TableHeaderComponent::visible);
-            }
+            table.getHeader().addColumn (columnXml->getStringAttribute ("name"),
+                                         columnXml->getIntAttribute ("columnId"),
+                                         columnXml->getIntAttribute ("width"),
+                                         30, 100,
+                                         TableHeaderComponent::defaultFlags);
         }
         
         // un-comment this line to have a go of stretch-to-fit mode
@@ -63,9 +50,9 @@ public:
         table.setMultipleSelectionEnabled (true);
         
         noteType = 1;
+        Hz = false;
         
         setLookAndFeel(this);
-        
         
     }
     
@@ -114,7 +101,31 @@ public:
             
             table.updateContent();
         }*/
-        sendChangeMessage();
+        
+        String s;
+        
+        if (newSortColumnId == 0)
+            return;
+        else if (newSortColumnId == 1)
+        {
+            if (noteType == 1)
+                noteType = 2;
+            else if (noteType == 2)
+                noteType = 3;
+            else
+                noteType = 1;
+            
+            s = (noteType == 1) ? "Note_Dotted" : ((noteType == 2) ? "Note_Triplet" : "Note_Whole");
+            //table.getHeader().setColumnName(1, s);
+        }
+        else if (newSortColumnId == 2)
+        {
+            Hz = !Hz;
+            s = (Hz) ? "Hz" : "Ms";
+            //table.getHeader().setColumnName(2, s);
+        }
+        setMilliseconds();
+        
     }
     
     // This is overloaded from TableListBoxModel, and must update any custom components that we're using
@@ -175,6 +186,53 @@ public:
         noteType = i;
     }
     
+    void setLabelComponent(LabelComponent* l)
+    {
+        labelComponent = l;
+    }
+    
+    void setMilliseconds()
+    {
+        double bpm = labelComponent->getTextValue().getValue();
+        double ms = 1000.0 / (bpm / 60.0); // ms for whole quarter note
+        double hz = bpm /60.0;             // hz for whole quarter note
+        double value = (Hz) ? hz : ms;
+        int noteType = getNoteType();
+        int noteDenominator = 4, noteNumerator = 1;
+        String s = "";
+        switch (noteType) {
+            case 1:     // whole note
+            {
+                break;
+            }
+            case 2:     // dotted note
+            {
+                value = value * (3.0/2.0);
+                s = ".";
+                break;
+            }
+            case 3:     // triplet note
+            {
+                value = value * (2.0/3.0);
+                s = "T";
+                break;
+            }
+            default:
+                break;
+        } // end switch
+        
+        for (int i = 0; i < table.getNumRows(); i++ )
+        {
+            setText(1, i, String(noteNumerator) + "/" + String(noteDenominator) + s);
+            setText(2, i, String(value));
+            if (Hz)
+                value = value*2.0;
+            else
+                value = value/2.0;
+            noteDenominator = noteDenominator * 2;
+        }
+    }
+    
     //==============================================================================
     void resized() override
     {
@@ -182,10 +240,13 @@ public:
         table.setBoundsInset (BorderSize<int> (8));
     }
     
+protected:
+    LabelComponent* labelComponent;
     
 private:
     TableListBox table;     // the table component itself
     Font font;
+    bool Hz = false;    // if true, then column two will show hz, if false it will show ms
     
     ScopedPointer<XmlElement> demoData;   // This is the XML document loaded from the embedded file "demo table data.xml"
     XmlElement* columnList; // A pointer to the sub-node of demoData that contains the list of columns
@@ -298,7 +359,7 @@ private:
                                int 	columnFlags 
                                ) override
     {
-        if(columnId == 1)
+        //if(columnId == 1)
         {
             if (isMouseDown)
                 g.fillAll (Colour (0x8899aadd));
