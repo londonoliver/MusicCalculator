@@ -25,15 +25,14 @@ MusicCalculatorAudioProcessor::MusicCalculatorAudioProcessor()
                        )
 #endif
 {
+    sync = false;
+    bpm = 120;
+    noteType = 1;
+    Hz = false;
 }
 
 MusicCalculatorAudioProcessor::~MusicCalculatorAudioProcessor()
 {
-}
-
-double MusicCalculatorAudioProcessor::getBpm()
-{
-    return bpm;
 }
 
 //==============================================================================
@@ -130,7 +129,9 @@ void MusicCalculatorAudioProcessor::processBlock (AudioSampleBuffer& buffer, Mid
 {
     playHead = this->getPlayHead();
     playHead->getCurrentPosition (currentPositionInfo);
-    bpm = currentPositionInfo.bpm;
+    hostBpm = currentPositionInfo.bpm;
+    if (sync)
+        bpm = hostBpm;
     
     const int totalNumInputChannels  = getTotalNumInputChannels();
     const int totalNumOutputChannels = getTotalNumOutputChannels();
@@ -184,4 +185,63 @@ void MusicCalculatorAudioProcessor::setStateInformation (const void* data, int s
 AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
     return new MusicCalculatorAudioProcessor();
+}
+
+//==============================================================================
+double* MusicCalculatorAudioProcessor::getBpm()
+{
+    return &bpm;
+}
+
+void MusicCalculatorAudioProcessor::setBpm (double d)
+{
+    if (!sync)
+        bpm = d;
+}
+
+bool MusicCalculatorAudioProcessor::getSync()
+{
+    return sync;
+}
+
+bool MusicCalculatorAudioProcessor::setSync (bool b)
+{
+    if (b && tempoInformationAvailable())
+    {
+        sync = true;
+        return true;
+    }
+    else
+    {
+        sync = false;
+        return false;
+    }
+}
+
+bool MusicCalculatorAudioProcessor::tempoInformationAvailable()
+{
+    if (hostBpm >= 5.0 && hostBpm <= 990.0)
+        return true;
+    else
+        return false;
+}
+
+int MusicCalculatorAudioProcessor::getNoteType()
+{
+    return noteType;
+}
+
+void MusicCalculatorAudioProcessor::setNoteType (int i)
+{
+    noteType = i;
+}
+
+bool MusicCalculatorAudioProcessor::getHz()
+{
+    return Hz;
+}
+
+void MusicCalculatorAudioProcessor::setHz (bool b)
+{
+    Hz = b;
 }

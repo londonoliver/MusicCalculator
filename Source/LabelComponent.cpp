@@ -23,6 +23,7 @@ LabelComponent::LabelComponent()
     setFont(Font("Roboto", 50, Font::plain));
     setJustificationType(Justification::centred);
     addListener(this);
+    setFormattedText(120, dontSendNotification);
 }
 
 void LabelComponent::setFormattedText(double d, NotificationType notification)

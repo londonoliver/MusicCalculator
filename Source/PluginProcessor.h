@@ -57,11 +57,26 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
     
     //==============================================================================
-    double getBpm();
+    double* getBpm();
+    void setBpm (double d);
+    bool setSync (bool b);
+    bool getSync();
+    
+    int getNoteType();
+    void setNoteType (int i);
+    bool getHz();
+    void setHz (bool b);
 
 private:
-    
     double bpm;
+    double hostBpm;
+    bool sync;
+    
+    // To rememeber table information
+    int noteType;
+    bool Hz;
+    
+    bool tempoInformationAvailable();
     
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MusicCalculatorAudioProcessor)
@@ -69,7 +84,6 @@ private:
     //==============================================================================
     AudioPlayHead* playHead;
     AudioPlayHead::CurrentPositionInfo currentPositionInfo;
-    //double bpm;
 };
 
 

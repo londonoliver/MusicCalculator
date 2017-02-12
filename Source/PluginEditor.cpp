@@ -25,24 +25,23 @@ MusicCalculatorAudioProcessorEditor::MusicCalculatorAudioProcessorEditor (MusicC
     // editor's size to whatever you need it to be.
     setSize (400, 300);
     
-    bpm = 120;
-    
-    bpmLabel.setFormattedText(bpm, sendNotification);
+    bpmLabel.setFormattedText(*processor.getBpm(), sendNotification);
     bpmLabel.setEditable(false, true, true);
     bpmLabel.setColour(Label::outlineColourId, Colour(0,0,0));
     bpmLabel.addListener(this);
     bpmLabel.setName("bpmLabel");
     
-    msLabel.setText(String(bpmToMs(bpm)), sendNotification);
-    msLabel.setColour(Label::outlineColourId, Colour(0,0,0));
-    
     
     syncButton.setButtonText("Sync");
     syncButton.setClickingTogglesState(true);
     syncButton.addListener(this);
+    syncButton.setToggleState(processor.getSync(), sendNotification);
     
     table.setName("table");
     table.setLabelComponent(&bpmLabel);
+    table.getTable()->getHeader().addListener(this);
+    table.setNoteType(processor.getNoteType());
+    table.setHz(processor.getHz());
     
     addAndMakeVisible(bpmLabel);
     addAndMakeVisible(table);
@@ -87,8 +86,8 @@ void MusicCalculatorAudioProcessorEditor::timerCallback()
         // Sync on
         if (hostHasTempoInformation())
         {
-            double bpm = processor.getBpm();
-            bpmLabel.setFormattedText(bpm, sendNotification);
+            double *bpm = processor.getBpm();
+            bpmLabel.setFormattedText(*bpm, sendNotification);
         }
     }
     else if(!syncButton.getToggleState())
@@ -104,10 +103,10 @@ double MusicCalculatorAudioProcessorEditor::bpmToMs(double bpm)
 
 void MusicCalculatorAudioProcessorEditor::labelTextChanged(Label *labelThatHasChanged)
 {
-    
     String s =  labelThatHasChanged->getName();
     if(s == bpmLabel.getName())
     {
+        processor.setBpm(bpmLabel.getTextValue().getValue());
         table.setMilliseconds();
     }
 }
@@ -118,34 +117,44 @@ void MusicCalculatorAudioProcessorEditor::buttonClicked(juce::Button *button)
     {
         // Sync on
         
-        startTimer (100);
-        
-        if (hostHasTempoInformation())
-            bpmLabel.setEnabled(false);
-        else
-        {
-            alert.flash();
-            
-            
-            syncButton.setToggleState(false, dontSendNotification);
-        }
+       if (processor.setSync(true))
+       {
+           bpmLabel.setEnabled(false);
+           startTimer (100);
+       }
+       else
+       {
+           alert.flash();
+           syncButton.setToggleState(false, dontSendNotification);
+       }
     }
     else if(!syncButton.getToggleState())
     {
         // Sync off
         
-        stopTimer();
-        
+        processor.setSync(false);
+        if (Timer::isTimerRunning())
+            stopTimer();
         bpmLabel.setEnabled(true);
     }
 }
 
 bool MusicCalculatorAudioProcessorEditor::hostHasTempoInformation()
 {
-    double d = processor.getBpm();
-    if (d >= 5.0 && d <= 990.0)
+    double *d = processor.getBpm();
+    if (*d >= 5.0 && *d <= 990.0)
         return true;
     else
         return false;
 }
 
+
+void MusicCalculatorAudioProcessorEditor::tableColumnsChanged (TableHeaderComponent *tableHeader)
+{
+    processor.setNoteType(table.getNoteType());
+    processor.setHz(table.getHz());
+}
+
+void MusicCalculatorAudioProcessorEditor::tableColumnsResized (TableHeaderComponent *tableHeader) {}
+void MusicCalculatorAudioProcessorEditor::tableSortOrderChanged (TableHeaderComponent *tableHeader) {}
+void MusicCalculatorAudioProcessorEditor::tableColumnDraggingChanged (TableHeaderComponent *tableHeader, int columnIdNowBeingDragged) {}

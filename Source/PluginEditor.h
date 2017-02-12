@@ -24,7 +24,8 @@
 class MusicCalculatorAudioProcessorEditor : public AudioProcessorEditor,
                                             private Timer,
                                             private LabelListener,
-                                            private ButtonListener
+                                            private ButtonListener,
+                                            private TableHeaderComponent::Listener
 {
 public:
     MusicCalculatorAudioProcessorEditor (MusicCalculatorAudioProcessor&);
@@ -43,7 +44,6 @@ private:
     bool sync;
     
     LabelComponent bpmLabel;
-    Label msLabel;
     void labelTextChanged (Label *labelThatHasChanged) override;
     
     void timerCallback() override;
@@ -60,7 +60,11 @@ private:
     bool hostHasTempoInformation();
     
     AlertComponent alert;
-
+    
+    void tableColumnsChanged (TableHeaderComponent *tableHeader) override;
+    void tableColumnsResized (TableHeaderComponent *tableHeader) override;
+    void tableSortOrderChanged (TableHeaderComponent *tableHeader) override;
+    void tableColumnDraggingChanged (TableHeaderComponent *tableHeader, int columnIdNowBeingDragged) override;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MusicCalculatorAudioProcessorEditor)
 };

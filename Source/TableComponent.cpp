@@ -115,14 +115,13 @@ public:
             else
                 noteType = 1;
             
-            s = (noteType == 1) ? "Note_Dotted" : ((noteType == 2) ? "Note_Triplet" : "Note_Whole");
-            //table.getHeader().setColumnName(1, s);
+            columnOneName = (noteType == 1) ? "Note (Whole)" : ((noteType == 2) ? "Note (Dotted)" : "Note (Triplet)");
+            
         }
         else if (newSortColumnId == 2)
         {
             Hz = !Hz;
-            s = (Hz) ? "Hz" : "Ms";
-            //table.getHeader().setColumnName(2, s);
+            columnTwoName = (Hz) ? "Hz" : "Ms";
         }
         setMilliseconds();
         
@@ -186,6 +185,16 @@ public:
         noteType = i;
     }
     
+    bool getHz ()
+    {
+        return Hz;
+    }
+    
+    void setHz (bool b)
+    {
+        Hz = b;
+    }
+    
     void setLabelComponent(LabelComponent* l)
     {
         labelComponent = l;
@@ -233,6 +242,11 @@ public:
         }
     }
     
+    TableListBox* getTable()
+    {
+        return &table;
+    }
+    
     //==============================================================================
     void resized() override
     {
@@ -246,7 +260,7 @@ protected:
 private:
     TableListBox table;     // the table component itself
     Font font;
-    bool Hz = false;    // if true, then column two will show hz, if false it will show ms
+    String columnOneName = "Note (Whole)", columnTwoName = "Ms";
     
     ScopedPointer<XmlElement> demoData;   // This is the XML document loaded from the embedded file "demo table data.xml"
     XmlElement* columnList; // A pointer to the sub-node of demoData that contains the list of columns
@@ -254,6 +268,7 @@ private:
     int numRows;            // The number of rows of data we've got
     
     int noteType;       // State of the note column: 1 = whole, 2 = dotted, 3 = triplet
+    bool Hz = false;    // if true, then column two will show hz, if false it will show ms
 
     //==============================================================================
     // This is a custom Label component, which we use for the table's editable text columns.
@@ -370,7 +385,7 @@ private:
         Rectangle<int> area (width, height);
         area.reduce (4, 0);
         
-        if ((columnFlags & (TableHeaderComponent::sortedForwards | TableHeaderComponent::sortedBackwards)) != 0)
+        /*if ((columnFlags & (TableHeaderComponent::sortedForwards | TableHeaderComponent::sortedBackwards)) != 0)
         {
             Path sortArrow;
             sortArrow.addTriangle (0.0f, 0.0f,
@@ -379,11 +394,14 @@ private:
             
             g.setColour (Colour (0x99000000));
             g.fillPath (sortArrow, sortArrow.getTransformToScaleToFit (area.removeFromRight (height / 2).reduced (2).toFloat(), true));
-        }
+        }*/
         
         g.setColour (Colours::black);
         g.setFont (Font (height * 0.5f, Font::bold));
-        g.drawFittedText (columnName, area, Justification::centredLeft, 1);
+        if (columnId == 1)
+            g.drawFittedText (columnOneName, area, Justification::centredLeft, 1);
+        else
+            g.drawFittedText (columnTwoName, area, Justification::centredLeft, 1);
     }
     
     // Overloaded from LookAndFeel_V3
@@ -401,6 +419,11 @@ private:
         
         for (int i = header.getNumColumns (true); --i >= 0;)
             g.fillRect (header.getColumnPosition (i).removeFromRight (1));
+    }
+    
+    void mouseDown (const MouseEvent &event) override
+    {
+        cout <<"mouseDown" << endl;
     }
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TableComponent)
