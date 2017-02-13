@@ -33,6 +33,7 @@ private:
     void mouseDrag(const juce::MouseEvent &event) override;
     String formatBpm(double d);
     
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (LabelComponent)
 };
 
 #endif /* LabelComponent_hpp */

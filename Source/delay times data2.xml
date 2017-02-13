@@ -1,7 +1,7 @@
 <DELAY_TIMES_DATA>
     <COLUMNS>
-        <COLUMN columnId="1" name="Note" width="50"/>
-        <COLUMN columnId="2" name="Ms" width="50"/>
+        <COLUMN columnId="1" name="Note"/>
+        <COLUMN columnId="2" name="Ms"/>
     </COLUMNS>
     <DATA>
         <ITEM Note="4/1" Ms="-" />

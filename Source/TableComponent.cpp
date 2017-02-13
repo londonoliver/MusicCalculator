@@ -23,6 +23,11 @@ class TableComponent   :    public Component,
 public:
     TableComponent()   : font (14.0f)
     {
+        
+        header = new CustomTableHeader();
+        header->setTableComponent(this);
+        table.setHeader(header);
+        
         // Load some data from an embedded XML file..
         loadData();
         
@@ -39,21 +44,18 @@ public:
         {
             table.getHeader().addColumn (columnXml->getStringAttribute ("name"),
                                          columnXml->getIntAttribute ("columnId"),
-                                         columnXml->getIntAttribute ("width"),
+                                         86,
                                          30, 100,
-                                         TableHeaderComponent::defaultFlags);
+                                         TableHeaderComponent::visible);
         }
         
         // un-comment this line to have a go of stretch-to-fit mode
-        table.getHeader().setStretchToFitActive (true);
+        //table.getHeader().setStretchToFitActive (true);
         
         table.setMultipleSelectionEnabled (true);
         
         noteType = 1;
         Hz = false;
-        
-        setLookAndFeel(this);
-        
     }
     
     // This is overloaded from TableListBoxModel, and must return the total number of rows in our table
@@ -65,9 +67,9 @@ public:
     // This is overloaded from TableListBoxModel, and should fill in the background of the whole row
     void paintRowBackground (Graphics& g, int rowNumber, int /*width*/, int /*height*/, bool rowIsSelected) override
     {
-        if (rowIsSelected)
-            g.fillAll (Colours::lightblue);
-        else if (rowNumber % 2)
+        //if (rowIsSelected)
+            //g.fillAll (Colours::lightblue);
+        if (rowNumber % 2)
             g.fillAll (Colour (0xffeeeeee));
     }
     
@@ -94,14 +96,6 @@ public:
     // to change the sort order.
     void sortOrderChanged (int newSortColumnId, bool isForwards) override
     {
-        /*if (newSortColumnId != 0)
-        {
-            DemoDataSorter sorter (getAttributeNameForColumnId (newSortColumnId), isForwards);
-            dataList->sortChildElements (sorter);
-            
-            table.updateContent();
-        }*/
-        
         String s;
         
         if (newSortColumnId == 0)
@@ -123,6 +117,7 @@ public:
             Hz = !Hz;
             columnTwoName = (Hz) ? "Hz" : "Ms";
         }
+        repaint();
         setMilliseconds();
         
     }
@@ -255,12 +250,13 @@ public:
     }
     
 protected:
-    LabelComponent* labelComponent;
+    SafePointer<LabelComponent> labelComponent;
     
 private:
     TableListBox table;     // the table component itself
     Font font;
     String columnOneName = "Note (Whole)", columnTwoName = "Ms";
+    
     
     ScopedPointer<XmlElement> demoData;   // This is the XML document loaded from the embedded file "demo table data.xml"
     XmlElement* columnList; // A pointer to the sub-node of demoData that contains the list of columns
@@ -269,7 +265,26 @@ private:
     
     int noteType;       // State of the note column: 1 = whole, 2 = dotted, 3 = triplet
     bool Hz = false;    // if true, then column two will show hz, if false it will show ms
+    
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     //==============================================================================
     // This is a custom Label component, which we use for the table's editable text columns.
     class EditableTextCustomComponent  : public Label
@@ -309,32 +324,74 @@ private:
     };
     
     //==============================================================================
-    // A comparator used to sort our data when the user clicks a column header
-    class DemoDataSorter
+    // This is a custom TableHeader component, which we use for the table's header.
+    class CustomTableHeader : public TableHeaderComponent, private Button::Listener
     {
     public:
-        DemoDataSorter (const String& attributeToSortBy, bool forwards)
-        : attributeToSort (attributeToSortBy),
-        direction (forwards ? 1 : -1)
+        CustomTableHeader()
+        {
+            addAndMakeVisible(b1);
+            addAndMakeVisible(b2);
+            b1.setName("b1");
+            b2.setName("b2");
+            b1.addListener(this);
+            b2.addListener(this);
+        }
+        
+        SafePointer<TextButton> getButton (int i)
+        {
+            if (i == 1)
+                return &b1;
+            else
+                return &b2;
+        }
+        
+        
+        void paint (Graphics& g) override
         {
         }
         
-        int compareElements (XmlElement* first, XmlElement* second) const
+        void resized() override
         {
-            int result = first->getStringAttribute (attributeToSort)
-            .compareNatural (second->getStringAttribute (attributeToSort));
-            
-            if (result == 0)
-                result = first->getStringAttribute ("ID")
-                .compareNatural (second->getStringAttribute ("ID"));
-            
-            return direction * result;
+            if (table)
+            {
+                b1.setButtonText(table->columnOneName);
+                b2.setButtonText(table->columnTwoName);
+            }
+            b1.setBounds(0, 0, getColumnWidth(1), getHeight());
+            b2.setBounds(getColumnWidth(1), 0, getColumnWidth(2), getHeight());
         }
         
+        
+        void setTableComponent(TableComponent* t)
+        {
+            table = t;
+        }
     private:
-        String attributeToSort;
-        int direction;
+        SafePointer<TableComponent> table;
+        TextButton b1, b2;
+        
+        void buttonClicked (Button *button) override
+        {
+            if (table)
+            {
+                if (button->getName() == "b1")
+                {
+                    table->sortOrderChanged(1, true);
+                    b1.setButtonText(table->columnOneName);
+                }
+                else if (button->getName() == "b2")
+                {
+                    table->sortOrderChanged(2, true);
+                    b2.setButtonText(table->columnTwoName);
+                }
+            }
+        }
     };
+    
+    
+    
+    
     
     //==============================================================================
     // this loads the embedded database XML file into memory
@@ -359,72 +416,8 @@ private:
         
         return String();
     }
-    
-    //==============================================================================
-    // The folling methods implement the custom look and feel
-    
-    // Overloaded from LookAndFeel_V3
-    void drawTableHeaderColumn(Graphics &g,
-                               const String & columnName,
-                               int 	columnId,
-                               int 	width,
-                               int 	height,
-                               bool isMouseOver,
-                               bool isMouseDown,
-                               int 	columnFlags 
-                               ) override
-    {
-        //if(columnId == 1)
-        {
-            if (isMouseDown)
-                g.fillAll (Colour (0x8899aadd));
-            else if (isMouseOver)
-                g.fillAll (Colour (0x5599aadd));
-        }
-        
-        Rectangle<int> area (width, height);
-        area.reduce (4, 0);
-        
-        /*if ((columnFlags & (TableHeaderComponent::sortedForwards | TableHeaderComponent::sortedBackwards)) != 0)
-        {
-            Path sortArrow;
-            sortArrow.addTriangle (0.0f, 0.0f,
-                                   0.5f, (columnFlags & TableHeaderComponent::sortedForwards) != 0 ? -0.8f : 0.8f,
-                                   1.0f, 0.0f);
             
-            g.setColour (Colour (0x99000000));
-            g.fillPath (sortArrow, sortArrow.getTransformToScaleToFit (area.removeFromRight (height / 2).reduced (2).toFloat(), true));
-        }*/
-        
-        g.setColour (Colours::black);
-        g.setFont (Font (height * 0.5f, Font::bold));
-        if (columnId == 1)
-            g.drawFittedText (columnOneName, area, Justification::centredLeft, 1);
-        else
-            g.drawFittedText (columnTwoName, area, Justification::centredLeft, 1);
-    }
-    
-    // Overloaded from LookAndFeel_V3
-    void drawTableHeaderBackground (Graphics& g, TableHeaderComponent& header) override
-    {
-        Rectangle<int> r (header.getLocalBounds());
-        
-        g.setColour (Colours::black.withAlpha (0.5f));
-        g.fillRect (r.removeFromBottom (1));
-        
-        g.setColour (Colours::white.withAlpha (0.6f));
-        g.fillRect (r);
-        
-        g.setColour (Colours::black.withAlpha (0.5f));
-        
-        for (int i = header.getNumColumns (true); --i >= 0;)
-            g.fillRect (header.getColumnPosition (i).removeFromRight (1));
-    }
-    
-    void mouseDown (const MouseEvent &event) override
-    {
-        cout <<"mouseDown" << endl;
-    }
-    
+    SafePointer<CustomTableHeader> header; // move this up higher when you make a .h file
+            
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TableComponent)
 };

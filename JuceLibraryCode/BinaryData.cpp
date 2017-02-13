@@ -31,8 +31,8 @@ const char* delay_times_data_xml = (const char*) temp_binary_data_0;
 static const unsigned char temp_binary_data_1[] =
 "<DELAY_TIMES_DATA>\n"
 "    <COLUMNS>\n"
-"        <COLUMN columnId=\"1\" name=\"Note\" width=\"50\"/>\n"
-"        <COLUMN columnId=\"2\" name=\"Ms\" width=\"50\"/>\n"
+"        <COLUMN columnId=\"1\" name=\"Note\"/>\n"
+"        <COLUMN columnId=\"2\" name=\"Ms\"/>\n"
 "    </COLUMNS>\n"
 "    <DATA>\n"
 "        <ITEM Note=\"4/1\" Ms=\"-\" />\n"
@@ -63,7 +63,7 @@ const char* getNamedResource (const char* resourceNameUTF8, int& numBytes) throw
     switch (hash)
     {
         case 0x71dd2117:  numBytes = 432; return delay_times_data_xml;
-        case 0xc741acab:  numBytes = 587; return delay_times_data2_xml;
+        case 0xc741acab:  numBytes = 565; return delay_times_data2_xml;
         default: break;
     }
 

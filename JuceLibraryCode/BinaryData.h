@@ -13,7 +13,7 @@ namespace BinaryData
     const int            delay_times_data_xmlSize = 432;
 
     extern const char*   delay_times_data2_xml;
-    const int            delay_times_data2_xmlSize = 587;
+    const int            delay_times_data2_xmlSize = 565;
 
     // Points to the start of a list of resource names.
     extern const char* namedResourceList[];
