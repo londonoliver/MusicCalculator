@@ -47,6 +47,7 @@ MusicCalculatorAudioProcessorEditor::MusicCalculatorAudioProcessorEditor (MusicC
     addAndMakeVisible(table);
     addAndMakeVisible(syncButton);
     addAndMakeVisible(alert);
+    addAndMakeVisible(noteSpinner);
     alert.setVisible(false);
     
     table.setMilliseconds();
@@ -69,18 +70,18 @@ void MusicCalculatorAudioProcessorEditor::resized()
 {
     // This is generally where you'll want to lay out the positions of any
     // subcomponents in your editor..
-    Font f = bpmLabel.getFont();
+    /*Font f = bpmLabel.getFont();
     bpmLabel.setBounds(30, 20, f.getStringWidth("120.000"), f.getHeight());
     table.setBounds(30, 70, 200, 200);
     syncButton.setBounds(200, 20, 50, 50);
     alert.setBounds((getWidth() - alert.getWidth())/2,
                     (getHeight() - alert.getHeight())/2,
-                    alert.getWidth(), alert.getHeight());
+                    alert.getWidth(), alert.getHeight());*/
+    noteSpinner.setBounds(30, 20, 200, 100);
 }
 
 void MusicCalculatorAudioProcessorEditor::timerCallback()
 {
-    //v.setValue(i + 1);
     if(syncButton.getToggleState())
     {
         // Sync on

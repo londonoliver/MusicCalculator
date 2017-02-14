@@ -24,11 +24,17 @@ LabelComponent::LabelComponent()
     setJustificationType(Justification::centred);
     addListener(this);
     setFormattedText(120, dontSendNotification);
+    noteIndex = 0;
 }
 
 void LabelComponent::setFormattedText(double d, NotificationType notification)
 {
-    setText (formatBpm (d), notification);
+    if (bpm)
+        setText (formatBpm (d), notification);
+    else if (noteValue)
+        setText (getNoteName(noteIndex), notification);
+    else
+        setText (String(d), notification);
 }
 
 
@@ -41,15 +47,42 @@ String oldText = "120.000";
 void LabelComponent::labelTextChanged(Label* labelThatHasChanged)
 {
     string s = getText().trim().toStdString();
-    regex r ("(\\d*)((\\.)(\\d*)?)?");
-    if (regex_match (s, r))
+    if (bpm)    // bpm
     {
-        double d = getTextValue().getValue();
-        setFormattedText(d, sendNotification);
+        regex r ("(\\d*)((\\.)(\\d*)?)?");
+        if (regex_match (s, r))
+        {
+            double d = getTextValue().getValue();
+            setFormattedText(d, sendNotification);
+        }
+        else
+        {
+            setText(oldText, sendNotification);
+        }
     }
-    else
+    else if (noteValue)     // note value
     {
-        setText(oldText, sendNotification);
+        regex r ("^(c|(c#)|d|(d#)|e|f|(f#)|g|(g#)|a|(a#)|b|C|(C#)|D|(D#)|E|F|(F#)|G|(G#)|A|(A#)|B)$");
+        if (regex_match (s, r))
+        {
+            setText(getNoteName(noteIndex), sendNotification);
+        }
+        else
+        {
+            setText(oldText, sendNotification);
+        }
+    }
+    else   // noteNumber
+    {
+        regex r ("^[0-8]$");
+        if (regex_match(s, r))
+        {
+            setText(String(s), sendNotification);
+        }
+        else
+        {
+            setText(oldText, sendNotification);
+        }
     }
 }
 
@@ -128,7 +161,7 @@ void LabelComponent::mouseDrag(const juce::MouseEvent &event)
         double value = getTextValue().getValue();
         for (int i = 0; i < absDelta; i++)
         {
-            if (ctrlDown)
+            if (ctrlDown && bpm)
             {
                 if(delta < 0.0) value -= 0.01;
                 else value += 0.01;
@@ -137,6 +170,22 @@ void LabelComponent::mouseDrag(const juce::MouseEvent &event)
             {
                 if(delta < 0.0) value -= 1.0;
                 else value += 1.0;
+                
+                if (noteValue)
+                {
+                    noteIndex += value;
+                    if (noteIndex > 11.0)
+                        noteIndex = 11.0;
+                    else if (noteIndex < 0.0)
+                        noteIndex = 0.0;
+                }
+                else if (noteNumber)
+                {
+                    if (value > 8.0)
+                        value = 8.0;
+                    else if (value < 0.0)
+                        value = 0.0;
+                }
             }
             setFormattedText(value, sendNotification);
         }
@@ -152,4 +201,74 @@ String LabelComponent::formatBpm(double d)
     stringstream ss;
     ss << fixed << setprecision(2) << d;
     return ss.str();
+}
+
+void LabelComponent::setType (int i)
+{
+    if (i == 1) // bpm
+    {
+        bpm = true;
+        noteValue = false;
+        noteNumber = false;
+    }
+    else if (i == 2)    // note value
+    {
+        bpm = false;
+        noteValue = true;
+        noteNumber = false;
+
+    }
+    else // note number
+    {
+        bpm = false;
+        noteValue = false;
+        noteNumber = true;
+
+    }
+}
+
+String LabelComponent::getNoteName (int i)
+{
+    switch (i) {
+        case 0:
+            return "C";
+            break;
+        case 1:
+            return "C#";
+            break;
+        case 2:
+            return "D";
+            break;
+        case 3:
+            return "D#";
+            break;
+        case 4:
+            return "E";
+            break;
+        case 5:
+            return "F";
+            break;
+        case 6:
+            return "F#";
+            break;
+        case 7:
+            return "G";
+            break;
+        case 8:
+            return "G#";
+            break;
+        case 9:
+            return "A";
+            break;
+        case 10:
+            return "A#";
+            break;
+        case 11:
+            return "B";
+            break;
+            
+        default:
+            return "";
+            break;
+    }
 }

@@ -133,6 +133,11 @@ public:
         if (textLabel == nullptr)
             textLabel = new EditableTextCustomComponent (*this);
         
+        if (columnId == 2)
+        {
+            textLabel->setEditable(true);
+        }
+        
         textLabel->setRowAndColumn (rowNumber, columnId);
         return textLabel;
     }
@@ -300,7 +305,6 @@ private:
         void mouseDown (const MouseEvent& event) override
         {
             // single click on the label should simply select the row
-            owner.table.selectRowsBasedOnModifierKeys (row, event.mods, false);
             
             Label::mouseDown (event);
         }
@@ -318,10 +322,29 @@ private:
             setText (owner.getText(columnId, row), dontSendNotification);
         }
         
+        void editorShown (TextEditor *editor) override
+        {
+            editor->setReadOnly(true);
+            editor->setCaretVisible(false);
+        }
+        
     private:
         TableComponent& owner;
         int row, columnId;
+        TextEditor editor;
     };
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     //==============================================================================
     // This is a custom TableHeader component, which we use for the table's header.

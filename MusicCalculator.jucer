@@ -33,6 +33,8 @@
             file="Source/LabelComponent.cpp"/>
       <FILE id="lzpfmq" name="LabelComponent.hpp" compile="0" resource="0"
             file="Source/LabelComponent.hpp"/>
+      <FILE id="sLWhru" name="NoteSpinner.cpp" compile="1" resource="0" file="Source/NoteSpinner.cpp"/>
+      <FILE id="UeAKqA" name="NoteSpinner.hpp" compile="0" resource="0" file="Source/NoteSpinner.hpp"/>
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>

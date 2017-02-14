@@ -16,6 +16,7 @@
 #include "LabelComponent.hpp"
 #include "TableComponent.cpp"
 #include "AlertCompnent.cpp"
+#include "NoteSpinner.hpp"
 
 
 //==============================================================================
@@ -65,6 +66,8 @@ private:
     void tableColumnsResized (TableHeaderComponent *tableHeader) override;
     void tableSortOrderChanged (TableHeaderComponent *tableHeader) override;
     void tableColumnDraggingChanged (TableHeaderComponent *tableHeader, int columnIdNowBeingDragged) override;
+    
+    NoteSpinner noteSpinner;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MusicCalculatorAudioProcessorEditor)
 };
