@@ -66,11 +66,17 @@ public:
     void setNoteType (int i);
     bool getHz();
     void setHz (bool b);
+    
+    int getNoteName ();
+    void setNoteName (int noteName);
+    int getNoteNumber ();
+    void setNoteNumber (int noteNumber);
 
 private:
     double bpm;
     double hostBpm;
     bool sync;
+    int noteName, noteNumber;
     
     // To rememeber table information
     int noteType;

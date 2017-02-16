@@ -251,7 +251,7 @@ public:
     void resized() override
     {
         // position our table with a gap around its edge
-        table.setBoundsInset (BorderSize<int> (8));
+        table.setBoundsInset (BorderSize<int> (0));
     }
     
 protected:

@@ -21,12 +21,17 @@ using namespace std;
 MusicCalculatorAudioProcessorEditor::MusicCalculatorAudioProcessorEditor (MusicCalculatorAudioProcessor& p)
 : AudioProcessorEditor (&p), processor (p)
 {
+    
+    width = 400;
+    height = 300;
+    note = 0;
+    octave = 3;
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
-    setSize (400, 300);
+    setSize (width, height);
     
     bpmLabel.setFormattedText(*processor.getBpm(), sendNotification);
-    bpmLabel.setEditable(false, true, true);
+    //bpmLabel.setEditable(false, true, true);
     bpmLabel.setColour(Label::outlineColourId, Colour(0,0,0));
     bpmLabel.addListener(this);
     bpmLabel.setName("bpmLabel");
@@ -43,15 +48,31 @@ MusicCalculatorAudioProcessorEditor::MusicCalculatorAudioProcessorEditor (MusicC
     table.setNoteType(processor.getNoteType());
     table.setHz(processor.getHz());
     
+    noteToHzLabel.setColour(Label::outlineColourId, Colour(0,0,0));
+    
+    noteLabel.setLabelType(LabelComponent::LabelType::NOTENAME);
+    noteLabel.setName("noteLabel");
+    noteLabel.addListener(this);
+    octaveLabel.setLabelType(LabelComponent::LabelType::NOTENUMBER);
+    octaveLabel.setName("octaveLabel");
+    octaveLabel.addListener(this);
+    
     addAndMakeVisible(bpmLabel);
     addAndMakeVisible(table);
     addAndMakeVisible(syncButton);
     addAndMakeVisible(alert);
-    addAndMakeVisible(noteSpinner);
+    addAndMakeVisible(noteToHzLabel);
     alert.setVisible(false);
-    
+    addAndMakeVisible(octaveLabel);
     table.setMilliseconds();
+    addAndMakeVisible(noteLabel);
+    addAndMakeVisible(display);
 
+    
+    lastInputIndex = 0;
+    setMidiInput (0);
+    keyboardState.addListener (this);
+    startTimer(100);
 }
 
 MusicCalculatorAudioProcessorEditor::~MusicCalculatorAudioProcessorEditor()
@@ -64,24 +85,29 @@ void MusicCalculatorAudioProcessorEditor::paint (Graphics& g)
     g.fillAll (Colours::white);
     g.setColour (Colours::black);
     g.setFont (15.0f);
+    //g.drawLine((float)width/2, 0, (float)width/2, height);
 }
 
 void MusicCalculatorAudioProcessorEditor::resized()
 {
     // This is generally where you'll want to lay out the positions of any
     // subcomponents in your editor..
-    /*Font f = bpmLabel.getFont();
-    bpmLabel.setBounds(30, 20, f.getStringWidth("120.000"), f.getHeight());
-    table.setBounds(30, 70, 200, 200);
-    syncButton.setBounds(200, 20, 50, 50);
+    Font f = bpmLabel.getFont();
+    //bpmLabel.setBounds((width - 200)/2, 20, 200, f.getHeight());
+    table.setBounds((width - 200)/2, 40 + f.getHeight(), 200, height - (60 + f.getHeight()));
+    /*syncButton.setBounds(200, 20, 50, 50);
     alert.setBounds((getWidth() - alert.getWidth())/2,
                     (getHeight() - alert.getHeight())/2,
                     alert.getWidth(), alert.getHeight());*/
-    noteSpinner.setBounds(30, 20, 200, 100);
+    //noteLabel.setBounds(width/2 - 51, 20, 50, noteLabel.getFont().getHeight());
+    //octaveLabel.setBounds(width/2 + 1, 20, 50, octaveLabel.getFont().getHeight());
+    //noteToHzLabel.setBounds(100, 100, 50, 50);
+    display.setBounds((width - display.width)/2, 20, display.width, display.height);
 }
 
 void MusicCalculatorAudioProcessorEditor::timerCallback()
 {
+    setMidiInput(0);
     if(syncButton.getToggleState())
     {
         // Sync on
@@ -109,6 +135,12 @@ void MusicCalculatorAudioProcessorEditor::labelTextChanged(Label *labelThatHasCh
     {
         processor.setBpm(bpmLabel.getTextValue().getValue());
         table.setMilliseconds();
+    }
+    else if (s == noteLabel.getName() || s == octaveLabel.getName())
+    {
+        note = noteLabel.getNote();
+        octave = octaveLabel.getOctave();
+        noteToHzLabel.setText(String(noteToHz(note, octave)), sendNotification);
     }
 }
 
@@ -149,6 +181,18 @@ bool MusicCalculatorAudioProcessorEditor::hostHasTempoInformation()
         return false;
 }
 
+double MusicCalculatorAudioProcessorEditor::noteToHz(int note, int octave)
+{
+    note -= 9;
+    octave -= 4;
+    return semitoneShift(440, (float)note + (float)(octave * 12));
+}
+
+double MusicCalculatorAudioProcessorEditor::semitoneShift(double value, double amount)
+{
+    return value / pow(2, amount / -12);
+}
+
 
 void MusicCalculatorAudioProcessorEditor::tableColumnsChanged (TableHeaderComponent *tableHeader)
 {
@@ -159,3 +203,40 @@ void MusicCalculatorAudioProcessorEditor::tableColumnsChanged (TableHeaderCompon
 void MusicCalculatorAudioProcessorEditor::tableColumnsResized (TableHeaderComponent *tableHeader) {}
 void MusicCalculatorAudioProcessorEditor::tableSortOrderChanged (TableHeaderComponent *tableHeader) {}
 void MusicCalculatorAudioProcessorEditor::tableColumnDraggingChanged (TableHeaderComponent *tableHeader, int columnIdNowBeingDragged) {}
+
+/** Starts listening to a MIDI input device, enabling it if necessary. */
+void MusicCalculatorAudioProcessorEditor::setMidiInput (int index)
+{
+    const StringArray list (MidiInput::getDevices());
+    
+    deviceManager.removeMidiInputCallback (list[lastInputIndex], this);
+    
+    const String newInput (list[index]);
+    
+    if (! deviceManager.isMidiInputEnabled (newInput))
+        deviceManager.setMidiInputEnabled (newInput, true);
+    
+    deviceManager.addMidiInputCallback (newInput, this);
+    midiInputList.setSelectedId (index + 1, dontSendNotification);
+    
+    lastInputIndex = index;
+}
+
+// These methods handle callbacks from the midi device + on-screen keyboard..
+void MusicCalculatorAudioProcessorEditor::handleIncomingMidiMessage (MidiInput* source, const MidiMessage& message)
+{
+    keyboardState.processNextMidiEvent (message);
+}
+
+void MusicCalculatorAudioProcessorEditor::handleNoteOn (MidiKeyboardState*, int midiChannel, int midiNoteNumber, float velocity)
+{
+    if (isPositiveAndBelow (midiNoteNumber, (int) 128))
+    {
+        note = midiNoteNumber % 12;
+        octave = midiNoteNumber / 12 + (3 - 5);  // octave = midiNoteNumber / 12 + (middleC - 5)
+    }
+}
+
+void MusicCalculatorAudioProcessorEditor::handleNoteOff (MidiKeyboardState*, int midiChannel, int midiNoteNumber, float /*velocity*/)
+{
+}

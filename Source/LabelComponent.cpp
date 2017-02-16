@@ -20,21 +20,25 @@ using namespace std;
 LabelComponent::LabelComponent()
 {
     setColour(ColourIds::backgroundWhenEditingColourId, Colours::lightblue);
-    setFont(Font("Roboto", 50, Font::plain));
+    font = Font("Roboto", 50, Font::plain);
+    setFont(font);
     setJustificationType(Justification::centred);
     addListener(this);
     setFormattedText(120, dontSendNotification);
     noteIndex = 0;
+    octave = 3;
+    setEditable(false, true, true);;
+    setBorderSize(BorderSize<int> (0));
 }
 
 void LabelComponent::setFormattedText(double d, NotificationType notification)
 {
-    if (bpm)
+    if (labelType == LabelType::BPM)    // bpm
         setText (formatBpm (d), notification);
-    else if (noteValue)
-        setText (getNoteName(noteIndex), notification);
-    else
-        setText (String(d), notification);
+    else if (labelType == LabelType::NOTENAME)  // note
+        setText (getNoteNameString(noteIndex), notification);
+    else                                            // octave
+        setText (String(octave), notification);
 }
 
 
@@ -47,7 +51,7 @@ String oldText = "120.000";
 void LabelComponent::labelTextChanged(Label* labelThatHasChanged)
 {
     string s = getText().trim().toStdString();
-    if (bpm)    // bpm
+    if (labelType == LabelType::BPM)    // bpm
     {
         regex r ("(\\d*)((\\.)(\\d*)?)?");
         if (regex_match (s, r))
@@ -60,12 +64,13 @@ void LabelComponent::labelTextChanged(Label* labelThatHasChanged)
             setText(oldText, sendNotification);
         }
     }
-    else if (noteValue)     // note value
+    else if (labelType == LabelType::NOTENAME)     // note name
     {
-        regex r ("^(c|(c#)|d|(d#)|e|f|(f#)|g|(g#)|a|(a#)|b|C|(C#)|D|(D#)|E|F|(F#)|G|(G#)|A|(A#)|B)$");
+        regex r ("^(c|(c#)|(cb)|d|(d#)|(db)|e|f|(f#)|(fb)|g|(g#)|(gb)|a|(a#)|(ab)|b|(b#)|(bb)|C|(C#)|(Cb)|D|(D#)|(Db)|E|F|(F#)|(Fb)|G|(G#)|(Gb)|A|(A#)|(Ab)|B|(B#)|(Bb))$");
         if (regex_match (s, r))
         {
-            setText(getNoteName(noteIndex), sendNotification);
+            noteIndex = noteToIndex(s);
+            setText(getNoteNameString(noteIndex), sendNotification);
         }
         else
         {
@@ -77,7 +82,8 @@ void LabelComponent::labelTextChanged(Label* labelThatHasChanged)
         regex r ("^[0-8]$");
         if (regex_match(s, r))
         {
-            setText(String(s), sendNotification);
+            octave = getTextValue().getValue();
+            setText(String(octave), sendNotification);
         }
         else
         {
@@ -112,16 +118,27 @@ void LabelComponent::mouseDown(const juce::MouseEvent &event)
 {
     if (isEnabled())
     {
-        bool ctrlDown = event.mods.isCtrlDown();
+        /*bool ctrlDown = event.mods.isCtrlDown();
         if (ctrlDown)
         {
             double value = getTextValue().getValue();
             value = floor(value);
             setText(formatBpm(value), sendNotification);
-        }
+        }*/
         
         enabled = false;
         mousePoint.setY(event.y);
+    }
+}
+
+void LabelComponent::mouseUp(const juce::MouseEvent &event)
+{
+    bool ctrlDown = event.mods.isCtrlDown();
+    if (ctrlDown)
+    {
+        double value = getTextValue().getValue();
+        value = floor(value);
+        setText(formatBpm(value), sendNotification);
     }
 }
 
@@ -161,30 +178,37 @@ void LabelComponent::mouseDrag(const juce::MouseEvent &event)
         double value = getTextValue().getValue();
         for (int i = 0; i < absDelta; i++)
         {
-            if (ctrlDown && bpm)
+            if (ctrlDown && (labelType == LabelType::BPM))  // bpm
             {
                 if(delta < 0.0) value -= 0.01;
                 else value += 0.01;
             }
             else
             {
-                if(delta < 0.0) value -= 1.0;
-                else value += 1.0;
-                
-                if (noteValue)
+                if (labelType == LabelType::BPM)    // bpm
                 {
-                    noteIndex += value;
+                    if(delta < 0.0) value -= 1.0;
+                    else value += 1.0;
+                }
+                else if (labelType == LabelType::NOTENAME)   // note name
+                {
+                    if(delta < 0.0) noteIndex -= 1.0;
+                    else noteIndex += 1.0;
+                    
                     if (noteIndex > 11.0)
                         noteIndex = 11.0;
                     else if (noteIndex < 0.0)
                         noteIndex = 0.0;
                 }
-                else if (noteNumber)
+                else                                    // note number
                 {
-                    if (value > 8.0)
-                        value = 8.0;
-                    else if (value < 0.0)
-                        value = 0.0;
+                    if(delta < 0.0) octave -= 1.0;
+                    else octave += 1.0;
+                    
+                    if (octave > 8.0)
+                        octave = 8.0;
+                    else if (octave < 0.0)
+                        octave = 0.0;
                 }
             }
             setFormattedText(value, sendNotification);
@@ -196,38 +220,58 @@ void LabelComponent::mouseDrag(const juce::MouseEvent &event)
 // Returns a double in the range of 5.0 - 990.0 with a precision of two decimal places
 String LabelComponent::formatBpm(double d)
 {
-    if (d > 990.0) d = 990.0;
+    /*if (d > 990.0) d = 990.0;
     else if (d < 5.0) d = 5.0;
     stringstream ss;
-    ss << fixed << setprecision(2) << d;
-    return ss.str();
+    ss << fixed << setprecision(3) << d;
+    return ss.str();*/
+    return String (d);
 }
 
-void LabelComponent::setType (int i)
+void LabelComponent::setLabelType (LabelType type)
 {
-    if (i == 1) // bpm
-    {
-        bpm = true;
-        noteValue = false;
-        noteNumber = false;
-    }
-    else if (i == 2)    // note value
-    {
-        bpm = false;
-        noteValue = true;
-        noteNumber = false;
-
-    }
-    else // note number
-    {
-        bpm = false;
-        noteValue = false;
-        noteNumber = true;
-
-    }
+    labelType = type;
+    setFormattedText(1, sendNotification);
 }
 
-String LabelComponent::getNoteName (int i)
+LabelComponent::LabelType LabelComponent::getLabelType()
+{
+    return labelType;
+}
+
+int LabelComponent::getNote()
+{
+    return noteIndex;
+}
+
+void LabelComponent::setNote (int i)
+{
+    noteIndex = i;
+    setFormattedText(note, sendNotification);
+}
+
+int LabelComponent::getOctave()
+{
+    return octave;
+}
+
+void LabelComponent::setOctave (int i)
+{
+    octave = i;
+    setFormattedText(octave, sendNotification);
+}
+
+int LabelComponent::getNoteIndex()
+{
+    return noteIndex;
+}
+
+Font LabelComponent::getFont()
+{
+    return font;
+}
+
+String LabelComponent::getNoteNameString (int i)
 {
     switch (i) {
         case 0:
@@ -271,4 +315,34 @@ String LabelComponent::getNoteName (int i)
             return "";
             break;
     }
+}
+
+int LabelComponent::noteToIndex (String s)
+{
+    if (s == "C" || s == "c")
+        return 0;
+    else if (s == "C#" || s == "c#" || s == "Db" || s == "db")
+        return 1;
+    else if (s == "D" || s == "d")
+        return 2;
+    else if (s == "D#" || s == "d#" || s == "Eb" || s == "eb")
+        return 3;
+    else if (s == "E" || s == "e" || s == "Fb" || s == "fb")
+        return 4;
+    else if (s == "F" || s == "f")
+        return 5;
+    else if (s == "F#" || s == "f#" || s == "Gb" || s == "gb")
+        return 6;
+    else if (s == "G" || s == "g")
+        return 7;
+    else if (s == "G#" || s == "g#" || s == "Ab" || s == "ab")
+        return 8;
+    else if (s == "A" || s == "a")
+        return 9;
+    else if (s == "A#" || s == "a#" || s == "Bb" || s == "bb")
+        return 10;
+    else if (s == "B" || s == "b" || s == "Cb" || s == "cb")
+        return 11;
+    else
+        return -1;
 }

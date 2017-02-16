@@ -29,6 +29,8 @@ MusicCalculatorAudioProcessor::MusicCalculatorAudioProcessor()
     bpm = 120;
     noteType = 1;
     Hz = false;
+    noteName = 0;
+    noteNumber = 3;
 }
 
 MusicCalculatorAudioProcessor::~MusicCalculatorAudioProcessor()
@@ -244,4 +246,24 @@ bool MusicCalculatorAudioProcessor::getHz()
 void MusicCalculatorAudioProcessor::setHz (bool b)
 {
     Hz = b;
+}
+
+int MusicCalculatorAudioProcessor::getNoteName()
+{
+    return noteName;
+}
+
+void MusicCalculatorAudioProcessor::setNoteName(int i)
+{
+    noteName = i;
+}
+
+int MusicCalculatorAudioProcessor::getNoteNumber()
+{
+    return noteNumber;
+}
+
+void MusicCalculatorAudioProcessor::setNoteNumber(int i)
+{
+    noteNumber = i;
 }
