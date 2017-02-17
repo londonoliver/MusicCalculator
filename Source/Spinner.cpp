@@ -8,10 +8,14 @@
 
 #ifndef Spinner_hpp
 #define Spinner_hpp
-#endif
-
 #include "../JuceLibraryCode/JuceHeader.h"
 #include <math.h>
+#endif
+
+#include <iostream>
+
+using namespace std;
+
 
 class Spinner : public Label
 {
@@ -46,22 +50,33 @@ public:
         this->max = max;
     }
     
-    void setText (int value)
+    void setText (int val)
     {
-        this->value = value;
+        value = inRange (val);
         
         if (type == SpinnerType::NUMBER)
             Label::setText (String (value), sendNotification);
         else if (type == SpinnerType::NOTE)
+        {
             Label::setText (getNote (value), sendNotification);
+        }
         else
             Label::setText (".", sendNotification);
     }
     
 private:
     
+    int inRange (int val)
+    {
+        if (val > max) return max;
+        else if (val < min) return min;
+        else return val;
+    }
+    
     void mouseDown(const MouseEvent &event) override
     {
+        if (type != SpinnerType::PERIOD) setColour (ColourIds::backgroundColourId, Colours::lightgrey);
+        
         enabled = false;
         mousePoint.setY(event.y);
     }
@@ -91,24 +106,28 @@ private:
                 }
             }
             if (absDelta == 0) return;
-            int value = getTextValue().getValue();
+            int val = value;
             for (int i = 0; i < absDelta; i++)
             {
 
-                if (delta < 0) value -= 1;
-                else value += 1;
-                
-                if (value > max) value = max;
-                else if (value < min) value = min;
+                if (delta < 0) val -= 1;
+                else val += 1;
 
-                setText (value);
+                setText (val);
             }
             mousePoint.setY (event.y);
     }
     
     void mouseDoubleClick (const MouseEvent &event) override
     {
-        getParentComponent()->mouseDoubleClick (event);
+        setColour (ColourIds::backgroundColourId, Colours::white);
+        
+        if (getParentComponent()) getParentComponent()->mouseDoubleClick (event);
+    }
+    
+    void mouseExit (const MouseEvent &event) override
+    {
+        setColour (ColourIds::backgroundColourId, Colours::white);
     }
     
     String getNote (int value)

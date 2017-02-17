@@ -33,7 +33,11 @@
             file="Source/LabelComponent.cpp"/>
       <FILE id="lzpfmq" name="LabelComponent.hpp" compile="0" resource="0"
             file="Source/LabelComponent.hpp"/>
-      <FILE id="zW2idm" name="Display.cpp" compile="1" resource="0" file="Source/Display.cpp"/>
+      <FILE id="vUDMcX" name="TempoSpinner.cpp" compile="1" resource="0"
+            file="Source/TempoSpinner.cpp"/>
+      <FILE id="SpdVs6" name="NoteSpinner.cpp" compile="1" resource="0" file="Source/NoteSpinner.cpp"/>
+      <FILE id="GaRree" name="HertzSpinner.cpp" compile="1" resource="0"
+            file="Source/HertzSpinner.cpp"/>
       <FILE id="qQqXV9" name="Spinner.cpp" compile="1" resource="0" file="Source/Spinner.cpp"/>
     </GROUP>
   </MAINGROUP>

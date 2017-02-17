@@ -17,7 +17,8 @@
 #include "TableComponent.cpp"
 #include "AlertCompnent.cpp"
 #include "MainComponent.cpp"
-#include "Display.cpp"
+#include "TempoSpinner.cpp"
+
 
 
 //==============================================================================
@@ -74,7 +75,8 @@ private:
     
     Label noteToHzLabel;
     
-    Display display;
+    TempoSpinner tempoSpinner;
+    //NoteSpinner noteSpinner;
     
     LabelComponent noteLabel;
     LabelComponent octaveLabel;

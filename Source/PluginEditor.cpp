@@ -66,7 +66,8 @@ MusicCalculatorAudioProcessorEditor::MusicCalculatorAudioProcessorEditor (MusicC
     addAndMakeVisible(octaveLabel);
     table.setMilliseconds();
     addAndMakeVisible(noteLabel);
-    addAndMakeVisible(display);
+    addAndMakeVisible(tempoSpinner);
+    //addAndMakeVisible(noteSpinner);
 
     
     lastInputIndex = 0;
@@ -102,7 +103,8 @@ void MusicCalculatorAudioProcessorEditor::resized()
     //noteLabel.setBounds(width/2 - 51, 20, 50, noteLabel.getFont().getHeight());
     //octaveLabel.setBounds(width/2 + 1, 20, 50, octaveLabel.getFont().getHeight());
     //noteToHzLabel.setBounds(100, 100, 50, 50);
-    display.setBounds((width - display.width)/2, 20, display.width, display.height);
+    tempoSpinner.Component::setBounds((width - tempoSpinner.width)/2, 20, tempoSpinner.width, tempoSpinner.height);
+    //noteSpinner.Component::setBounds((width - noteSpinner.width)/2, 20, noteSpinner.width, noteSpinner.height);
 }
 
 void MusicCalculatorAudioProcessorEditor::timerCallback()
