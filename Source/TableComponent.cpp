@@ -5,10 +5,12 @@
 //  Created by London Oliver on 2/5/17.
 //
 //
-
+#ifndef TableComponent_hpp
+#define TableComponent_hpp
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "LabelComponent.hpp"
 #include <iostream>
+#endif
 
 using namespace std;
 
@@ -21,8 +23,13 @@ class TableComponent   :    public Component,
                             public LookAndFeel_V3
 {
 public:
+    int width;
+    int height;
+    
     TableComponent()   : font (14.0f)
     {
+        width = 200;
+        height = 300;
         
         header = new CustomTableHeader();
         header->setTableComponent(this);

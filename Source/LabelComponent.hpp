@@ -11,6 +11,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
+
 class LabelComponent :  public Label,
 private LabelListener
 {

@@ -17,7 +17,8 @@
 #include "TableComponent.cpp"
 #include "AlertCompnent.cpp"
 #include "MainComponent.cpp"
-#include "TempoSpinner.cpp"
+#include "TempoSpinner.h"
+#include "Table.cpp"
 
 
 
@@ -63,6 +64,7 @@ private:
     
     
     TableComponent table;
+    Table newTable;
     
     TextButton syncButton;
     void buttonClicked (Button *button) override;
@@ -77,6 +79,7 @@ private:
     
     TempoSpinner tempoSpinner;
     //NoteSpinner noteSpinner;
+    //HertzSpinner hertzSpinner;
     
     LabelComponent noteLabel;
     LabelComponent octaveLabel;
