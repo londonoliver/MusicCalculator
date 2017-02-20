@@ -10,7 +10,7 @@
 #define TempoSpinner_h
 
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "Spinner.cpp"
+#include "Spinner.h"
 
 class TempoSpinner : public Component, private Label::Listener
 {
@@ -40,8 +40,9 @@ public:
     
     String toString();
     double getValue();
-    void setBounds();
+    void fitBounds();
     void setSpinnersText (String val);
+    void attachListener(Label::Listener *listener);
     void resized() override;
 private:
     void mouseDoubleClick (const MouseEvent &e) override;

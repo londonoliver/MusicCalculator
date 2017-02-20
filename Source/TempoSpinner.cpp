@@ -27,7 +27,7 @@ TempoSpinner::TempoSpinner() :  s1 {Spinner::SpinnerType::NUMBER, 5, 990},
     s5.setText (0);
     s6.setText (0);
     
-    setBounds();        
+    fitBounds();
     
     addAndMakeVisible (s1);
     addAndMakeVisible (s2);
@@ -36,16 +36,10 @@ TempoSpinner::TempoSpinner() :  s1 {Spinner::SpinnerType::NUMBER, 5, 990},
     addAndMakeVisible (s5);
     addAndMakeVisible (s6);
     
-    s1.addListener (this);
-    s2.addListener (this);
-    s3.addListener (this);
-    s4.addListener (this);
-    s5.addListener (this);
-    s6.addListener (this);
+    attachListener (this);
     
-    
-    ed.setFont(font);
-    ed.setBorderSize(BorderSize<int> (0));
+    ed.setFont (font);
+    ed.setBorderSize (BorderSize<int> (0));
     addAndMakeVisible (ed);
     ed.setVisible (false);
     ed.addListener(this);
@@ -66,7 +60,7 @@ double TempoSpinner::getValue()
     
 }
 
-void TempoSpinner::setBounds()
+void TempoSpinner::fitBounds()
 {
     s1Width = font.getStringWidth (s1.getTextValue().toString());
     s2Width = font.getStringWidth (s2.getTextValue().toString());
@@ -110,12 +104,22 @@ void TempoSpinner::setSpinnersText (String val)
     }
 }
 
+void TempoSpinner::attachListener(Label::Listener *listener)
+{
+    s1.addListener (listener);
+    s2.addListener (listener);
+    s3.addListener (listener);
+    s4.addListener (listener);
+    s5.addListener (listener);
+    s6.addListener (listener);
+}
+
 void TempoSpinner::resized()
 {
-    setBounds();
+    fitBounds();
     
-    if (getParentComponent())
-        getParentComponent()->resized();
+    /*if (getParentComponent())
+        getParentComponent()->resized();*/
 }
 
 void TempoSpinner::mouseDoubleClick (const MouseEvent &e)

@@ -87,30 +87,6 @@ public:
     // to change the sort order.
     void sortOrderChanged (int newSortColumnId, bool isForwards) override
     {
-        /*String s;
-        
-        if (newSortColumnId == 0)
-            return;
-        else if (newSortColumnId == 1)
-        {
-            if (noteType == 1)
-                noteType = 2;
-            else if (noteType == 2)
-                noteType = 3;
-            else
-                noteType = 1;
-            
-            columnOneName = (noteType == 1) ? "Note (Whole)" : ((noteType == 2) ? "Note (Dotted)" : "Note (Triplet)");
-            
-        }
-        else if (newSortColumnId == 2)
-        {
-            Hz = !Hz;
-            columnTwoName = (Hz) ? "Hz" : "Ms";
-        }
-        repaint();
-        setMilliseconds();*/
-        
     }
     
     // This is overloaded from TableListBoxModel, and must update any custom components that we're using
@@ -154,26 +130,6 @@ public:
         table.updateContent();
     }
     
-    int getNoteType ()
-    {
-        return noteType;
-    }
-    
-    void setNoteType (int i)
-    {
-        noteType = i;
-    }
-    
-    bool getHz ()
-    {
-        return Hz;
-    }
-    
-    void setHz (bool b)
-    {
-        Hz = b;
-    }
-    
     void setTempoSpinner (TempoSpinner *ts)
     {
         tempoSpinner = ts;
@@ -212,44 +168,6 @@ public:
     
     void setMilliseconds()
     {
-        /*double bpm = labelComponent->getTextValue().getValue();
-        double ms = 1000.0 / (bpm / 60.0); // ms for quarter note
-        double hz = bpm /60.0;             // hz for quarter note
-        double value = (Hz) ? hz : ms;
-        int noteType = getNoteType();
-        int noteDenominator = 4, noteNumerator = 1;
-        String s = "";
-        switch (noteType) {
-            case 1:     //  note
-            {
-                break;
-            }
-            case 2:     // dotted note
-            {
-                value = value * (3.0/2.0);
-                s = ".";
-                break;
-            }
-            case 3:     // triplet note
-            {
-                value = value * (2.0/3.0);
-                s = "T";
-                break;
-            }
-            default:
-                break;
-        } // end switch
-        
-        for (int i = 0; i < table.getNumRows(); i++ )
-        {
-            setText(1, i, String(noteNumerator) + "/" + String(noteDenominator) + s);
-            setText(2, i, String(value));
-            if (Hz)
-                value = value*2.0;
-            else
-                value = value/2.0;
-            noteDenominator = noteDenominator * 2;
-        }*/
     }
     
     TableListBox* getTable()

@@ -19,6 +19,7 @@
 #include "MainComponent.cpp"
 #include "TempoSpinner.h"
 #include "Table.cpp"
+#include "Display.cpp"
 
 
 
@@ -31,7 +32,8 @@ class MusicCalculatorAudioProcessorEditor : public AudioProcessorEditor,
                                             private ButtonListener,
                                             private TableHeaderComponent::Listener,
                                             private MidiInputCallback,
-                                            private MidiKeyboardStateListener
+                                            private MidiKeyboardStateListener,
+                                            private ComboBox::Listener
 {
 public:
     MusicCalculatorAudioProcessorEditor (MusicCalculatorAudioProcessor&);
@@ -77,9 +79,15 @@ private:
     
     Label noteToHzLabel;
     
-    TempoSpinner tempoSpinner;
+    //TempoSpinner tempoSpinner;
     //NoteSpinner noteSpinner;
     //HertzSpinner hertzSpinner;
+    
+    Display display;
+    
+    ComboBox comboBox;
+    void comboBoxChanged(ComboBox *comboBox) override;
+    
     
     LabelComponent noteLabel;
     LabelComponent octaveLabel;

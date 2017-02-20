@@ -57,6 +57,11 @@ MusicCalculatorAudioProcessorEditor::MusicCalculatorAudioProcessorEditor (MusicC
     octaveLabel.setName("octaveLabel");
     octaveLabel.addListener(this);
     
+    comboBox.addItem("Tempo", 1);
+    comboBox.addItem("Note", 2);
+    comboBox.addItem("Hertz", 3);
+    comboBox.addListener(this);
+    
     addAndMakeVisible(bpmLabel);
     //addAndMakeVisible(table);
     addAndMakeVisible(syncButton);
@@ -66,13 +71,14 @@ MusicCalculatorAudioProcessorEditor::MusicCalculatorAudioProcessorEditor (MusicC
     addAndMakeVisible(octaveLabel);
     table.setMilliseconds();
     addAndMakeVisible(noteLabel);
-    addAndMakeVisible(tempoSpinner);
+    //addAndMakeVisible(tempoSpinner);
     //addAndMakeVisible(noteSpinner);
     //addAndMakeVisible(hertzSpinner);
-    addAndMakeVisible(newTable);
+    //addAndMakeVisible(newTable);
+    addAndMakeVisible(display);
+    addAndMakeVisible(comboBox);
     
-    newTable.setTempoSpinner (&tempoSpinner);
-
+    //newTable.setTempoSpinner (&tempoSpinner);
     
     lastInputIndex = 0;
     setMidiInput (0);
@@ -107,10 +113,12 @@ void MusicCalculatorAudioProcessorEditor::resized()
     //noteLabel.setBounds(width/2 - 51, 20, 50, noteLabel.getFont().getHeight());
     //octaveLabel.setBounds(width/2 + 1, 20, 50, octaveLabel.getFont().getHeight());
     //noteToHzLabel.setBounds(100, 100, 50, 50);
-    tempoSpinner.Component::setBounds((width - tempoSpinner.width)/2, 20, tempoSpinner.width, tempoSpinner.height);
+    //tempoSpinner.Component::setBounds((width - tempoSpinner.width)/2, 20, tempoSpinner.width, tempoSpinner.height);
     //noteSpinner.Component::setBounds((width - noteSpinner.width)/2, 20, noteSpinner.width, noteSpinner.height);
     //hertzSpinner.Component::setBounds((width - hertzSpinner.width)/2, 20, hertzSpinner.width, hertzSpinner.height);
-    newTable.setBounds((width - table.width)/2, tempoSpinner.height + 40, table.width, table.height);
+    //newTable.setBounds((width - table.width)/2, tempoSpinner.height + 40, table.width, table.height);
+    display.setBounds((width - display.width)/2, 20, display.width, display.height);
+    comboBox.setBounds(20, 100, 100, 100);
 }
 
 void MusicCalculatorAudioProcessorEditor::timerCallback()
@@ -247,4 +255,10 @@ void MusicCalculatorAudioProcessorEditor::handleNoteOn (MidiKeyboardState*, int 
 
 void MusicCalculatorAudioProcessorEditor::handleNoteOff (MidiKeyboardState*, int midiChannel, int midiNoteNumber, float /*velocity*/)
 {
+}
+
+void MusicCalculatorAudioProcessorEditor::comboBoxChanged(juce::ComboBox *combo)
+{
+    int i = combo->getSelectedId();
+    display.setType((i == 1) ? Display::DisplayType::TEMPO : ((i == 2) ? Display::DisplayType::NOTE : Display::DisplayType::HERTZ));
 }

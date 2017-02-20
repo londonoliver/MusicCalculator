@@ -6,152 +6,130 @@
 //
 //
 
-#ifndef HertzSpinner_hpp
-#define HertzSpinner_hpp
-#include "../JuceLibraryCode/JuceHeader.h"
-#include "Spinner.cpp"
+#include "HertzSpinner.h"
 #include <iostream>
 #include <regex>
-#endif
-
-
 
 using namespace std;
 
-class HertzSpinner : public Component, private LabelListener
+HertzSpinner::HertzSpinner()  :   s1 {Spinner::SpinnerType::NUMBER, 0, 20000},
+                    s2 {Spinner::SpinnerType::PERIOD, 0, 0},
+                    s3 {Spinner::SpinnerType::NUMBER, 0, 9},
+                    s4 {Spinner::SpinnerType::NUMBER, 0, 9}
 {
-public:
-    int width;
-    int height;
+    font = Font ("Roboto", 50, Font::plain);
     
-    Font font;
+    s1.setText (440);
+    s2.Label::setText (".", sendNotification);
+    s3.setText (0);
+    s4.setText (0);
     
-    Spinner s1 {Spinner::SpinnerType::NUMBER, 0, 20000};
-    Spinner s2 {Spinner::SpinnerType::PERIOD, 0, 0};
-    Spinner s3 {Spinner::SpinnerType::NUMBER, 0, 9};
-    Spinner s4 {Spinner::SpinnerType::NUMBER, 0, 9};
+    fitBounds();
     
-    Label ed;
+    addAndMakeVisible (s1);
+    addAndMakeVisible (s2);
+    addAndMakeVisible (s3);
+    addAndMakeVisible (s4);
     
-    int s1Width;
-    int s2Width;
-    int s3Width;
-    int s4Width;
+    attachListener (this);
     
-    HertzSpinner()
-    {
-        font = Font ("Roboto", 50, Font::plain);
-        
-        s1.setText (440);
-        s2.Label::setText (".", sendNotification);
-        s3.setText (0);
-        s4.setText (0);
-        
-        setBounds();
-        
-        addAndMakeVisible (s1);
-        addAndMakeVisible (s2);
-        addAndMakeVisible (s3);
-        addAndMakeVisible (s4);
-        
-        s1.addListener (this);
-        s2.addListener (this);
-        s3.addListener (this);
-        s4.addListener (this);
-        
-        ed.setFont (font);
-        ed.setBorderSize (BorderSize<int> (0));
-        addAndMakeVisible (ed);
-        ed.setVisible (false);
-        ed.addListener(this);
-    }
+    ed.setFont (font);
+    ed.setBorderSize (BorderSize<int> (0));
+    addAndMakeVisible (ed);
+    ed.setVisible (false);
+    ed.addListener (this);
+}
+
+String HertzSpinner::toString()
+{
+    return s1.getTextValue().toString() + "." + s3.getTextValue().toString() + s4.getTextValue().toString();
+}
+
+void HertzSpinner::fitBounds()
+{
+    s1Width = font.getStringWidth (s1.getTextValue().toString());
+    s2Width = font.getStringWidth (s2.getTextValue().toString());
+    s3Width = font.getStringWidth (s3.getTextValue().toString());
+    s4Width = font.getStringWidth (s4.getTextValue().toString());
     
-    String toString()
-    {
-        return s1.getTextValue().toString() + "." + s3.getTextValue().toString() + s4.getTextValue().toString();
-    }
+    height = font.getHeight();
+    width = s1Width + s2Width + s3Width + s4Width;
     
-    void setBounds()
-    {
-        s1Width = font.getStringWidth (s1.getTextValue().toString());
-        s2Width = font.getStringWidth (s2.getTextValue().toString());
-        s3Width = font.getStringWidth (s3.getTextValue().toString());
-        s4Width = font.getStringWidth (s4.getTextValue().toString());
-        
-        height = font.getHeight();
-        width = s1Width + s2Width + s3Width + s4Width;
-        
-        Component::setBounds (0, 0, width, height);
-        
-        s1.setBounds (0, 0, s1Width, height);
-        s2.setBounds (s1Width, 0, s2Width, height);
-        s3.setBounds (s1Width + s2Width, 0, s3Width, height);
-        s4.setBounds (s1Width + s2Width + s3Width, 0, s4Width, height);
-        
-        ed.setBounds (0, 0, width, height);
-    }
+    Component::setBounds (0, 0, width, height);
     
-    void setSpinnersText (String val)
-    {
-        int len = val.length();
-        
-        int i = 0;
-        
-        while (i < len && val[i] != '.') i++;
-        
-        s1.setText ((i != 0) ? stoi (val.substring (0, i).toStdString()) : 0);
-        s3.setText ((++i < len) ? stoi (val.substring (i, i + 1).toStdString()) : 0);
-        s4.setText ((++i < len) ? stoi (val.substring (i, i + 1).toStdString()) : 0);
-    }
+    s1.setBounds (0, 0, s1Width, height);
+    s2.setBounds (s1Width, 0, s2Width, height);
+    s3.setBounds (s1Width + s2Width, 0, s3Width, height);
+    s4.setBounds (s1Width + s2Width + s3Width, 0, s4Width, height);
     
-    void resized() override
-    {
-        setBounds();
-        
-        if (getParentComponent())
-            getParentComponent()->resized();
-    }
+    ed.setBounds (0, 0, width, height);
+}
+
+void HertzSpinner::setSpinnersText (String val)
+{
+    int len = val.length();
     
-private:
-    void mouseDoubleClick (const MouseEvent &e) override
-    {
-        setSpinnersVisible (false);
-        
-        ed.setVisible (true);
-        
-        ed.setText (toString(), sendNotification);
-        
-        ed.showEditor();
-    }
+    int i = 0;
     
-    void setSpinnersVisible (bool visible)
-    {
-        s1.setVisible(visible);
-        s2.setVisible(visible);
-        s3.setVisible(visible);
-        s4.setVisible(visible);
-    }
+    while (i < len && val[i] != '.') i++;
     
-    void editorHidden (Label *label, TextEditor &editor) override
-    {
-        ed.setVisible (false);
-        
-        setSpinnersVisible (true);
-        
-        String val = ed.getTextValue().toString().trim();
-        
-        if (regex_match (val.toStdString(), regex ("(\\d*)((\\.)(\\d*)?)?")))
-            setSpinnersText (val);
-    }
+    s1.setText ((i != 0) ? stoi (val.substring (0, i).toStdString()) : 0);
+    s3.setText ((++i < len) ? stoi (val.substring (i, i + 1).toStdString()) : 0);
+    s4.setText ((++i < len) ? stoi (val.substring (i, i + 1).toStdString()) : 0);
+}
+
+void HertzSpinner::attachListener(Label::Listener *listener)
+{
+    s1.addListener (listener);
+    s2.addListener (listener);
+    s3.addListener (listener);
+    s4.addListener (listener);
+}
+
+void HertzSpinner::resized()
+{
+    fitBounds();
     
-    void labelTextChanged (Label *labelThatHasChanged) override
-    {
-        resized();
-    }
+    /*if (getParentComponent())
+        getParentComponent()->resized();*/
+}
+
+void HertzSpinner::mouseDoubleClick (const MouseEvent &e)
+{
+    setSpinnersVisible (false);
     
-    void editorShown (Label *, TextEditor &) override
-    {
-    }
+    ed.setVisible (true);
     
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (HertzSpinner)
-};
+    ed.setText (toString(), sendNotification);
+    
+    ed.showEditor();
+}
+
+void HertzSpinner::setSpinnersVisible (bool visible)
+{
+    s1.setVisible(visible);
+    s2.setVisible(visible);
+    s3.setVisible(visible);
+    s4.setVisible(visible);
+}
+
+void HertzSpinner::editorHidden (Label *label, TextEditor &editor)
+{
+    ed.setVisible (false);
+    
+    setSpinnersVisible (true);
+    
+    String val = ed.getTextValue().toString().trim();
+    
+    if (regex_match (val.toStdString(), regex ("(\\d*)((\\.)(\\d*)?)?")))
+        setSpinnersText (val);
+}
+
+void HertzSpinner::labelTextChanged (Label *labelThatHasChanged)
+{
+    resized();
+}
+
+void HertzSpinner::editorShown (Label *, TextEditor &)
+{
+}
