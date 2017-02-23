@@ -25,12 +25,12 @@ MusicCalculatorAudioProcessor::MusicCalculatorAudioProcessor()
                        )
 #endif
 {
-    sync = false;
-    bpm = 120;
-    noteType = 1;
-    Hz = false;
-    noteName = 0;
-    noteNumber = 3;
+    bpm = 125;
+    setNote(0);
+    setOctave(3);
+    displayType = Display::DisplayType::TEMPO;
+    delayType = Table::DelayType::NORMAL;
+    tempoConversion = Table::TempoConversion::MS;
 }
 
 MusicCalculatorAudioProcessor::~MusicCalculatorAudioProcessor()
@@ -190,12 +190,12 @@ AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 }
 
 //==============================================================================
-double* MusicCalculatorAudioProcessor::getBpm()
+double* MusicCalculatorAudioProcessor::getTempo()
 {
     return &bpm;
 }
 
-void MusicCalculatorAudioProcessor::setBpm (double d)
+void MusicCalculatorAudioProcessor::setTempo (double d)
 {
     if (!sync)
         bpm = d;
@@ -228,42 +228,52 @@ bool MusicCalculatorAudioProcessor::tempoInformationAvailable()
         return false;
 }
 
-int MusicCalculatorAudioProcessor::getNoteType()
+int MusicCalculatorAudioProcessor::getNote()
 {
-    return noteType;
+    return note;
 }
 
-void MusicCalculatorAudioProcessor::setNoteType (int i)
+void MusicCalculatorAudioProcessor::setNote (int val)
 {
-    noteType = i;
+    note = val;
 }
 
-bool MusicCalculatorAudioProcessor::getHz()
+int MusicCalculatorAudioProcessor::getOctave()
 {
-    return Hz;
+    return octave;
 }
 
-void MusicCalculatorAudioProcessor::setHz (bool b)
+void MusicCalculatorAudioProcessor::setOctave (int val)
 {
-    Hz = b;
+    octave = val;
 }
 
-int MusicCalculatorAudioProcessor::getNoteName()
+Display::DisplayType MusicCalculatorAudioProcessor::getDisplayType()
 {
-    return noteName;
+    return displayType;
 }
 
-void MusicCalculatorAudioProcessor::setNoteName(int i)
+void MusicCalculatorAudioProcessor::setDisplayType (Display::DisplayType type)
 {
-    noteName = i;
+    displayType = type;
 }
 
-int MusicCalculatorAudioProcessor::getNoteNumber()
+Table::DelayType MusicCalculatorAudioProcessor::getDelayType()
 {
-    return noteNumber;
+    return delayType;
 }
 
-void MusicCalculatorAudioProcessor::setNoteNumber(int i)
+void MusicCalculatorAudioProcessor::setDelayType (Table::DelayType type)
 {
-    noteNumber = i;
+    this->delayType = type;
+}
+
+Table::TempoConversion MusicCalculatorAudioProcessor::getTempoConversion()
+{
+    return tempoConversion;
+}
+
+void MusicCalculatorAudioProcessor::setTempoConversion (Table::TempoConversion conversion)
+{
+    this->tempoConversion = conversion;
 }

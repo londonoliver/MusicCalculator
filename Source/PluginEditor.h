@@ -13,13 +13,9 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "PluginProcessor.h"
-#include "LabelComponent.hpp"
-#include "TableComponent.cpp"
 #include "AlertCompnent.cpp"
-#include "MainComponent.cpp"
-#include "TempoSpinner.h"
-#include "Table.cpp"
-#include "Display.cpp"
+#include "Table.h"
+#include "Display.h"
 
 
 
@@ -30,7 +26,6 @@ class MusicCalculatorAudioProcessorEditor : public AudioProcessorEditor,
                                             private Timer,
                                             private LabelListener,
                                             private ButtonListener,
-                                            private TableHeaderComponent::Listener,
                                             private MidiInputCallback,
                                             private MidiKeyboardStateListener,
                                             private ComboBox::Listener
@@ -56,8 +51,6 @@ private:
     
     bool sync;
     
-    LabelComponent bpmLabel;
-    void labelTextChanged (Label *labelThatHasChanged) override;
     
     void timerCallback() override;
     double bpmToMs (double bpm);
@@ -65,8 +58,7 @@ private:
     double semitoneShift (double value, double amount);
     
     
-    TableComponent table;
-    Table newTable;
+    Table table;
     
     TextButton syncButton;
     void buttonClicked (Button *button) override;
@@ -77,25 +69,12 @@ private:
     
     AlertComponent alert;
     
-    Label noteToHzLabel;
-    
-    //TempoSpinner tempoSpinner;
-    //NoteSpinner noteSpinner;
-    //HertzSpinner hertzSpinner;
-    
     Display display;
+    void labelTextChanged (Label *label) override;
     
     ComboBox comboBox;
     void comboBoxChanged(ComboBox *comboBox) override;
-    
-    
-    LabelComponent noteLabel;
-    LabelComponent octaveLabel;
-    
-    void tableColumnsChanged (TableHeaderComponent *tableHeader) override;
-    void tableColumnsResized (TableHeaderComponent *tableHeader) override;
-    void tableSortOrderChanged (TableHeaderComponent *tableHeader) override;
-    void tableColumnDraggingChanged (TableHeaderComponent *tableHeader, int columnIdNowBeingDragged) override;
+
     
     
     void setMidiInput (int index);

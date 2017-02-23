@@ -12,12 +12,6 @@
               jucerVersion="4.3.1">
   <MAINGROUP id="QSE8F7" name="MusicCalculator">
     <GROUP id="{8E453A34-B25A-3B41-04E5-C3C5747C63C8}" name="Source">
-      <GROUP id="{58A78106-4634-B7C7-F8EA-609AF28EC997}" name="Resources">
-        <FILE id="tQqbTZ" name="delay times data.xml" compile="0" resource="1"
-              file="Source/delay times data.xml"/>
-        <FILE id="XaxJbT" name="delay times data2.xml" compile="0" resource="1"
-              file="Source/delay times data2.xml"/>
-      </GROUP>
       <FILE id="lS3fey" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
       <FILE id="wN6EYw" name="PluginProcessor.h" compile="0" resource="0"
@@ -25,8 +19,6 @@
       <FILE id="fDHbuU" name="PluginEditor.cpp" compile="1" resource="0"
             file="Source/PluginEditor.cpp"/>
       <FILE id="K1e628" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
-      <FILE id="DNFMfE" name="TableComponent.cpp" compile="1" resource="0"
-            file="Source/TableComponent.cpp"/>
       <FILE id="ODwIRW" name="AlertCompnent.cpp" compile="1" resource="0"
             file="Source/AlertCompnent.cpp"/>
       <FILE id="QyKPvi" name="LabelComponent.cpp" compile="1" resource="0"
@@ -40,8 +32,11 @@
       <FILE id="GaRree" name="HertzSpinner.cpp" compile="1" resource="0"
             file="Source/HertzSpinner.cpp"/>
       <FILE id="qQqXV9" name="Spinner.cpp" compile="1" resource="0" file="Source/Spinner.cpp"/>
+      <FILE id="yf0Tig" name="Spinner.h" compile="0" resource="0" file="Source/Spinner.h"/>
       <FILE id="cPOmdT" name="Table.cpp" compile="1" resource="0" file="Source/Table.cpp"/>
+      <FILE id="G2CnlF" name="Table.h" compile="0" resource="0" file="Source/Table.h"/>
       <FILE id="yGiD04" name="Display.cpp" compile="1" resource="0" file="Source/Display.cpp"/>
+      <FILE id="ayVhjI" name="Display.h" compile="0" resource="0" file="Source/Display.h"/>
       <FILE id="GLrQDf" name="DisplayOld.cpp" compile="1" resource="0" file="Source/DisplayOld.cpp"/>
     </GROUP>
   </MAINGROUP>

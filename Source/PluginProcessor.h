@@ -12,6 +12,7 @@
 #define PLUGINPROCESSOR_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "Table.h"
 
 
 //==============================================================================
@@ -57,33 +58,41 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
     
     //==============================================================================
-    double* getBpm();
-    void setBpm (double d);
+    double* getTempo();
+    void setTempo (double d);
+    
     bool setSync (bool b);
     bool getSync();
     
-    int getNoteType();
-    void setNoteType (int i);
-    bool getHz();
-    void setHz (bool b);
+    int getNote();
+    void setNote (int val);
     
-    int getNoteName ();
-    void setNoteName (int noteName);
-    int getNoteNumber ();
-    void setNoteNumber (int noteNumber);
+    int getOctave();
+    void setOctave (int val);
+    
+    Display::DisplayType getDisplayType();
+    void setDisplayType (Display::DisplayType type);
+    
+    Table::DelayType getDelayType();
+    void setDelayType (Table::DelayType type);
+    
+    Table::TempoConversion getTempoConversion();
+    void setTempoConversion (Table::TempoConversion conversion);
+    
+    bool tempoInformationAvailable();
 
 private:
+    //==============================================================================
     double bpm;
     double hostBpm;
     bool sync;
-    int noteName, noteNumber;
+    int note;
+    int octave;
     
     // To rememeber table information
-    int noteType;
-    bool Hz;
-    
-    bool tempoInformationAvailable();
-    
+    Display::DisplayType displayType;
+    Table::DelayType delayType;
+    Table::TempoConversion tempoConversion;
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MusicCalculatorAudioProcessor)
     
