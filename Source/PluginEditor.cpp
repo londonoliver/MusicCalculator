@@ -90,8 +90,10 @@ void MusicCalculatorAudioProcessorEditor::resized()
     display.setBounds((width - display.width)/2, 20, display.width, display.height);
     comboBox.setBounds (0, 0, 50, 50);
     
+    cout << "table header height = " << table.table.getHeader().getHeight();
+    
     processor.setDelayType(table.delayType);
-    cout << "processor set delaytype " << (int)table.delayType << endl;
+    
     processor.setTempoConversion(table.tempoConversion);
 }
 
@@ -186,7 +188,11 @@ void MusicCalculatorAudioProcessorEditor::handleNoteOn (MidiKeyboardState*, int 
     {
         note = midiNoteNumber % 12;
         octave = midiNoteNumber / 12 + (3 - 5);  // octave = midiNoteNumber / 12 + (middleC - 5)
+        
+        if (display.displayType == Display::DisplayType::NOTE)
+        display.setDisplay (Spinner::getNote (note) + String (octave), Display::DisplayType::NOTE);
     }
+    cout << "note on" << endl;
 }
 
 void MusicCalculatorAudioProcessorEditor::handleNoteOff (MidiKeyboardState*, int midiChannel, int midiNoteNumber, float /*velocity*/)

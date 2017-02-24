@@ -297,13 +297,6 @@ void Table::setTableType ()
 
 
 
-void Table::setMilliseconds()
-{
-}
-
-
-
-
 TableListBox* Table::getTable()
 {
     return &table;
@@ -316,6 +309,7 @@ void Table::resized()
 {
     table.setBounds (0, 0, width, height);
     table.setBoundsInset (BorderSize<int> (0));
+    table.getHeader().setBounds(0, 0, 0, 0);
     
     if (getParentComponent())
         getParentComponent()->resized();
@@ -323,7 +317,11 @@ void Table::resized()
 
 
 
-
+//=============================================================================
+/*
+ *  EditableTextCustomComponent
+ */
+//=============================================================================
 
 
     Table::EditableTextCustomComponent::EditableTextCustomComponent (Table& td)  : owner (td)
@@ -331,23 +329,23 @@ void Table::resized()
         setEditable (false);
         setColour (textColourId, Colours::black);
     }
-    
-    
+
+
     void Table::EditableTextCustomComponent::mouseDown (const MouseEvent& event)
     {
         Label::mouseDown (event);
     }
 
-    
+
     void Table::EditableTextCustomComponent::textWasEdited()
     {
     }
 
-    
+
     void Table::EditableTextCustomComponent::setRowAndColumn (const int newRow, const int newColumn)
     {
     }
-    
+
 
     void Table::EditableTextCustomComponent::editorShown (TextEditor *editor)
     {
@@ -357,49 +355,33 @@ void Table::resized()
 
 
 
+//=============================================================================
+/*
+ *  CustomTableHeader
+ */
+//=============================================================================
 
 
-
-
-
-
-
-    
-    
     Table::CustomTableHeader::CustomTableHeader()
     {
-        addAndMakeVisible(b1);
-        addAndMakeVisible(b2);
-        b1.setName("b1");
-        b2.setName("b2");
-        b1.addListener(this);
-        b2.addListener(this);
     }
-    
+
     void Table::CustomTableHeader::paint (Graphics& g)
     {
     }
-    
-    
+
+
     void Table::CustomTableHeader::resized()
     {
-        if (table)
-        {
-            b1.setButtonText(table->columnOneName);
-            b2.setButtonText(table->columnTwoName);
-        }
-        
-        b1.setBounds(0, 0, getColumnWidth(1), getHeight());
-        b2.setBounds(getColumnWidth(1), 0, getColumnWidth(2), getHeight());
+        setBounds(0, 0, 0, 0);
     }
-    
-    
+
+
     void Table::CustomTableHeader::setTable (Table* t)
     {
         table = t;
     }
 
-    
     void Table::CustomTableHeader::buttonClicked (Button *button)
     {
         if (table && table->display->displayType == Display::DisplayType::TEMPO)
@@ -407,11 +389,11 @@ void Table::resized()
             if (button->getName() == b1.getName())
             {
                 table->delayType =  (table->delayType == DelayType::NORMAL)     ?   DelayType::DOTTED
-                                                                                :
-                                    ((table->delayType == DelayType::DOTTED)    ?   DelayType::TRIPLET
-                                                                                :   DelayType::NORMAL);
+                :
+                ((table->delayType == DelayType::DOTTED)    ?   DelayType::TRIPLET
+                 :   DelayType::NORMAL);
                 
-            
+                
                 table->setTableType();
                 
                 b1.setButtonText(table->columnOneName);
@@ -422,7 +404,7 @@ void Table::resized()
             else if (button->getName() == b2.getName())
             {
                 table->tempoConversion = (table->tempoConversion == TempoConversion::MS)    ?   TempoConversion::HZ
-                                                                                            :   TempoConversion::MS;
+                :   TempoConversion::MS;
                 
                 
                 table->setTableType();
