@@ -46,7 +46,6 @@ MusicCalculatorAudioProcessorEditor::MusicCalculatorAudioProcessorEditor (MusicC
     
     comboBox.addItem("Tempo", 1);
     comboBox.addItem("Note", 2);
-    comboBox.addItem("Hertz", 3);
     comboBox.addListener(this);
     
     addAndMakeVisible(syncButton);
@@ -95,11 +94,15 @@ void MusicCalculatorAudioProcessorEditor::resized()
     processor.setDelayType(table.delayType);
     
     processor.setTempoConversion(table.tempoConversion);
+    
+    if (display.displayType == Display::DisplayType::NOTE)
+        display.setDisplay (Spinner::getNote (note) + String (octave), Display::DisplayType::NOTE);
 }
 
 void MusicCalculatorAudioProcessorEditor::timerCallback()
 {
     setMidiInput(0);
+    resized();
     if(syncButton.getToggleState())
     {
         // Sync on
@@ -121,6 +124,12 @@ void MusicCalculatorAudioProcessorEditor::labelTextChanged(Label *labelThatHasCh
     processor.setNote (display.getNote());
     processor.setOctave (display.getOctave());
     table.table.updateContent();
+    
+    note = display.getNote();
+    octave = display.getOctave();
+    tempo = *processor.getTempo();
+    
+    
 }
 
 void MusicCalculatorAudioProcessorEditor::buttonClicked(juce::Button *button)
@@ -135,7 +144,7 @@ void MusicCalculatorAudioProcessorEditor::buttonClicked(juce::Button *button)
        }
        else
        {
-           alert.flash();
+           //alert.flash();
            syncButton.setToggleState(false, dontSendNotification);
        }
     }
@@ -188,9 +197,6 @@ void MusicCalculatorAudioProcessorEditor::handleNoteOn (MidiKeyboardState*, int 
     {
         note = midiNoteNumber % 12;
         octave = midiNoteNumber / 12 + (3 - 5);  // octave = midiNoteNumber / 12 + (middleC - 5)
-        
-        if (display.displayType == Display::DisplayType::NOTE)
-        display.setDisplay (Spinner::getNote (note) + String (octave), Display::DisplayType::NOTE);
     }
     cout << "note on" << endl;
 }
@@ -202,7 +208,7 @@ void MusicCalculatorAudioProcessorEditor::handleNoteOff (MidiKeyboardState*, int
 void MusicCalculatorAudioProcessorEditor::comboBoxChanged(juce::ComboBox *combo)
 {
     int i = combo->getSelectedId();
-    display.setDisplayType((i == 1) ? Display::DisplayType::TEMPO : ((i == 2) ? Display::DisplayType::NOTE : Display::DisplayType::HERTZ));
+    display.setDisplayType((i == 1) ? Display::DisplayType::TEMPO : Display::DisplayType::NOTE);
     table.setTableType();
     processor.setDisplayType(display.displayType);
 }

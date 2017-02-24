@@ -46,6 +46,7 @@ private:
     MusicCalculatorAudioProcessor& processor;
     
     int note, octave;
+    double tempo;
     
     int width, height;
     

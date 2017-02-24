@@ -364,6 +364,10 @@ void Table::resized()
 
     Table::CustomTableHeader::CustomTableHeader()
     {
+        addAndMakeVisible(b1);
+        addAndMakeVisible(b2);
+        b1.setName("b1");
+        b2.setName("b2");
     }
 
     void Table::CustomTableHeader::paint (Graphics& g)
@@ -373,7 +377,10 @@ void Table::resized()
 
     void Table::CustomTableHeader::resized()
     {
-        setBounds(0, 0, 0, 0);
+        if (table)
+        {
+            b1.setBounds(0, 0, table->width/getNumColumns(true), 20);
+        }
     }
 
 
