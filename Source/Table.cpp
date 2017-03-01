@@ -34,6 +34,8 @@ Table::Table()   : font (14.0f)
     table.setModel (this);
     
     setTableType();
+    
+    table.setRowHeight (25);
 }
 
 
@@ -43,17 +45,17 @@ int Table::getNumRows()
 {
     return  (display)   ?
     
-                            (display->displayType == Display::DisplayType::TEMPO)   ?   numTempoRows
+    (display->displayType == Display::DisplayType::TEMPO)   ?   numTempoRows
     
-                                                                                    :
+    :
     
-                            ((display->displayType == Display::DisplayType::NOTE)   ?   numNoteRows
-                             
-                                                                                    :   numHertzRows)
+    ((display->displayType == Display::DisplayType::NOTE)   ?   numNoteRows
+     
+     :   numHertzRows)
     
-                        :
+    :
     
-                            0;
+    0;
 }
 
 
@@ -69,7 +71,7 @@ void Table::paintRowBackground (Graphics& g, int rowNumber, int /*width*/, int /
 
 
 void Table::paintCell (Graphics& g, int rowNumber, int columnId,
-                int width, int height, bool /*rowIsSelected*/)
+                       int width, int height, bool /*rowIsSelected*/)
 {
 }
 
@@ -84,34 +86,30 @@ void Table::sortOrderChanged (int newSortColumnId, bool isForwards)
 
 
 Component* Table::refreshComponentForCell (int rowNumber, int columnId, bool /*isRowSelected*/,
-                                    Component* existingComponentToUpdate)
+                                           Component* existingComponentToUpdate)
 {
     EditableTextCustomComponent* textLabel = static_cast<EditableTextCustomComponent*> (existingComponentToUpdate);
     
     if (textLabel == nullptr)
         textLabel = new EditableTextCustomComponent (*this);
     
-    if (columnId == 2)
-    {
-        textLabel->setEditable(true);
-    }
     
-    textLabel->setText(
+    textLabel->label.setText (
                        
-       (display)    ?
-       
-                        (display->displayType == Display::DisplayType::TEMPO)   ?   setTempoTable (rowNumber, columnId)
-                   
-                                                                                :
-                   
-                        ((display->displayType == Display::DisplayType::NOTE)   ?   setNoteTable (rowNumber, columnId)
-                    
-                                                                                :   setHertzTable (rowNumber, columnId))
-       
-                    :
-       
-                        "", sendNotification
-    );
+                       (display)    ?
+                       
+                       (display->displayType == Display::DisplayType::TEMPO)   ?   setTempoTable (rowNumber, columnId)
+                       
+                       :
+                       
+                       ((display->displayType == Display::DisplayType::NOTE)   ?   setNoteTable (rowNumber, columnId)
+                        
+                        :   setHertzTable (rowNumber, columnId))
+                       
+                       :
+                       
+                       "", sendNotification
+                       );
     
     return textLabel;
 }
@@ -195,8 +193,8 @@ double Table::semitoneShift(double value, double amount)
 double Table::getWholeNoteMs()
 {
     return (1000.0 / (getTempo() / 60.0)) * 4.0 *
-            ((delayType == DelayType::DOTTED) ? (3.0 / 2.0) :
-             ((delayType == DelayType::TRIPLET) ? (2.0 / 3.0) : 1));
+    ((delayType == DelayType::DOTTED) ? (3.0 / 2.0) :
+     ((delayType == DelayType::TRIPLET) ? (2.0 / 3.0) : 1));
 }
 
 
@@ -215,23 +213,23 @@ double Table::getWholeNoteHz()
 String Table::setTempoTable (int rowNumber, int columnId)
 {
     return  (columnId == 1)     ?   "1/"                                            +
-                                    String (pow (2, rowNumber))                     +
+    String (pow (2, rowNumber))                     +
     
-                                    ((delayType == DelayType::DOTTED)   ?   "."
-                                     
-                                                                        :
-                                     
-                                    ((delayType == DelayType::TRIPLET)  ?   "T"
-                                     
-                                                                        :   ""))
+    ((delayType == DelayType::DOTTED)   ?   "."
+     
+     :
+     
+     ((delayType == DelayType::TRIPLET)  ?   "T"
+      
+      :   ""))
     
-                                :
+    :
     
-            ((columnId == 2)    ?   (tempoConversion == TempoConversion::MS)    ?   String (getWholeNoteMs() / pow (2, rowNumber))
-             
-                                                                                :   String (getWholeNoteHz() * pow (2, rowNumber))
-             
-                                :   "");
+    ((columnId == 2)    ?   (tempoConversion == TempoConversion::MS)    ?   String (getWholeNoteMs() / pow (2, rowNumber))
+     
+     :   String (getWholeNoteHz() * pow (2, rowNumber))
+     
+     :   "");
 }
 
 
@@ -241,7 +239,7 @@ String Table::setNoteTable (int rowNumber, int columnId)
 {
     return  (columnId == 1)     ?   String (noteToHz (getNote(), getOctave()))
     
-                                :   "";
+    :   "";
 }
 
 
@@ -266,13 +264,13 @@ void Table::setTableType ()
             table.getHeader().setColumnWidth(1, width/2);
             table.getHeader().setColumnWidth(2, width/2);
             
-            columnOneName = (delayType == DelayType::NORMAL)    ?   "Note (Normal)"
-                                                                :
-                            ((delayType == DelayType::DOTTED)   ?   "Note (Dotted)"
-                                                                :   "Note (Triplet)");
+            columnOneName = (delayType == DelayType::NORMAL)    ?   "Note"
+            :
+            ((delayType == DelayType::DOTTED)   ?   "Note"
+             :   "Note");
             
             columnTwoName = (tempoConversion == TempoConversion::MS)    ?   "Ms"
-                                                                        :   "Hz";
+            :   "Hz";
         }
         else if (display->displayType == Display::DisplayType::NOTE)
         {
@@ -282,6 +280,8 @@ void Table::setTableType ()
             table.getHeader().setColumnWidth(1, width);
             
             columnOneName = "Hz";
+            
+            
         }
         else
         {
@@ -297,6 +297,13 @@ void Table::setTableType ()
 
 
 
+void Table::setMilliseconds()
+{
+}
+
+
+
+
 TableListBox* Table::getTable()
 {
     return &table;
@@ -307,9 +314,10 @@ TableListBox* Table::getTable()
 
 void Table::resized()
 {
-    table.setBounds (0, 0, width, height);
+    header->setBounds(0, 0, width, 40);
+    
+    table.setBounds (0, header->getY(), width, height);
     table.setBoundsInset (BorderSize<int> (0));
-    table.getHeader().setBounds(0, 0, 0, 0);
     
     if (getParentComponent())
         getParentComponent()->resized();
@@ -317,110 +325,253 @@ void Table::resized()
 
 
 
-//=============================================================================
+
+
+
+//====================================================================
 /*
- *  EditableTextCustomComponent
+ *  EditableCustomTextComponent
  */
-//=============================================================================
+//====================================================================
 
 
-    Table::EditableTextCustomComponent::EditableTextCustomComponent (Table& td)  : owner (td)
+
+Table::EditableTextCustomComponent::EditableTextCustomComponent (Table& td)  : owner (td)
+{
+    /*Image image = ImageCache::getFromMemory(BinaryData::clipboard_svg, BinaryData::clipboard_svgSize);
+    button.setImages(true, true, true,
+                     image, 0.7f,Colours::transparentBlack,
+                     image, 1.0f, Colours::transparentBlack,
+                     image, 1.0f, Colours::transparentBlack,
+                     0.5f);*/
+    
+    
+    
+    button = new DrawableButton ("Button 1", DrawableButton::ImageFitted);
+    
+    ScopedPointer<XmlElement> svg (XmlDocument::parse(BinaryData::clipboard_svg));
+    ScopedPointer<Drawable> drawable;
+    
+    if (svg != nullptr)
     {
-        setEditable (false);
-        setColour (textColourId, Colours::black);
+        drawable = Drawable::createFromSVG (*svg);
+        drawable->replaceColour(Colours::black, Colours::grey);
+        button->setImages(drawable);
     }
+    
+    
+    
+    label.setEditable (false);
+    label.setColour (Label::textColourId, Colours::black);
+    
+    addAndMakeVisible (label);
+    addAndMakeVisible (button);
+}
 
 
-    void Table::EditableTextCustomComponent::mouseDown (const MouseEvent& event)
-    {
-        Label::mouseDown (event);
-    }
+void paint()
+{
+}
 
 
-    void Table::EditableTextCustomComponent::textWasEdited()
-    {
-    }
+void Table::EditableTextCustomComponent::resized()
+{
+    label.setBoundsInset (BorderSize<int> (0));
+    label.setBounds (0, (getHeight() - label.getFont().getHeight())/2, 100, label.getFont().getHeight());
+    button->setBounds (getWidth() - 25, (getHeight() - 20)/2, 20, 20);
+}
 
 
-    void Table::EditableTextCustomComponent::setRowAndColumn (const int newRow, const int newColumn)
-    {
-    }
-
-
-    void Table::EditableTextCustomComponent::editorShown (TextEditor *editor)
-    {
-        editor->setReadOnly(true);
-        editor->setCaretVisible(false);
-    }
+void Table::EditableTextCustomComponent::mouseDown (const MouseEvent& event)
+{
+    label.mouseDown (event);
+}
 
 
 
-//=============================================================================
+
+
+//====================================================================
 /*
  *  CustomTableHeader
  */
-//=============================================================================
+//====================================================================
 
 
-    Table::CustomTableHeader::CustomTableHeader()
+
+
+
+
+
+Table::CustomTableHeader::CustomTableHeader()
+{
+    addAndMakeVisible (b1);
+    addAndMakeVisible (b2);
+    b1.setName ("b1");
+    b2.setName ("b2");
+    b1.addListener (this);
+    b2.addListener (this);
+    b1.setConnectedEdges (1|2|4|8);
+    b2.setConnectedEdges (1|2|4|8);
+    b1.setColour(TextButton::ColourIds::buttonColourId, Colour (0xffeeeeee));
+    b2.setColour(TextButton::ColourIds::buttonColourId, Colour (0xffeeeeee));
+    setLookAndFeel (this);
+}
+
+Table::CustomTableHeader::~CustomTableHeader()
+{
+    b1.removeListener(this);
+    b2.removeListener(this);
+}
+
+void Table::CustomTableHeader::paint (Graphics& g)
+{
+}
+
+
+void Table::CustomTableHeader::resized()
+{
+    if (table)
     {
-        addAndMakeVisible(b1);
-        addAndMakeVisible(b2);
-        b1.setName("b1");
-        b2.setName("b2");
-    }
-
-    void Table::CustomTableHeader::paint (Graphics& g)
-    {
-    }
-
-
-    void Table::CustomTableHeader::resized()
-    {
-        if (table)
+        b1.setButtonText (table->columnOneName);
+        b2.setButtonText (table->columnTwoName);
+        
+        if (table->display)
         {
-            b1.setBounds(0, 0, table->width/getNumColumns(true), 20);
+            if (table->display->displayType == Display::DisplayType::TEMPO)
+            {
+                b1.setEnabled (true);
+            }
+            else
+            {
+                b1.setEnabled (false);
+            }
         }
     }
+    
+    b1.setBounds(0, 0, getColumnWidth(1), getHeight());
+    b2.setBounds(getColumnWidth(1), 0, getColumnWidth(2), getHeight());
+}
 
 
-    void Table::CustomTableHeader::setTable (Table* t)
+void Table::CustomTableHeader::setTable (Table* t)
+{
+    table = t;
+}
+
+
+void Table::CustomTableHeader::buttonClicked (Button *button)
+{
+    if (table && table->display->displayType == Display::DisplayType::TEMPO)
     {
-        table = t;
-    }
-
-    void Table::CustomTableHeader::buttonClicked (Button *button)
-    {
-        if (table && table->display->displayType == Display::DisplayType::TEMPO)
+        if (button->getName() == b1.getName())
         {
-            if (button->getName() == b1.getName())
-            {
-                table->delayType =  (table->delayType == DelayType::NORMAL)     ?   DelayType::DOTTED
-                :
-                ((table->delayType == DelayType::DOTTED)    ?   DelayType::TRIPLET
-                 :   DelayType::NORMAL);
-                
-                
-                table->setTableType();
-                
-                b1.setButtonText(table->columnOneName);
-                
-                table->table.updateContent();
-                
-            }
-            else if (button->getName() == b2.getName())
-            {
-                table->tempoConversion = (table->tempoConversion == TempoConversion::MS)    ?   TempoConversion::HZ
-                :   TempoConversion::MS;
-                
-                
-                table->setTableType();
-                
-                b2.setButtonText(table->columnTwoName);
-                
-                table->table.updateContent();
-            }
+            table->delayType =  (table->delayType == DelayType::NORMAL)     ?   DelayType::DOTTED
+            :
+            ((table->delayType == DelayType::DOTTED)    ?   DelayType::TRIPLET
+             :   DelayType::NORMAL);
             
-            table->resized();
+            
+            table->setTableType();
+            
+            b1.setButtonText(table->columnOneName);
+            
+            table->table.updateContent();
+            
         }
+        else if (button->getName() == b2.getName())
+        {
+            table->tempoConversion = (table->tempoConversion == TempoConversion::MS)    ?   TempoConversion::HZ
+            :   TempoConversion::MS;
+            
+            
+            table->setTableType();
+            
+            b2.setButtonText(table->columnTwoName);
+            
+            table->table.updateContent();
+        }
+        
+        table->resized();
     }
+}
+
+void Table::CustomTableHeader::drawButtonBackground (Graphics& g, Button& button, const Colour& backgroundColour, bool isMouseOverButton, bool isButtonDown)
+{
+    /*Colour baseColour (backgroundColour.withMultipliedSaturation (button.hasKeyboardFocus (true) ? 1.3f : 0.9f)
+                       .withMultipliedAlpha (button.isEnabled() ? 0.9f : 0.5f));*/
+    Colour baseColour (backgroundColour.withMultipliedSaturation (button.hasKeyboardFocus (true) ? 1.3f : 0.9f)
+                       .withMultipliedAlpha (1.0f));
+    
+    if (isButtonDown || isMouseOverButton)
+        baseColour = baseColour.contrasting (isButtonDown ? 0.2f : 0.1f);
+    
+    const bool flatOnLeft   = button.isConnectedOnLeft();
+    const bool flatOnRight  = button.isConnectedOnRight();
+    const bool flatOnTop    = button.isConnectedOnTop();
+    const bool flatOnBottom = button.isConnectedOnBottom();
+    
+    const float width  = button.getWidth() - 1.0f;
+    const float height = button.getHeight() - 1.0f;
+    
+    if (width > 0 && height > 0)
+    {
+        const float cornerSize = 4.0f;
+        
+        Path outline;
+        outline.addRoundedRectangle (0.5f, 0.5f, width, height, cornerSize, cornerSize,
+                                     ! (flatOnLeft  || flatOnTop),
+                                     ! (flatOnRight || flatOnTop),
+                                     ! (flatOnLeft  || flatOnBottom),
+                                     ! (flatOnRight || flatOnBottom));
+        
+        drawButtonShape (g, outline, baseColour, height);
+        
+    }
+}
+
+void Table::CustomTableHeader::drawButtonShape (Graphics& g, const Path& outline, Colour baseColour, float height)
+{
+    //const float mainBrightness = baseColour.getBrightness();
+    //const float mainAlpha = baseColour.getFloatAlpha();
+    
+    /*g.setGradientFill (ColourGradient (baseColour.brighter (0.2f), 0.0f, 0.0f,
+                                       baseColour.darker (0.25f), 0.0f, height, false));*/
+    g.setColour (baseColour);
+    g.fillPath (outline);
+    
+    //g.setColour (Colours::white.withAlpha (0.4f * mainAlpha * mainBrightness * mainBrightness));
+    /*g.strokePath (outline, PathStrokeType (1.0f), AffineTransform::translation (0.0f, 1.0f)
+                  .scaled (1.0f, (height - 1.6f) / height));*/
+    
+    //g.setColour (Colours::black.withAlpha (0.4f * mainAlpha));
+    g.setColour (Colour (baseColour));
+    g.strokePath (outline, PathStrokeType (1.0f));
+}
+
+void Table::CustomTableHeader::drawButtonText (Graphics& g, TextButton& button, bool /*isMouseOverButton*/, bool /*isButtonDown*/)
+{
+    Font font (getTextButtonFont (button, button.getHeight()));
+    g.setFont (font);
+    //g.setFont (Font ("Roboto", 15, Font::plain));
+    /*g.setColour (button.findColour (button.getToggleState() ? TextButton::textColourOnId
+                                    : TextButton::textColourOffId)
+                 .withMultipliedAlpha (button.isEnabled() ? 1.0f : 0.5f));*/
+    g.setColour (button.findColour (button.getToggleState() ? TextButton::textColourOnId
+                                    : TextButton::textColourOffId)
+                 .withMultipliedAlpha (1.0f));
+    
+    const int yIndent = jmin (4, button.proportionOfHeight (0.3f));
+    const int cornerSize = jmin (button.getHeight(), button.getWidth()) / 2;
+    
+    const int fontHeight = roundToInt (font.getHeight() * 0.6f);
+    const int leftIndent  = jmin (fontHeight, 2 + cornerSize / (button.isConnectedOnLeft() ? 4 : 2));
+    const int rightIndent = jmin (fontHeight, 2 + cornerSize / (button.isConnectedOnRight() ? 4 : 2));
+    const int textWidth = button.getWidth() - leftIndent - rightIndent;
+    
+    if (textWidth > 0)
+        g.drawFittedText (button.getButtonText(),
+                          leftIndent, yIndent, textWidth, button.getHeight() - yIndent * 2,
+                          Justification::centred, 2);
+}
+

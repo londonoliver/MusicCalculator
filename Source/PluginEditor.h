@@ -28,7 +28,8 @@ class MusicCalculatorAudioProcessorEditor : public AudioProcessorEditor,
                                             private ButtonListener,
                                             private MidiInputCallback,
                                             private MidiKeyboardStateListener,
-                                            private ComboBox::Listener
+                                            private ComboBox::Listener,
+                                            private LookAndFeel_V3
 {
 public:
     MusicCalculatorAudioProcessorEditor (MusicCalculatorAudioProcessor&);
@@ -62,6 +63,7 @@ private:
     Table table;
     
     TextButton syncButton;
+    TextButton midiButton;
     void buttonClicked (Button *button) override;
     
     double bpm;
@@ -76,6 +78,8 @@ private:
     ComboBox comboBox;
     void comboBoxChanged(ComboBox *comboBox) override;
 
+    
+    void drawComboBox (Graphics& g, int width, int height, const bool /*isButtonDown*/, int buttonX, int buttonY, int buttonW, int buttonH, ComboBox& box) override;
     
     
     void setMidiInput (int index);

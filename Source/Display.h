@@ -56,6 +56,9 @@ public:
     int h3Width;
     int h4Width;
     
+    bool tempoSync;
+    bool midiSync;
+    
     Display();
     
     String toString(DisplayType displayType);
@@ -66,8 +69,12 @@ public:
     double getHertz();
     void setDisplay (String val, DisplayType displayType);
     void attachListener(Label::Listener *listener);
+    void removeListeners(Label::Listener *listener);
     void setDisplayType (DisplayType displayType);
     int noteIndex (String val);
+    void setSpinnersEnabled (bool enabled);
+    void setTempoSync (bool sync);
+    void setMidiSync (bool sync);
     void resized();
 private:
     void fitBounds();

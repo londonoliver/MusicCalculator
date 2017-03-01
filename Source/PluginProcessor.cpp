@@ -25,7 +25,7 @@ MusicCalculatorAudioProcessor::MusicCalculatorAudioProcessor()
                        )
 #endif
 {
-    bpm = 125;
+    bpm = 120;
     setNote(0);
     setOctave(3);
     displayType = Display::DisplayType::TEMPO;

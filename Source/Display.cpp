@@ -278,6 +278,24 @@ void Display::attachListener(Label::Listener *listener)
     h4.addListener (listener);
 }
 
+void Display::removeListeners(Label::Listener *listener)
+{
+    t1.removeListener (listener);
+    t2.removeListener (listener);
+    t3.removeListener (listener);
+    t4.removeListener (listener);
+    t5.removeListener (listener);
+    t6.removeListener (listener);
+    
+    n1.removeListener (listener);
+    n2.removeListener (listener);
+    
+    h1.removeListener (listener);
+    h2.removeListener (listener);
+    h3.removeListener (listener);
+    h4.removeListener (listener);
+}
+
 
 
 
@@ -306,6 +324,9 @@ void Display::resized()
 
 void Display::mouseDoubleClick (const MouseEvent &e)
 {
+    if (displayType == DisplayType::TEMPO && tempoSync)
+        return;
+    
     setSpinnersVisible (false);
     
     ed.setVisible (true);
@@ -333,6 +354,56 @@ void Display::setSpinnersVisible (bool visible)
     h2.setVisible ((displayType == DisplayType::HERTZ)  ?   visible : false);
     h3.setVisible ((displayType == DisplayType::HERTZ)  ?   visible : false);
     h4.setVisible ((displayType == DisplayType::HERTZ)  ?   visible : false);
+}
+
+
+
+
+void Display::setSpinnersEnabled (bool enabled)
+{
+    t1.setVisible ((displayType == DisplayType::TEMPO)  ?   enabled : false);
+    t2.setVisible ((displayType == DisplayType::TEMPO)  ?   enabled : false);
+    t3.setVisible ((displayType == DisplayType::TEMPO)  ?   enabled : false);
+    t4.setVisible ((displayType == DisplayType::TEMPO)  ?   enabled : false);
+    t5.setVisible ((displayType == DisplayType::TEMPO)  ?   enabled : false);
+    t6.setVisible ((displayType == DisplayType::TEMPO)  ?   enabled : false);
+    
+    n1.setVisible ((displayType == DisplayType::NOTE)   ?   enabled : false);
+    n2.setVisible ((displayType == DisplayType::NOTE)   ?   enabled : false);
+    
+    h1.setVisible ((displayType == DisplayType::HERTZ)  ?   enabled : false);
+    h2.setVisible ((displayType == DisplayType::HERTZ)  ?   enabled : false);
+    h3.setVisible ((displayType == DisplayType::HERTZ)  ?   enabled : false);
+    h4.setVisible ((displayType == DisplayType::HERTZ)  ?   enabled : false);
+}
+
+void Display::setTempoSync (bool sync)
+{
+    tempoSync = sync;
+
+    t1.setColour (Label::ColourIds::textColourId, (tempoSync) ? Colours::grey : Colours:: black);
+    t2.setColour (Label::ColourIds::textColourId, (tempoSync) ? Colours::grey : Colours:: black);
+    t3.setColour (Label::ColourIds::textColourId, (tempoSync) ? Colours::grey : Colours:: black);
+    t4.setColour (Label::ColourIds::textColourId, (tempoSync) ? Colours::grey : Colours:: black);
+    t5.setColour (Label::ColourIds::textColourId, (tempoSync) ? Colours::grey : Colours:: black);
+    t6.setColour (Label::ColourIds::textColourId, (tempoSync) ? Colours::grey : Colours:: black);
+    
+    t1.setBgColorClicked((tempoSync) ? Colours::white : Colours::lightgrey);
+    t3.setBgColorClicked((tempoSync) ? Colours::white : Colours::lightgrey);
+    t4.setBgColorClicked((tempoSync) ? Colours::white : Colours::lightgrey);
+    t5.setBgColorClicked((tempoSync) ? Colours::white : Colours::lightgrey);
+    t6.setBgColorClicked((tempoSync) ? Colours::white : Colours::lightgrey);
+    
+    t1.setDraggable ((tempoSync) ? false : true);
+    t3.setDraggable ((tempoSync) ? false : true);
+    t4.setDraggable ((tempoSync) ? false : true);
+    t5.setDraggable ((tempoSync) ? false : true);
+    t6.setDraggable ((tempoSync) ? false : true);
+}
+
+void Display::setMidiSync (bool sync)
+{
+    midiSync = sync;
 }
 
 

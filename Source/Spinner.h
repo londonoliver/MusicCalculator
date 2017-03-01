@@ -22,12 +22,17 @@ public:
     Point<int> mousePoint;
     SpinnerType type;
     int value;
+    Colour bgColorClicked;
+    bool draggable;
     
     Spinner (SpinnerType type, int min, int max);
     
+    void setDraggable (bool draggable);
     void setRange (int min, int max);
     void setText (int val);
     static String getNote (int value);
+    void setBgColorClicked (Colour color);
+    
 private:
     int inRange (int val);
     void mouseDown (const MouseEvent &event) override;

@@ -25,6 +25,10 @@ Spinner::Spinner (SpinnerType type, int min, int max)
     setBorderSize (BorderSize<int> (0));
     
     setEditable (false);
+    
+    bgColorClicked = Colours::lightgrey;
+    
+    draggable = true;
 }
 
 void Spinner::setRange (int min, int max)
@@ -56,14 +60,26 @@ int Spinner::inRange (int val)
 
 void Spinner::mouseDown(const MouseEvent &event)
 {
-    if (type != SpinnerType::PERIOD) setColour (ColourIds::backgroundColourId, Colours::lightgrey);
+    if (type != SpinnerType::PERIOD) setColour (ColourIds::backgroundColourId, bgColorClicked);
     
     enabled = false;
     mousePoint.setY(event.y);
 }
 
+void Spinner::setBgColorClicked(Colour color)
+{
+    bgColorClicked = color;
+}
+
+void Spinner::setDraggable (bool draggable)
+{
+    this->draggable = draggable;
+}
+
 void Spinner::mouseDrag(const MouseEvent &event)
 {
+    if (draggable)
+    {
         int delta = mousePoint.getY() - event.y;
         int absDelta = abs(delta);
         if (!enabled && absDelta < 5) return;
@@ -97,6 +113,7 @@ void Spinner::mouseDrag(const MouseEvent &event)
             setText (val);
         }
         mousePoint.setY (event.y);
+    }
 }
 
 void Spinner::mouseDoubleClick (const MouseEvent &event)

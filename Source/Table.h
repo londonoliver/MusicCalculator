@@ -12,7 +12,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Display.h"
 
-class Table   :    public Component, public TableListBoxModel, public LookAndFeel_V3
+class Table   :    public Component, public TableListBoxModel
 {
 public:
     enum class TableType {TEMPO, NOTE, HERTZ};
@@ -64,35 +64,38 @@ public:
     void resized() override;
     
 private:
-    class EditableTextCustomComponent  : public Label
+    
+    class EditableTextCustomComponent  : public Component
     {
     public:
+        Label label;
+        ScopedPointer<DrawableButton> button;
+        
         EditableTextCustomComponent (Table& td);
         
+        void resized() override;
         void mouseDown (const MouseEvent& event) override;
-        void textWasEdited() override;
-        void setRowAndColumn (const int newRow, const int newColumn);
-        void editorShown (TextEditor *editor) override;
     private:
         Table& owner;
-        int row, columnId;
-        TextEditor editor;
     };
         
-    class CustomTableHeader : public TableHeaderComponent, private Button::Listener
+    class CustomTableHeader : public TableHeaderComponent, private Button::Listener, public LookAndFeel_V3
     {
     public:
         CustomTableHeader();
+        ~CustomTableHeader();
         
+        TextButton b1, b2;
         void paint (Graphics& g) override;
         void resized() override;
         void setTable (Table* t);
     private:
         SafePointer<Table> table;
-        TextButton b1, b2;
-        
+
         void buttonClicked (Button *button) override;
-        
+        void drawButtonBackground (Graphics& g, Button& button, const Colour& backgroundColour, bool isMouseOverButton, bool isButtonDown) override;
+        static void drawButtonShape (Graphics& g, const Path& outline, Colour baseColour, float height);
+        void drawButtonText (Graphics& g, TextButton& button, bool /*isMouseOverButton*/, bool /*isButtonDown*/) override;
     };
         
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Table)
