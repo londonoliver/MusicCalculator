@@ -63,18 +63,30 @@ public:
     TableListBox* getTable();
     void resized() override;
     
+    void setNumRows (int i);
+    int getNumColumns();
+    void setNumColumns (int i);
+    
+    
 private:
     
-    class EditableTextCustomComponent  : public Component
+    class EditableTextCustomComponent  : public Component, public Button::Listener, public ChangeListener
     {
     public:
         Label label;
+        Label copied;
+        bool fadeout;
         ScopedPointer<DrawableButton> button;
         
         EditableTextCustomComponent (Table& td);
+        ~EditableTextCustomComponent();
         
         void resized() override;
         void mouseDown (const MouseEvent& event) override;
+        void mouseEnter (const MouseEvent &event) override;
+        void mouseExit (const MouseEvent &event) override;
+        void buttonClicked (Button *button) override;
+        void changeListenerCallback (ChangeBroadcaster *source) override;
     private:
         Table& owner;
     };

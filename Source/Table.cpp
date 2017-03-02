@@ -58,6 +58,10 @@ int Table::getNumRows()
     0;
 }
 
+void Table::setNumRows (int i)
+{
+
+}
 
 
 
@@ -92,6 +96,14 @@ Component* Table::refreshComponentForCell (int rowNumber, int columnId, bool /*i
     
     if (textLabel == nullptr)
         textLabel = new EditableTextCustomComponent (*this);
+    
+    if (columnId == 1 && display->displayType == Display::DisplayType::TEMPO)
+        textLabel->removeChildComponent (textLabel->button);
+    else
+    {
+        textLabel->addAndMakeVisible (textLabel->button);
+        textLabel->button->setVisible (false);
+    }
     
     
     textLabel->label.setText (
@@ -254,6 +266,8 @@ String Table::setHertzTable (int rowNumber, int columnId)
 
 void Table::setTableType ()
 {
+    table.updateContent();
+    
     if (display)
     {
         if (display->displayType == Display::DisplayType::TEMPO)
@@ -338,25 +352,25 @@ void Table::resized()
 
 Table::EditableTextCustomComponent::EditableTextCustomComponent (Table& td)  : owner (td)
 {
-    /*Image image = ImageCache::getFromMemory(BinaryData::clipboard_svg, BinaryData::clipboard_svgSize);
-    button.setImages(true, true, true,
-                     image, 0.7f,Colours::transparentBlack,
-                     image, 1.0f, Colours::transparentBlack,
-                     image, 1.0f, Colours::transparentBlack,
-                     0.5f);*/
-    
-    
-    
     button = new DrawableButton ("Button 1", DrawableButton::ImageFitted);
     
     ScopedPointer<XmlElement> svg (XmlDocument::parse(BinaryData::clipboard_svg));
-    ScopedPointer<Drawable> drawable;
+    ScopedPointer<Drawable> normal;
+    ScopedPointer<Drawable> over;
+    ScopedPointer<Drawable> down;
     
     if (svg != nullptr)
     {
-        drawable = Drawable::createFromSVG (*svg);
-        drawable->replaceColour(Colours::black, Colours::grey);
-        button->setImages(drawable);
+        normal = Drawable::createFromSVG (*svg);
+        normal->replaceColour(Colours::black, Colours::grey);
+        
+        over = Drawable::createFromSVG (*svg);
+        over->replaceColour(Colours::black, Colours::grey.darker());
+        
+        down = Drawable::createFromSVG (*svg);
+        down->replaceColour(Colours::black, Colours::grey.darker().darker());
+        
+        button->setImages(normal, over, down);
     }
     
     
@@ -364,13 +378,70 @@ Table::EditableTextCustomComponent::EditableTextCustomComponent (Table& td)  : o
     label.setEditable (false);
     label.setColour (Label::textColourId, Colours::black);
     
+    copied.setEditable (false);
+    copied.setColour (Label::backgroundColourId, Colours::black.withAlpha(0.0f));
+    copied.setText ("Copied", dontSendNotification);
+    copied.setJustificationType (Justification::centredLeft);
+    
     addAndMakeVisible (label);
     addAndMakeVisible (button);
+    addAndMakeVisible (copied);
+    
+    copied.setVisible (false);
+    
+    button->setVisible (false);
+    button->addListener (this);
+    
+    addMouseListener(this, true);
+    
+    Desktop::getInstance().getAnimator().addChangeListener (this);
+    
+}
+
+Table::EditableTextCustomComponent::~EditableTextCustomComponent()
+{
+    removeMouseListener (this);
+    button->removeListener (this);
+    Desktop::getInstance().getAnimator().removeChangeListener (this);
 }
 
 
 void paint()
 {
+}
+
+void Table::EditableTextCustomComponent::buttonClicked (Button *button)
+{
+    label.showEditor();
+    label.getCurrentTextEditor()->selectAll();
+    label.getCurrentTextEditor()->copyToClipboard();
+    label.hideEditor (false);
+    
+    label.setVisible (false);
+    
+    copied.setBounds(-getWidth(), 0, getWidth(), getHeight());
+    copied.setVisible (true);
+    button->setVisible (false);
+    fadeout = true;
+    Desktop::getInstance().getAnimator().animateComponent (&copied, Rectangle<int> (0, 0, getWidth(), getHeight()), 0.7f, 250, true, 1.0, 1.0);
+}
+
+void Table::EditableTextCustomComponent::changeListenerCallback (ChangeBroadcaster *source)
+{
+    if (source == &Desktop::getInstance().getAnimator())
+    {
+        if ( ! Desktop::getInstance().getAnimator().isAnimating(&copied) )
+        {
+            Desktop::getInstance().getAnimator().fadeOut (&copied, 1000);
+            fadeout = !fadeout;
+            
+            if (fadeout)
+            {
+                label.setVisible (true);
+                fadeout = !fadeout;
+            }
+        }
+    }
 }
 
 
@@ -379,6 +450,19 @@ void Table::EditableTextCustomComponent::resized()
     label.setBoundsInset (BorderSize<int> (0));
     label.setBounds (0, (getHeight() - label.getFont().getHeight())/2, 100, label.getFont().getHeight());
     button->setBounds (getWidth() - 25, (getHeight() - 20)/2, 20, 20);
+}
+
+
+void Table::EditableTextCustomComponent::mouseEnter (const MouseEvent &event)
+{
+    if (! Desktop::getInstance().getAnimator().isAnimating(&copied) )
+        button->setVisible (true);
+}
+
+
+void Table::EditableTextCustomComponent::mouseExit (const MouseEvent &event)
+{
+    button->setVisible (false);
 }
 
 

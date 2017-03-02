@@ -5,6 +5,8 @@
  
  It contains the basic framework code for a JUCE plugin editor.
  
+ Entypo pictograms by Daniel Bruce — www.entypo.com
+ 
  ==============================================================================
  */
 
@@ -22,7 +24,7 @@ MusicCalculatorAudioProcessorEditor::MusicCalculatorAudioProcessorEditor (MusicC
 : AudioProcessorEditor (&p), processor (p)
 {
     table.setDisplay (&display);
-    cout << "processor tempo = " << *processor.getTempo() << endl;
+    
     if (hostHasTempoInformation())
         display.setDisplay (String (*processor.getTempo()), Display::DisplayType::TEMPO);
     else
@@ -222,8 +224,13 @@ void MusicCalculatorAudioProcessorEditor::comboBoxChanged(juce::ComboBox *combo)
 {
     int i = combo->getSelectedId();
     display.setDisplayType((i == 1) ? Display::DisplayType::TEMPO : Display::DisplayType::NOTE);
-    table.setTableType();
+    
     processor.setDisplayType(display.displayType);
+    table.setTableType();
+    table.setVisible (false);
+    Desktop::getInstance().getAnimator().fadeIn (&table, 1000);
+
+
 }
 
 void MusicCalculatorAudioProcessorEditor::drawComboBox (Graphics& g, int width, int height, const bool /*isButtonDown*/, int buttonX, int buttonY, int buttonW, int buttonH, ComboBox& box)
