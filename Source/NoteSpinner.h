@@ -30,6 +30,11 @@ public:
     
     NoteSpinner();
     
+    int getNote();
+    void setNote (int note);
+    int getOctave();
+    void setOctave (int octave);
+    void setFontHeight (float fontHeight);
     String toString();
     void fitBounds();
     void setSpinnersText (String val);

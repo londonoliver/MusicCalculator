@@ -24,9 +24,11 @@ public:
     int value;
     Colour bgColorClicked;
     bool draggable;
+    Font font;
     
     Spinner (SpinnerType type, int min, int max);
     
+    void setFontHeight (float fontHeight);
     void setDraggable (bool draggable);
     void setRange (int min, int max);
     void setText (int val);

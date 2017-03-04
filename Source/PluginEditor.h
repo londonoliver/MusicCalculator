@@ -16,6 +16,9 @@
 #include "AlertCompnent.cpp"
 #include "Table.h"
 #include "Display.h"
+#include "TempoConversionComponent.h"
+#include "NoteConversionComponent.h"
+#include "CustomTabbedComponent.h"
 
 
 
@@ -29,7 +32,8 @@ class MusicCalculatorAudioProcessorEditor : public AudioProcessorEditor,
                                             private MidiInputCallback,
                                             private MidiKeyboardStateListener,
                                             private ComboBox::Listener,
-                                            private LookAndFeel_V3
+                                            private LookAndFeel_V3,
+                                            private ComponentBoundsConstrainer
 {
 public:
     MusicCalculatorAudioProcessorEditor (MusicCalculatorAudioProcessor&);
@@ -65,6 +69,7 @@ private:
     TextButton syncButton;
     TextButton midiButton;
     void buttonClicked (Button *button) override;
+
     
     double bpm;
     
@@ -77,6 +82,10 @@ private:
     
     ComboBox comboBox;
     void comboBoxChanged(ComboBox *comboBox) override;
+    
+    TempoConversionComponent tcc;
+    
+    CustomTabbedComponent ctc;
 
     
     void drawComboBox (Graphics& g, int width, int height, const bool /*isButtonDown*/, int buttonX, int buttonY, int buttonW, int buttonH, ComboBox& box) override;

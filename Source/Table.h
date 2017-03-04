@@ -33,9 +33,13 @@ public:
     String columnOneName;
     String columnTwoName;
     
+    int numRows;
+    int numColumns;
     int numTempoRows;
     int numNoteRows;
     int numHertzRows;
+    
+    std::vector < std::vector <String> > cellText ;
     
     Table();
     
@@ -67,8 +71,10 @@ public:
     int getNumColumns();
     void setNumColumns (int i);
     
+    void createTable();
     
-private:
+    
+public:
     
     class EditableTextCustomComponent  : public Component, public Button::Listener, public ChangeListener
     {

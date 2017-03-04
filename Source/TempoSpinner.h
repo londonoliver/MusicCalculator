@@ -38,6 +38,7 @@ public:
     
     TempoSpinner();
     
+    void setFontHeight (float fontHeight);
     String toString();
     double getValue();
     void fitBounds();

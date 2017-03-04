@@ -90,8 +90,8 @@ void NoteSpinner::resized()
 {
     fitBounds();
     
-    /*if (getParentComponent())
-        getParentComponent()->resized();*/
+    if (getParentComponent())
+        getParentComponent()->resized();
 }
 
 void NoteSpinner::mouseDoubleClick (const MouseEvent &e)
@@ -133,7 +133,27 @@ bool NoteSpinner::isNumber (String val)
 {
     return regex_match (val.toStdString(), regex ("^[0-9]$"));
 }
-               
+
+int NoteSpinner::getNote()
+{
+    return noteIndex (s1.getTextValue().getValue());
+}
+
+void NoteSpinner::setNote (int note)
+{
+    s1.setText (note);
+}
+
+int NoteSpinner::getOctave()
+{
+    return s2.getTextValue().getValue();
+}
+
+void NoteSpinner::setOctave (int octave)
+{
+    s2.setText (octave);
+}
+
 int NoteSpinner::noteIndex (String val)
 {
     if (val == "C" || val == "c")
@@ -162,4 +182,16 @@ int NoteSpinner::noteIndex (String val)
         return 11;
     else
         return -1;
+}
+
+void NoteSpinner::setFontHeight (float fontHeight)
+{
+    font.setHeight (fontHeight);
+    
+    s1.setFont (Font ("Roboto", fontHeight, Font::plain));
+    s2.setFont (Font ("Roboto", fontHeight, Font::plain));
+    
+    ed.setFont (Font ("Roboto", fontHeight, Font::plain));
+    
+    fitBounds();
 }

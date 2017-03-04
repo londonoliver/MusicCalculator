@@ -27,11 +27,9 @@ Table::Table()   : font (14.0f)
     numHertzRows = 1;
     
     
-    table.getHeader().addColumn(columnOneName, 1, width/2);
-    table.getHeader().addColumn(columnTwoName, 2, width/2);
-    
     addAndMakeVisible (table);
     table.setModel (this);
+    
     
     setTableType();
     
@@ -43,7 +41,7 @@ Table::Table()   : font (14.0f)
 
 int Table::getNumRows()
 {
-    return  (display)   ?
+    /*return  (display)   ?
     
     (display->displayType == Display::DisplayType::TEMPO)   ?   numTempoRows
     
@@ -55,14 +53,38 @@ int Table::getNumRows()
     
     :
     
-    0;
+    0;*/
+    return numRows;
 }
 
 void Table::setNumRows (int i)
 {
-
+    numRows = i;
 }
 
+void Table::setNumColumns (int i)
+{
+    numColumns = i;
+}
+
+void Table::createTable()
+{
+    table.getHeader().removeAllColumns();
+    
+    for (int i = 1; i <= numColumns; i++)
+    {
+        table.getHeader().addColumn("Column " + String (i), i, width/numColumns);
+    }
+    
+    addAndMakeVisible (table);
+    
+    for (int i = 0; i < numColumns; i++)
+    {
+        vector <String> columnText (numRows);
+        cellText.push_back (columnText);
+    }
+}
+ 
 
 
 void Table::paintRowBackground (Graphics& g, int rowNumber, int /*width*/, int /*height*/, bool rowIsSelected)
@@ -97,6 +119,10 @@ Component* Table::refreshComponentForCell (int rowNumber, int columnId, bool /*i
     if (textLabel == nullptr)
         textLabel = new EditableTextCustomComponent (*this);
     
+    textLabel->label.setText(cellText[columnId - 1][rowNumber], sendNotification);
+    
+    /*
+    
     if (columnId == 1 && display->displayType == Display::DisplayType::TEMPO)
         textLabel->removeChildComponent (textLabel->button);
     else
@@ -121,7 +147,7 @@ Component* Table::refreshComponentForCell (int rowNumber, int columnId, bool /*i
                        :
                        
                        "", sendNotification
-                       );
+                       );*/
     
     return textLabel;
 }
@@ -147,6 +173,7 @@ String Table::getText (const int columnNumber, const int rowNumber) const
 
 void Table::setText (const int columnNumber, const int rowNumber, const String& newText)
 {
+    cellText[columnNumber - 1][rowNumber] = newText;
     table.updateContent();
 }
 
@@ -328,6 +355,20 @@ TableListBox* Table::getTable()
 
 void Table::resized()
 {
+    if (getParentComponent())
+    {
+        width = getParentWidth();
+        height = getParentHeight();
+    }
+    
+    int rowHeight = (25.0/300.0) * height;
+    table.setRowHeight (rowHeight);
+    
+    for (int i = 1; i <= numColumns; i++)
+        table.getHeader().setColumnWidth(i, width/numColumns);
+    
+    table.updateContent();
+    
     header->setBounds(0, 0, width, 40);
     
     table.setBounds (0, header->getY(), width, height);
@@ -438,6 +479,8 @@ void Table::EditableTextCustomComponent::changeListenerCallback (ChangeBroadcast
             if (fadeout)
             {
                 label.setVisible (true);
+                if (isMouseOver())
+                    button->setVisible(true);
                 fadeout = !fadeout;
             }
         }
@@ -447,9 +490,27 @@ void Table::EditableTextCustomComponent::changeListenerCallback (ChangeBroadcast
 
 void Table::EditableTextCustomComponent::resized()
 {
-    label.setBoundsInset (BorderSize<int> (0));
-    label.setBounds (0, (getHeight() - label.getFont().getHeight())/2, 100, label.getFont().getHeight());
-    button->setBounds (getWidth() - 25, (getHeight() - 20)/2, 20, 20);
+    int width;
+    if (getParentComponent())
+    {
+        width = (getParentComponent()->getWidth())/2;
+    }
+    else
+    {
+        width = getWidth();
+    }
+    
+    cout << "custom text component width = " << width << endl;
+    
+    int rowHeight = owner.table.getRowHeight();
+    int fontHeight = 0.56f * rowHeight;
+    int buttonHeight = 0.7 * rowHeight;
+    Font font ("Roboto", fontHeight, Font::plain);
+    label.setFont (font);
+    copied.setFont (font);
+    label.setBorderSize (BorderSize<int> (0));
+    label.setBounds (0, (getHeight() - label.getFont().getHeight())/2, font.getStringWidth (label.getText()), label.getFont().getHeight());
+    button->setBounds (width - buttonHeight, (rowHeight - buttonHeight)/2, buttonHeight, buttonHeight);
 }
 
 
@@ -508,40 +569,13 @@ Table::CustomTableHeader::~CustomTableHeader()
     b2.removeListener(this);
 }
 
-void Table::CustomTableHeader::paint (Graphics& g)
-{
-}
+void Table::CustomTableHeader::paint (Graphics& g) {}
 
 
-void Table::CustomTableHeader::resized()
-{
-    if (table)
-    {
-        b1.setButtonText (table->columnOneName);
-        b2.setButtonText (table->columnTwoName);
-        
-        if (table->display)
-        {
-            if (table->display->displayType == Display::DisplayType::TEMPO)
-            {
-                b1.setEnabled (true);
-            }
-            else
-            {
-                b1.setEnabled (false);
-            }
-        }
-    }
-    
-    b1.setBounds(0, 0, getColumnWidth(1), getHeight());
-    b2.setBounds(getColumnWidth(1), 0, getColumnWidth(2), getHeight());
-}
+void Table::CustomTableHeader::resized() { setBounds(0, 0, 0, 0); }
 
 
-void Table::CustomTableHeader::setTable (Table* t)
-{
-    table = t;
-}
+void Table::CustomTableHeader::setTable (Table* t) { table = t; }
 
 
 void Table::CustomTableHeader::buttonClicked (Button *button)

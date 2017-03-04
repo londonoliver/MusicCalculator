@@ -62,12 +62,12 @@ double TempoSpinner::getValue()
 
 void TempoSpinner::fitBounds()
 {
-    s1Width = font.getStringWidth (s1.getTextValue().toString());
-    s2Width = font.getStringWidth (s2.getTextValue().toString());
-    s3Width = font.getStringWidth (s3.getTextValue().toString());
-    s4Width = font.getStringWidth (s4.getTextValue().toString());
-    s5Width = font.getStringWidth (s5.getTextValue().toString());
-    s6Width = font.getStringWidth (s6.getTextValue().toString());
+    s1Width = s1.getFont().getStringWidth (s1.getTextValue().toString());
+    s2Width = s2.getFont().getStringWidth (s2.getTextValue().toString());
+    s3Width = s3.getFont().getStringWidth (s3.getTextValue().toString());
+    s4Width = s4.getFont().getStringWidth (s4.getTextValue().toString());
+    s5Width = s5.getFont().getStringWidth (s5.getTextValue().toString());
+    s6Width = s6.getFont().getStringWidth (s6.getTextValue().toString());
     
     height = font.getHeight();
     width = s1Width + s2Width + s3Width + s4Width + s5Width + s6Width;
@@ -94,14 +94,11 @@ void TempoSpinner::setSpinnersText (String val)
     
     int i1 = stoi (val.substring (0, i).toStdString());
     
-    if (i1 >= 5)
-    {
-        s1.setText (i1);
-        s3.setText ((++i < len) ? stoi (val.substring (i, i + 1).toStdString()) : 0);
-        s4.setText ((++i < len) ? stoi (val.substring (i, i + 1).toStdString()) : 0);
-        s5.setText ((++i < len) ? stoi (val.substring (i, i + 1).toStdString()) : 0);
-        s6.setText ((++i < len) ? stoi (val.substring (i, i + 1).toStdString()) : 0);
-    }
+    s1.setText (i1);
+    s3.setText ((++i < len) ? stoi (val.substring (i, i + 1).toStdString()) : 0);
+    s4.setText ((++i < len) ? stoi (val.substring (i, i + 1).toStdString()) : 0);
+    s5.setText ((++i < len) ? stoi (val.substring (i, i + 1).toStdString()) : 0);
+    s6.setText ((++i < len) ? stoi (val.substring (i, i + 1).toStdString()) : 0);
 }
 
 void TempoSpinner::attachListener(Label::Listener *listener)
@@ -118,8 +115,8 @@ void TempoSpinner::resized()
 {
     fitBounds();
     
-    /*if (getParentComponent())
-        getParentComponent()->resized();*/
+    if (getParentComponent())
+        getParentComponent()->resized();
 }
 
 void TempoSpinner::mouseDoubleClick (const MouseEvent &e)
@@ -152,7 +149,10 @@ void TempoSpinner::editorHidden (Label *label, TextEditor &editor)
     String val = ed.getTextValue().toString().trim();
     
     if (regex_match (val.toStdString(), regex ("(\\d+)((\\.)(\\d*)?)?")))
+    {
         setSpinnersText (val);
+        cout << "setSpinnersText(" << val << ")" << endl;
+    }
 }
 
 void TempoSpinner::labelTextChanged (Label *labelThatHasChanged)
@@ -162,4 +162,20 @@ void TempoSpinner::labelTextChanged (Label *labelThatHasChanged)
 
 void TempoSpinner::editorShown (Label *, TextEditor &)
 {
+}
+
+void TempoSpinner::setFontHeight (float fontHeight)
+{
+    font.setHeight (fontHeight);
+    
+    s1.setFont (Font ("Roboto", fontHeight, Font::plain));
+    s2.setFont (Font ("Roboto", fontHeight, Font::plain));
+    s3.setFont (Font ("Roboto", fontHeight, Font::plain));
+    s4.setFont (Font ("Roboto", fontHeight, Font::plain));
+    s5.setFont (Font ("Roboto", fontHeight, Font::plain));
+    s6.setFont (Font ("Roboto", fontHeight, Font::plain));
+    
+    ed.setFont (Font ("Roboto", fontHeight, Font::plain));
+    
+    fitBounds();
 }

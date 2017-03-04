@@ -37,11 +37,16 @@ MusicCalculatorAudioProcessorEditor::MusicCalculatorAudioProcessorEditor (MusicC
     table.setTableType();
     
     width = 300;
-    height = 350; //300
+    height = 1.167 * width; //300
     
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
+    setResizable(true, true);
+    setResizeLimits(width, height, 3 * width, 3 * height);
     setSize (width, height);
+    getConstrainer()->setFixedAspectRatio ( (double) width / (double) height );
+    setConstrainer(this);
+    
     
     syncButton.setButtonText("Sync");
     syncButton.setClickingTogglesState(true);
@@ -58,13 +63,16 @@ MusicCalculatorAudioProcessorEditor::MusicCalculatorAudioProcessorEditor (MusicC
     comboBox.setWantsKeyboardFocus (false);
     comboBox.setLookAndFeel (this);
     
-    addAndMakeVisible(syncButton);
+    //addAndMakeVisible(syncButton);
     //addAndMakeVisible(midiButton);
-    addAndMakeVisible(table);
-    addAndMakeVisible(display);
-    addAndMakeVisible(comboBox);
-    addAndMakeVisible(alert);
-    alert.setVisible(false);
+    //addAndMakeVisible(table);
+    //addAndMakeVisible(display);
+    //addAndMakeVisible(comboBox);
+    //addAndMakeVisible(alert);
+    //alert.setVisible(false);
+    //addAndMakeVisible(tcc);
+    addAndMakeVisible(ctc);
+    
     
     
     
@@ -98,12 +106,21 @@ void MusicCalculatorAudioProcessorEditor::resized()
     // subcomponents in your editor..
     
     //midiButton.setBounds(width - 50, height - 50, 25, 25);
-    alert.setBounds((getWidth() - alert.getWidth())/2,
+    /*alert.setBounds((getWidth() - alert.getWidth())/2,
                     (getHeight() - alert.getHeight())/2,
-                    alert.getWidth(), alert.getHeight());
-    display.setBounds((width - display.width)/2, 25, display.width, display.height);
-    comboBox.setBounds(display.getX() + display.width + 0, display.getY() + display.height - 25, 25, 25);
-    table.setBounds((width - table.width)/2, display.getY() + display.height + 25, table.width, table.height);
+                    alert.getWidth(), alert.getHeight());*/
+    // display.setBounds((width - display.width)/2, 25, display.width, display.height);
+    //comboBox.setBounds(display.getX() + display.width + 0, display.getY() + display.height - 25, 25, 25);
+    //table.setBounds((width - table.width)/2, display.getY() + display.height + 25, table.width, table.height);
+    
+    width = getWidth();
+    height = getHeight();
+    
+    //tcc.setBounds((width - tcc.width)/2, 10, tcc.width, tcc.height);
+    //tcc.resized();
+    
+    ctc.setBounds(0, 0, width, height);
+
     //syncButton.setBounds(width - table.width - 40, comboBox.getY(), 40, 25);
     
     

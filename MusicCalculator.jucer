@@ -30,6 +30,7 @@
             file="Source/TempoSpinner.cpp"/>
       <FILE id="oxaDuw" name="TempoSpinner.h" compile="0" resource="0" file="Source/TempoSpinner.h"/>
       <FILE id="SpdVs6" name="NoteSpinner.cpp" compile="1" resource="0" file="Source/NoteSpinner.cpp"/>
+      <FILE id="AubRvi" name="NoteSpinner.h" compile="0" resource="0" file="Source/NoteSpinner.h"/>
       <FILE id="GaRree" name="HertzSpinner.cpp" compile="1" resource="0"
             file="Source/HertzSpinner.cpp"/>
       <FILE id="qQqXV9" name="Spinner.cpp" compile="1" resource="0" file="Source/Spinner.cpp"/>
@@ -39,6 +40,20 @@
       <FILE id="yGiD04" name="Display.cpp" compile="1" resource="0" file="Source/Display.cpp"/>
       <FILE id="ayVhjI" name="Display.h" compile="0" resource="0" file="Source/Display.h"/>
       <FILE id="GLrQDf" name="DisplayOld.cpp" compile="1" resource="0" file="Source/DisplayOld.cpp"/>
+      <FILE id="RybrTs" name="CustomTableCell.cpp" compile="1" resource="0"
+            file="Source/CustomTableCell.cpp"/>
+      <FILE id="F29zOg" name="CustomTableCell.h" compile="0" resource="0"
+            file="Source/CustomTableCell.h"/>
+      <FILE id="MzhvZI" name="TempoConversionComponent.cpp" compile="1" resource="0"
+            file="Source/TempoConversionComponent.cpp"/>
+      <FILE id="AMDvoc" name="TempoConversionComponent.h" compile="0" resource="0"
+            file="Source/TempoConversionComponent.h"/>
+      <FILE id="MK9lIw" name="NoteConversionComponent.cpp" compile="1" resource="0"
+            file="Source/NoteConversionComponent.cpp"/>
+      <FILE id="YsQMrF" name="CustomTabbedComponent.cpp" compile="1" resource="0"
+            file="Source/CustomTabbedComponent.cpp"/>
+      <FILE id="TuhqGH" name="CustomTabbedComponent.h" compile="0" resource="0"
+            file="Source/CustomTabbedComponent.h"/>
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>

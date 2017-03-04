@@ -18,7 +18,8 @@ Spinner::Spinner (SpinnerType type, int min, int max)
     this->min = min;
     this->max = max;
     
-    setFont (Font ("Roboto", 50, Font::plain));
+    font = (Font ("Roboto", 50, Font::plain));
+    setFont (font);
     
     setJustificationType (Justification::right);
     
@@ -172,4 +173,9 @@ String Spinner::getNote (int value)
             return "";
             break;
     }
+}
+
+void Spinner::setFontHeight (float fontHeight)
+{
+    font.setHeight (fontHeight);
 }
