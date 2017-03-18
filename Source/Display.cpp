@@ -388,11 +388,11 @@ void Display::setTempoSync (bool sync)
     t5.setColour (Label::ColourIds::textColourId, (tempoSync) ? Colours::grey : Colours:: black);
     t6.setColour (Label::ColourIds::textColourId, (tempoSync) ? Colours::grey : Colours:: black);
     
-    t1.setBgColorClicked((tempoSync) ? Colours::white : Colours::lightgrey);
-    t3.setBgColorClicked((tempoSync) ? Colours::white : Colours::lightgrey);
-    t4.setBgColorClicked((tempoSync) ? Colours::white : Colours::lightgrey);
-    t5.setBgColorClicked((tempoSync) ? Colours::white : Colours::lightgrey);
-    t6.setBgColorClicked((tempoSync) ? Colours::white : Colours::lightgrey);
+    t1.setBgColourClicked((tempoSync) ? Colours::white : Colours::lightgrey);
+    t3.setBgColourClicked((tempoSync) ? Colours::white : Colours::lightgrey);
+    t4.setBgColourClicked((tempoSync) ? Colours::white : Colours::lightgrey);
+    t5.setBgColourClicked((tempoSync) ? Colours::white : Colours::lightgrey);
+    t6.setBgColourClicked((tempoSync) ? Colours::white : Colours::lightgrey);
     
     t1.setDraggable ((tempoSync) ? false : true);
     t3.setDraggable ((tempoSync) ? false : true);

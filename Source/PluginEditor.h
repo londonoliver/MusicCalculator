@@ -19,6 +19,10 @@
 #include "TempoConversionComponent.h"
 #include "NoteConversionComponent.h"
 #include "CustomTabbedComponent.h"
+#include "SecondComponent.hpp"
+#include "Tabs.cpp"
+#include "Header.cpp"
+#include "NewTable.cpp"
 
 
 
@@ -27,11 +31,8 @@
 */
 class MusicCalculatorAudioProcessorEditor : public AudioProcessorEditor,
                                             private Timer,
-                                            private LabelListener,
-                                            private ButtonListener,
                                             private MidiInputCallback,
                                             private MidiKeyboardStateListener,
-                                            private ComboBox::Listener,
                                             private LookAndFeel_V3,
                                             private ComponentBoundsConstrainer
 {
@@ -49,46 +50,16 @@ private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
     MusicCalculatorAudioProcessor& processor;
-    
-    int note, octave;
-    double tempo;
-    
+
     int width, height;
     
-    bool sync;
-    
+    int note, octave;
     
     void timerCallback() override;
-    double bpmToMs (double bpm);
-    double noteToHz (int note, int octave);
-    double semitoneShift (double value, double amount);
-    
-    
-    Table table;
-    
-    TextButton syncButton;
-    TextButton midiButton;
-    void buttonClicked (Button *button) override;
 
+    Header hd;
     
-    double bpm;
-    
-    bool hostHasTempoInformation();
-    
-    AlertComponent alert;
-    
-    Display display;
-    void labelTextChanged (Label *label) override;
-    
-    ComboBox comboBox;
-    void comboBoxChanged(ComboBox *comboBox) override;
-    
-    TempoConversionComponent tcc;
-    
-    CustomTabbedComponent ctc;
-
-    
-    void drawComboBox (Graphics& g, int width, int height, const bool /*isButtonDown*/, int buttonX, int buttonY, int buttonW, int buttonH, ComboBox& box) override;
+    void drawCornerResizer (Graphics& g, int w, int h, bool /*isMouseOver*/, bool /*isMouseDragging*/) override;
     
     
     void setMidiInput (int index);

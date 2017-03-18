@@ -17,6 +17,7 @@ NoteConversionComponent::NoteConversionComponent()
     
     setTableText();
     
+    //addAndMakeVisible (syncComponent);
     addAndMakeVisible (noteSpinner);
     addAndMakeVisible (label);
     addAndMakeVisible (c1);
@@ -36,15 +37,19 @@ void NoteConversionComponent::resized()
     width = getWidth();
     height = getHeight();
     
+    int margin = (0.025 * height);
+    
     setTableText();
     
     float fontHeight = 0.142 * (float) height;
     int labelHeight = 0.1 * height;
     
-    noteSpinner.setFontHeight (fontHeight);
-    noteSpinner.setBounds ((width - noteSpinner.width)/2, 10, noteSpinner.width, noteSpinner.height);
+    //syncComponent.setBounds(0, 0, width, labelHeight);
     
-    label.setBounds (0, noteSpinner.height + 20, width, labelHeight);
+    noteSpinner.setFontHeight (fontHeight);
+    noteSpinner.setBounds ((width - noteSpinner.width)/2, margin, noteSpinner.width, noteSpinner.height);
+    
+    label.setBounds (0, noteSpinner.getY() + noteSpinner.height + margin, width, labelHeight);
     
     int cellHeight = (height - (label.getY() + labelHeight))/8.0;
     

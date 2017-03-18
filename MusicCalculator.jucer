@@ -12,6 +12,17 @@
               jucerVersion="4.3.1">
   <MAINGROUP id="QSE8F7" name="MusicCalculator">
     <GROUP id="{8E453A34-B25A-3B41-04E5-C3C5747C63C8}" name="Source">
+      <FILE id="CtVA3l" name="Sync.cpp" compile="1" resource="0" file="Source/Sync.cpp"/>
+      <FILE id="YmicfV" name="Tempo.cpp" compile="1" resource="0" file="Source/Tempo.cpp"/>
+      <FILE id="nkh97x" name="ModeButtons.cpp" compile="1" resource="0" file="Source/ModeButtons.cpp"/>
+      <FILE id="lhdh4z" name="Header.cpp" compile="1" resource="0" file="Source/Header.cpp"/>
+      <FILE id="NCb6hr" name="NewDisplay.cpp" compile="1" resource="0" file="Source/NewDisplay.cpp"/>
+      <FILE id="Ae8HkX" name="SyncComponent.cpp" compile="1" resource="0"
+            file="Source/SyncComponent.cpp"/>
+      <FILE id="phjOF8" name="SyncComponent.hpp" compile="0" resource="0"
+            file="Source/SyncComponent.hpp"/>
+      <FILE id="bYhgvm" name="metronome.svg" compile="0" resource="1" file="Source/metronome.svg"/>
+      <FILE id="HOuLwS" name="note.svg" compile="0" resource="1" file="Source/note.svg"/>
       <FILE id="JbVcPk" name="clipboard.svg" compile="0" resource="1" file="Source/clipboard.svg"/>
       <FILE id="lS3fey" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
@@ -50,6 +61,8 @@
             file="Source/TempoConversionComponent.h"/>
       <FILE id="MK9lIw" name="NoteConversionComponent.cpp" compile="1" resource="0"
             file="Source/NoteConversionComponent.cpp"/>
+      <FILE id="mUVYkD" name="NoteConversionComponent.h" compile="0" resource="0"
+            file="Source/NoteConversionComponent.h"/>
       <FILE id="YsQMrF" name="CustomTabbedComponent.cpp" compile="1" resource="0"
             file="Source/CustomTabbedComponent.cpp"/>
       <FILE id="TuhqGH" name="CustomTabbedComponent.h" compile="0" resource="0"

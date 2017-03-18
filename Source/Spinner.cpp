@@ -18,7 +18,7 @@ Spinner::Spinner (SpinnerType type, int min, int max)
     this->min = min;
     this->max = max;
     
-    font = (Font ("Roboto", 50, Font::plain));
+    font = (Font ("Arial", 50, Font::plain));
     setFont (font);
     
     setJustificationType (Justification::right);
@@ -27,7 +27,9 @@ Spinner::Spinner (SpinnerType type, int min, int max)
     
     setEditable (false);
     
-    bgColorClicked = Colours::lightgrey;
+    bgColour = Colours::white.withAlpha(0.0f);
+    bgColourClicked = Colours::white.withAlpha(0.15f);
+    setColour (Label::ColourIds::backgroundColourId, bgColour);
     
     draggable = true;
 }
@@ -61,15 +63,21 @@ int Spinner::inRange (int val)
 
 void Spinner::mouseDown(const MouseEvent &event)
 {
-    if (type != SpinnerType::PERIOD) setColour (ColourIds::backgroundColourId, bgColorClicked);
+    if (type != SpinnerType::PERIOD) setColour (ColourIds::backgroundColourId, bgColourClicked);
     
     enabled = false;
     mousePoint.setY(event.y);
 }
 
-void Spinner::setBgColorClicked(Colour color)
+void Spinner::setBgColour (Colour colour)
 {
-    bgColorClicked = color;
+    bgColour = colour;
+    setColour(ColourIds::backgroundColourId, bgColour);
+}
+
+void Spinner::setBgColourClicked(Colour colour)
+{
+    bgColourClicked = colour;
 }
 
 void Spinner::setDraggable (bool draggable)
@@ -119,14 +127,19 @@ void Spinner::mouseDrag(const MouseEvent &event)
 
 void Spinner::mouseDoubleClick (const MouseEvent &event)
 {
-    setColour (ColourIds::backgroundColourId, Colours::white);
+    setColour (ColourIds::backgroundColourId, bgColour);
     
     if (getParentComponent()) getParentComponent()->mouseDoubleClick (event);
 }
 
+void Spinner::mouseEnter (const MouseEvent &event)
+{
+    if (type != SpinnerType::PERIOD) setColour (ColourIds::backgroundColourId, bgColourClicked);
+}
+
 void Spinner::mouseExit (const MouseEvent &event)
 {
-    setColour (ColourIds::backgroundColourId, Colours::white);
+    setColour (ColourIds::backgroundColourId, bgColour);
 }
 
 String Spinner::getNote (int value)

@@ -74,7 +74,7 @@ void CustomTableCell::setBackgroundColor (Colour colour)
 
 void CustomTableCell::paint (Graphics &g)
 {
-    g.fillAll (bgColour);
+    g.fillAll (bgColour.withAlpha(0.0f));
 }
 
 void CustomTableCell::buttonClicked (Button *button)
@@ -124,7 +124,7 @@ void CustomTableCell::resized()
     copied.setFont (font);
     label.setBorderSize (BorderSize<int> (0));
     button->setBounds (getWidth() - buttonHeight, (rowHeight - buttonHeight)/2, buttonHeight, buttonHeight);
-    label.setBounds (0, (getHeight() - label.getFont().getHeight())/2, button->getX(), label.getFont().getHeight());
+    label.setBounds ((0.025 * getWidth()), (getHeight() - label.getFont().getHeight())/2, button->getX(), label.getFont().getHeight());
 }
 
 

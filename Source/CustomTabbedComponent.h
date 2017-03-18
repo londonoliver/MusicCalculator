@@ -14,16 +14,32 @@
 #include "NoteConversionComponent.h"
 #include "Spinner.h"
 #include "Table.h"
+#include "SyncComponent.hpp"
 
-class CustomTabbedComponent : public TabbedComponent
+class CustomTabbedComponent : public TabbedComponent, public LookAndFeel_V3
 {
 public:
     TempoConversionComponent tcc;
     NoteConversionComponent ncc;
-    CustomTableCell ctc;
+    SyncComponent sync;
+    
+    ScopedPointer<Drawable> metronome;
+    ScopedPointer<Drawable> note;
     
     CustomTabbedComponent();
     ~CustomTabbedComponent();
+    
+    void paint(Graphics &g) override;
+    void resized() override;
+    
+    static Rectangle<int> getTabArea (Rectangle<int>& content, BorderSize<int>& outline,
+                                      const TabbedButtonBar::Orientation orientation, const int tabDepth);
+    void drawTabButton (TabBarButton& button, Graphics& g, bool isMouseOver, bool isMouseDown) override;
+    int getTabButtonBestWidth (TabBarButton& button, int tabDepth) override;
+    void drawTabAreaBehindFrontButton (TabbedButtonBar &, Graphics &, int w, int h) override;
+    int getTabButtonOverlap (int tabDepth) override;
+    
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CustomTabbedComponent)
 };
 
 #endif /* CustomTabbedComponent_h */

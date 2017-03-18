@@ -12,6 +12,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "TempoSpinner.h"
 #include "CustomTableCell.h"
+#include "SyncComponent.hpp"
 
 class TempoConversionComponent : public Component, public LookAndFeel_V3, public ButtonListener
 {
@@ -25,6 +26,8 @@ public:
     
     
     TempoSpinner tempoSpinner;
+    TextButton sync;
+    SyncComponent syncComponent;
     TextButton b1, b2;
     
     CustomTableCell c11;
@@ -45,6 +48,7 @@ public:
     CustomTableCell c27;
     CustomTableCell c28;
     
+    Colour bgColour;
     
     int width, height;
     
@@ -53,10 +57,11 @@ public:
     
     void resized() override;
     void setTableText();
+    void paint (Graphics &g) override;
     
 private:
-    
     Font getTextButtonFont (TextButton &, int buttonHeight) override;
+    void drawButtonBackground (Graphics& g, Button& button, const Colour& backgroundColour, bool isMouseOverButton, bool isButtonDown) override;
     void buttonClicked (Button *button) override;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TempoConversionComponent)

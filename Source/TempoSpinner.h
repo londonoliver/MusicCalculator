@@ -12,13 +12,14 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Spinner.h"
 
-class TempoSpinner : public Component, private Label::Listener
+class TempoSpinner : public Component, private Label::Listener, private LookAndFeel_V3
 {
 public:
     int width;
     int height;
     
     Font font;
+    String f;
     
     Spinner s1;
     Spinner s2;
@@ -37,7 +38,10 @@ public:
     int s6Width;
     
     TempoSpinner();
+    ~TempoSpinner();
     
+    void setBackgroundColour (Colour colour);
+    void setTextColour (Colour colour);
     void setFontHeight (float fontHeight);
     String toString();
     double getValue();

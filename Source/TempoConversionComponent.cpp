@@ -4,6 +4,8 @@
 //
 //  Created by London Oliver on 3/1/17.
 //
+//  https://thenounproject.com/bravebros/collection/music/?i=104862
+//  https://thenounproject.com/search/?q=metronome&i=28820
 //
 
 #include "TempoConversionComponent.h"
@@ -13,8 +15,14 @@ TempoConversionComponent::TempoConversionComponent()
     width = 200;
     height = 400;
     
+    sync.addListener (this);
+    sync.setName ("sync");
+    sync.setButtonText ("Sync");
+
+    
     b1.setLookAndFeel (this);
     b2.setLookAndFeel (this);
+    sync.setLookAndFeel(this);
     
     b1.addListener (this);
     b2.addListener (this);
@@ -24,8 +32,9 @@ TempoConversionComponent::TempoConversionComponent()
     
     b1.setButtonText ("Note");
     b2.setButtonText ("Ms");
-   
+    
     addAndMakeVisible (tempoSpinner);
+    //addAndMakeVisible (syncComponent);
     addAndMakeVisible (b1);
     addAndMakeVisible (b2);
     
@@ -77,43 +86,56 @@ TempoConversionComponent::~TempoConversionComponent()
     b2.removeListener (this);
 }
 
+void TempoConversionComponent::paint (Graphics &g)
+{
+    g.fillAll (bgColour);
+}
+
 void TempoConversionComponent::resized()
 {
     width = getWidth();
     height = getHeight();
     
+    int margin = (0.025 * height);
+    
     setTableText();
     
-    float fontHeight = 0.142f * (float) height;
+    float fontHeight = 0.15f * (float) height;
     int tableWidth = width;
     int buttonHeight = 0.1 * height;
     
-    tempoSpinner.setFontHeight (fontHeight);
-    tempoSpinner.setBounds ((width - tempoSpinner.width)/2, 10, tempoSpinner.width, tempoSpinner.height);
+    //syncComponent.setBounds(0, 0, width, buttonHeight);
     
-    b1.setBounds (0, tempoSpinner.height + 20, tableWidth/2, buttonHeight);
-    b2.setBounds (width/2, tempoSpinner.height + 20, tableWidth/2, buttonHeight);
+    
+    tempoSpinner.setFontHeight (fontHeight);
+    tempoSpinner.setBounds ((width - tempoSpinner.width)/2, margin, tempoSpinner.width, tempoSpinner.height);
+    
+    int c1Width = floor(tableWidth/2.0);
+    int c2Width = ceil(tableWidth/2.0);
+    
+    b1.setBounds (0, tempoSpinner.getY() + tempoSpinner.getHeight() + margin, c1Width, buttonHeight);
+    b2.setBounds (width/2, b1.getY(), c2Width, buttonHeight);
     b2.setButtonText ((col2_Mode == ColumnTwoMode::MS) ? "Ms" : "Hz");
     
     int cellHeight = (height - (b1.getY() + buttonHeight))/8.0;
     
-    c11.setBounds (0, b1.getY() + buttonHeight, width/2, cellHeight);
-    c12.setBounds (0, c11.getY() + cellHeight, width/2, cellHeight);
-    c13.setBounds (0, c12.getY() + cellHeight, width/2, cellHeight);
-    c14.setBounds (0, c13.getY() + cellHeight, width/2, cellHeight);
-    c15.setBounds (0, c14.getY() + cellHeight, width/2, cellHeight);
-    c16.setBounds (0, c15.getY() + cellHeight, width/2, cellHeight);
-    c17.setBounds (0, c16.getY() + cellHeight, width/2, cellHeight);
-    c18.setBounds (0, c17.getY() + cellHeight, width/2, cellHeight);
+    c11.setBounds (0, b1.getY() + buttonHeight, c1Width, cellHeight);
+    c12.setBounds (0, c11.getY() + cellHeight, c1Width, cellHeight);
+    c13.setBounds (0, c12.getY() + cellHeight, c1Width, cellHeight);
+    c14.setBounds (0, c13.getY() + cellHeight, c1Width, cellHeight);
+    c15.setBounds (0, c14.getY() + cellHeight, c1Width, cellHeight);
+    c16.setBounds (0, c15.getY() + cellHeight, c1Width, cellHeight);
+    c17.setBounds (0, c16.getY() + cellHeight, c1Width, cellHeight);
+    c18.setBounds (0, c17.getY() + cellHeight, c1Width, cellHeight);
     
-    c21.setBounds (width/2, b2.getY() + buttonHeight, width/2, cellHeight);
-    c22.setBounds (width/2, c21.getY() + cellHeight, width/2, cellHeight);
-    c23.setBounds (width/2, c22.getY() + cellHeight, width/2, cellHeight);
-    c24.setBounds (width/2, c23.getY() + cellHeight, width/2, cellHeight);
-    c25.setBounds (width/2, c24.getY() + cellHeight, width/2, cellHeight);
-    c26.setBounds (width/2, c25.getY() + cellHeight, width/2, cellHeight);
-    c27.setBounds (width/2, c26.getY() + cellHeight, width/2, cellHeight);
-    c28.setBounds (width/2, c27.getY() + cellHeight, width/2, cellHeight);
+    c21.setBounds (width/2, b2.getY() + buttonHeight, c2Width, cellHeight);
+    c22.setBounds (width/2, c21.getY() + cellHeight, c2Width, cellHeight);
+    c23.setBounds (width/2, c22.getY() + cellHeight, c2Width, cellHeight);
+    c24.setBounds (width/2, c23.getY() + cellHeight, c2Width, cellHeight);
+    c25.setBounds (width/2, c24.getY() + cellHeight, c2Width, cellHeight);
+    c26.setBounds (width/2, c25.getY() + cellHeight, c2Width, cellHeight);
+    c27.setBounds (width/2, c26.getY() + cellHeight, c2Width, cellHeight);
+    c28.setBounds (width/2, c27.getY() + cellHeight, c2Width, cellHeight);
 }
 
 void TempoConversionComponent::setTableText()
@@ -148,14 +170,14 @@ void TempoConversionComponent::setTableText()
     
     int exponent = (col2_Mode == ColumnTwoMode::MS) ? -1.0 : 1.0;
     
-    c21.label.setText(String (wholeNote * pow (pow (2, rowNumber++), exponent)), sendNotification);
-    c22.label.setText(String (wholeNote * pow (pow (2, rowNumber++), exponent)), sendNotification);
-    c23.label.setText(String (wholeNote * pow (pow (2, rowNumber++), exponent)), sendNotification);
-    c24.label.setText(String (wholeNote * pow (pow (2, rowNumber++), exponent)), sendNotification);
-    c25.label.setText(String (wholeNote * pow (pow (2, rowNumber++), exponent)), sendNotification);
-    c26.label.setText(String (wholeNote * pow (pow (2, rowNumber++), exponent)), sendNotification);
-    c27.label.setText(String (wholeNote * pow (pow (2, rowNumber++), exponent)), sendNotification);
-    c28.label.setText(String (wholeNote * pow (pow (2, rowNumber++), exponent)), sendNotification);
+    c21.label.setText (String (wholeNote * pow (pow (2, rowNumber++), exponent)), sendNotification);
+    c22.label.setText (String (wholeNote * pow (pow (2, rowNumber++), exponent)), sendNotification);
+    c23.label.setText (String (wholeNote * pow (pow (2, rowNumber++), exponent)), sendNotification);
+    c24.label.setText (String (wholeNote * pow (pow (2, rowNumber++), exponent)), sendNotification);
+    c25.label.setText (String (wholeNote * pow (pow (2, rowNumber++), exponent)), sendNotification);
+    c26.label.setText (String (wholeNote * pow (pow (2, rowNumber++), exponent)), sendNotification);
+    c27.label.setText (String (wholeNote * pow (pow (2, rowNumber++), exponent)), sendNotification);
+    c28.label.setText (String (wholeNote * pow (pow (2, rowNumber++), exponent)), sendNotification);
 }
 
 Font TempoConversionComponent::getTextButtonFont (TextButton &, int buttonHeight)
@@ -173,4 +195,41 @@ void TempoConversionComponent::buttonClicked (Button *button)
         col2_Mode = (col2_Mode == ColumnTwoMode::MS) ? ColumnTwoMode::HZ : ColumnTwoMode::MS;
     
     resized();
+}
+
+void TempoConversionComponent::drawButtonBackground (Graphics& g, Button& button, const Colour& backgroundColour, bool isMouseOverButton, bool isButtonDown)
+{
+    Colour baseColour (backgroundColour.withMultipliedSaturation (button.hasKeyboardFocus (true) ? 1.3f : 0.9f)
+                       .withMultipliedAlpha (1.0f));
+    
+    if (isButtonDown || isMouseOverButton)
+        baseColour = baseColour.contrasting (isButtonDown ? 0.2f : 0.1f);
+    
+    const bool flatOnLeft   = button.isConnectedOnLeft();
+    const bool flatOnRight  = button.isConnectedOnRight();
+    const bool flatOnTop    = button.isConnectedOnTop();
+    const bool flatOnBottom = button.isConnectedOnBottom();
+    
+    const float width  = button.getWidth() - 1.0f;
+    const float height = button.getHeight() - 1.0f;
+    
+    if (width > 0 && height > 0)
+    {
+        const float cornerSize = 4.0f;
+        
+        Path outline;
+        outline.addRoundedRectangle (0.5f, 0.5f, width, height, cornerSize, cornerSize,
+                                      (flatOnLeft  || flatOnTop),
+                                      (flatOnRight || flatOnTop),
+                                      (flatOnLeft  || flatOnBottom),
+                                      (flatOnRight || flatOnBottom));
+        
+
+        g.setColour (baseColour.withAlpha(0.0f));
+        g.fillPath (outline);
+
+        g.setColour (Colour (baseColour));
+        g.strokePath (outline, PathStrokeType (1.0f));
+        
+    }
 }

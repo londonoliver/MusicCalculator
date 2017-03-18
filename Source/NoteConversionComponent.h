@@ -12,14 +12,15 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "NoteSpinner.h"
 #include "CustomTableCell.h"
+#include "SyncComponent.hpp"
 
 class NoteConversionComponent : public Component
 {
 public:
-    
     NoteSpinner noteSpinner;
     Label label;
     CustomTableCell c1;
+    SyncComponent syncComponent;
     
     int width, height;
     
