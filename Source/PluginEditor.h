@@ -13,16 +13,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "PluginProcessor.h"
-#include "AlertCompnent.cpp"
-#include "Table.h"
-#include "Display.h"
-#include "TempoConversionComponent.h"
-#include "NoteConversionComponent.h"
-#include "CustomTabbedComponent.h"
-#include "SecondComponent.hpp"
-#include "Tabs.cpp"
-#include "Header.cpp"
-#include "NewTable.cpp"
+#include "Container.cpp"
 
 
 
@@ -57,7 +48,8 @@ private:
     
     void timerCallback() override;
 
-    Header hd;
+
+    Container c;
     
     void drawCornerResizer (Graphics& g, int w, int h, bool /*isMouseOver*/, bool /*isMouseDragging*/) override;
     

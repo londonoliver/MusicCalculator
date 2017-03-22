@@ -12,7 +12,6 @@
 #define PLUGINPROCESSOR_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "Table.h"
 
 
 //==============================================================================
@@ -69,16 +68,7 @@ public:
     
     int getOctave();
     void setOctave (int val);
-    
-    Display::DisplayType getDisplayType();
-    void setDisplayType (Display::DisplayType type);
-    
-    Table::DelayType getDelayType();
-    void setDelayType (Table::DelayType type);
-    
-    Table::TempoConversion getTempoConversion();
-    void setTempoConversion (Table::TempoConversion conversion);
-    
+   
     bool tempoInformationAvailable();
 
 private:
@@ -88,11 +78,6 @@ private:
     bool sync;
     int note;
     int octave;
-    
-    // To rememeber table information
-    Display::DisplayType displayType;
-    Table::DelayType delayType;
-    Table::TempoConversion tempoConversion;
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MusicCalculatorAudioProcessor)
     

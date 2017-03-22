@@ -18,7 +18,7 @@ TempoSpinner::TempoSpinner() :  s1 {Spinner::SpinnerType::NUMBER, 5, 990},
                                 s5 {Spinner::SpinnerType::NUMBER, 0, 9},
                                 s6 {Spinner::SpinnerType::NUMBER, 0, 9}
 {
-    f = "Roboto-Thin";
+    f = "Roboto";
     font = Font (f, 50, Font::plain);
     
     s1.setText (120);
@@ -68,6 +68,7 @@ double TempoSpinner::getValue()
 
 void TempoSpinner::fitBounds()
 {
+    
     s1Width = s1.getFont().getStringWidth (s1.getTextValue().toString());
     s2Width = s2.getFont().getStringWidth (s2.getTextValue().toString());
     s3Width = s3.getFont().getStringWidth (s3.getTextValue().toString());
@@ -75,8 +76,9 @@ void TempoSpinner::fitBounds()
     s5Width = s5.getFont().getStringWidth (s5.getTextValue().toString());
     s6Width = s6.getFont().getStringWidth (s6.getTextValue().toString());
     
-    height = font.getHeight();
+    height = s1.getFont().getHeight();
     width = s1Width + s2Width + s3Width + s4Width + s5Width + s6Width;
+    width *= 1.1; // to make up for caret in editor
     
     Component::setBounds (0, 0, width, height);
     
@@ -115,7 +117,16 @@ void TempoSpinner::attachListener(Label::Listener *listener)
     s4.addListener (listener);
     s5.addListener (listener);
     s6.addListener (listener);
-    // detach listeners!!
+}
+
+void TempoSpinner::detachListener(Label::Listener *listener)
+{
+    s1.removeListener (listener);
+    s2.removeListener (listener);
+    s3.removeListener (listener);
+    s4.removeListener (listener);
+    s5.removeListener (listener);
+    s6.removeListener (listener);
 }
 
 void TempoSpinner::resized()
@@ -139,7 +150,7 @@ void TempoSpinner::mouseDoubleClick (const MouseEvent &e)
     ed.getCurrentTextEditor()->setColour (TextEditor::ColourIds::focusedOutlineColourId, Colours::white.withAlpha(0.0f));
     ed.getCurrentTextEditor()->setColour (TextEditor::ColourIds::highlightColourId, Colours::white.withAlpha(0.15f));
     ed.getCurrentTextEditor()->setColour (TextEditor::ColourIds::highlightedTextColourId, Colour (177, 202, 225));
-    ed.getCurrentTextEditor()->setColour (CaretComponent::caretColourId, Colour (177, 202, 225)); 
+    ed.getCurrentTextEditor()->setColour (CaretComponent::caretColourId, Colour (177, 202, 225));
 }
 
 void TempoSpinner::setSpinnersVisible (bool visible)
@@ -163,7 +174,6 @@ void TempoSpinner::editorHidden (Label *label, TextEditor &editor)
     if (regex_match (val.toStdString(), regex ("(\\d+)((\\.)(\\d*)?)?")))
     {
         setSpinnersText (val);
-        cout << "setSpinnersText(" << val << ")" << endl;
     }
 }
 
@@ -178,7 +188,7 @@ void TempoSpinner::editorShown (Label *, TextEditor &)
 
 void TempoSpinner::setFontHeight (float fontHeight)
 {
-    font.setHeight (fontHeight);
+    font = Font (f, fontHeight, Font::plain);
     
     s1.setFont (Font (f, fontHeight, Font::plain));
     s2.setFont (Font (f, fontHeight, Font::plain));

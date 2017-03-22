@@ -34,6 +34,35 @@ Spinner::Spinner (SpinnerType type, int min, int max)
     draggable = true;
 }
 
+Spinner::Spinner (SpinnerType type, Array<int> a)
+{
+    this->type = type;
+    this->arr = a;
+    this->min = 0;
+    this->max = a.size() - 1;
+    
+    font = (Font ("Arial", 50, Font::plain));
+    setFont (font);
+    
+    setJustificationType (Justification::right);
+    
+    setBorderSize (BorderSize<int> (0));
+    
+    setEditable (false);
+    
+    bgColour = Colours::white.withAlpha(0.0f);
+    bgColourClicked = Colours::white.withAlpha(0.15f);
+    setColour (Label::ColourIds::backgroundColourId, bgColour);
+    
+    draggable = true;
+}
+
+void Spinner::resized()
+{
+    if (getParentComponent())
+        getParentComponent()->resized();
+}
+
 void Spinner::setRange (int min, int max)
 {
     this->min = min;
@@ -50,8 +79,17 @@ void Spinner::setText (int val)
     {
         Label::setText (getNote (value), sendNotification);
     }
-    else
+    else if (type == SpinnerType::PERIOD)
+    {
         Label::setText (".", sendNotification);
+    }
+    else
+    {
+        Label::setText(String (arr [value]), sendNotification);
+    }
+    
+    resized();
+    
 }
 
 int Spinner::inRange (int val)

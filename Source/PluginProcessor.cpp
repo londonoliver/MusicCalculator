@@ -25,12 +25,6 @@ MusicCalculatorAudioProcessor::MusicCalculatorAudioProcessor()
                        )
 #endif
 {
-    bpm = 120;
-    setNote(0);
-    setOctave(3);
-    displayType = Display::DisplayType::TEMPO;
-    delayType = Table::DelayType::NORMAL;
-    tempoConversion = Table::TempoConversion::MS;
 }
 
 MusicCalculatorAudioProcessor::~MusicCalculatorAudioProcessor()
@@ -226,54 +220,4 @@ bool MusicCalculatorAudioProcessor::tempoInformationAvailable()
         return true;
     else
         return false;
-}
-
-int MusicCalculatorAudioProcessor::getNote()
-{
-    return note;
-}
-
-void MusicCalculatorAudioProcessor::setNote (int val)
-{
-    note = val;
-}
-
-int MusicCalculatorAudioProcessor::getOctave()
-{
-    return octave;
-}
-
-void MusicCalculatorAudioProcessor::setOctave (int val)
-{
-    octave = val;
-}
-
-Display::DisplayType MusicCalculatorAudioProcessor::getDisplayType()
-{
-    return displayType;
-}
-
-void MusicCalculatorAudioProcessor::setDisplayType (Display::DisplayType type)
-{
-    displayType = type;
-}
-
-Table::DelayType MusicCalculatorAudioProcessor::getDelayType()
-{
-    return delayType;
-}
-
-void MusicCalculatorAudioProcessor::setDelayType (Table::DelayType type)
-{
-    this->delayType = type;
-}
-
-Table::TempoConversion MusicCalculatorAudioProcessor::getTempoConversion()
-{
-    return tempoConversion;
-}
-
-void MusicCalculatorAudioProcessor::setTempoConversion (Table::TempoConversion conversion)
-{
-    this->tempoConversion = conversion;
 }

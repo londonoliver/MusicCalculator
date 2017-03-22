@@ -34,15 +34,15 @@ public:
     
     void paint (Graphics &g) override
     {
-        g.fillAll (Colours::white.withAlpha(0.0f));
+        g.fillAll (Colours::white.withAlpha (0.0f));
     }
     
     void resized() override
     {
-        ts.setFontHeight(20.f);
-        ts.setBounds((getWidth() - ts.width)/2, (getHeight() - ts.height)/2, ts.width, ts.height);
-        int lwidth = l.getFont().getStringWidth(l.getText());
-        l.setBounds((getWidth() - lwidth)/2, ts.getY() + ts.height, lwidth, l.getFont().getHeight());
+        ts.setFontHeight (getHeight()/2);
+        ts.setBounds ((getWidth() - ts.width)/2, (getHeight() - ts.height)/2, ts.getWidth(), ts.getHeight());
+        //int lwidth = l.getFont().getStringWidth(l.getText());
+        //l.setBounds((getWidth() - lwidth)/2, ts.getY() + ts.height, lwidth, l.getFont().getHeight());
     }
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Tempo)

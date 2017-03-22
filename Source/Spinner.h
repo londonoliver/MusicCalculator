@@ -14,7 +14,7 @@
 class Spinner : public Label
 {
 public:
-    enum class SpinnerType {NUMBER, NOTE, PERIOD};
+    enum class SpinnerType {NUMBER, NOTE, PERIOD, ARRAY};
     
     int min;
     int max;
@@ -26,8 +26,10 @@ public:
     Colour bgColour;
     bool draggable;
     Font font;
+    Array<int> arr;
     
     Spinner (SpinnerType type, int min, int max);
+    Spinner (SpinnerType type, Array<int> a);
     
     void setFontHeight (float fontHeight);
     void setDraggable (bool draggable);
@@ -36,6 +38,7 @@ public:
     static String getNote (int value);
     void setBgColour (Colour colour);
     void setBgColourClicked (Colour colour);
+    void resized() override;
     
 private:
     int inRange (int val);

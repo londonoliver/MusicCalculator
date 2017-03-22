@@ -195,3 +195,11 @@ void NoteSpinner::setFontHeight (float fontHeight)
     
     fitBounds();
 }
+
+void NoteSpinner::setTextColour (Colour colour)
+{
+    s1.setColour(Label::ColourIds::textColourId, colour);
+    s2.setColour(Label::ColourIds::textColourId, colour);
+    
+    ed.setColour(Label::ColourIds::textWhenEditingColourId, colour);
+}

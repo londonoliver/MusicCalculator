@@ -30,6 +30,7 @@ public:
     
     NoteSpinner();
     
+    void setTextColour (Colour colour);
     int getNote();
     void setNote (int note);
     int getOctave();

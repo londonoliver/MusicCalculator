@@ -74,7 +74,7 @@ void CustomTableCell::setBackgroundColor (Colour colour)
 
 void CustomTableCell::paint (Graphics &g)
 {
-    g.fillAll (bgColour.withAlpha(0.0f));
+    g.fillAll (bgColour);
 }
 
 void CustomTableCell::buttonClicked (Button *button)

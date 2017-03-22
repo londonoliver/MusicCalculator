@@ -16,13 +16,10 @@ class Header : public Component
 public:
     NewDisplay nd;
     ModeButtons mb;
-   // Sync s;
     
     Header()
     {
         addAndMakeVisible (nd);
-        addAndMakeVisible (mb);
-        //addAndMakeVisible (s);
     }
     
     ~Header()
@@ -39,12 +36,8 @@ public:
     }
     
     void resized()
-    {
-        mb.setBounds(10, (getHeight() - 30)/2, 60, 30);
-        int ndwidth = 180;
-        //nd.setBounds((getWidth() - ndwidth)/2, (getHeight() - 50)/2, ndwidth, 50);
-        nd.setBounds(80, (getHeight() - 50)/2, ndwidth, 50);
-       // s.setBounds(getWidth() - 60, (getHeight() - 50)/2, 50, 50);
+    {  
+        nd.setBounds(0, (getHeight() - 50)/2, getWidth(), 50);
     }
     
 private:

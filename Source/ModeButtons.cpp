@@ -41,7 +41,7 @@ public:
         if (svg1 != nullptr)
         {
             normal1 = Drawable::createFromSVG (*svg1);
-            normal1->replaceColour(Colours::black, Colour (118, 77, 175));
+            normal1->replaceColour(Colours::black, Colours::red.darker());
             
             down1 = Drawable::createFromSVG (*svg1);
             down1->replaceColour(Colours::black, Colours::white);
@@ -52,7 +52,7 @@ public:
         if (svg2 != nullptr)
         {
             normal2 = Drawable::createFromSVG (*svg2);
-            normal2->replaceColour(Colours::black, Colour (118, 77, 175));
+            normal2->replaceColour(Colours::black, Colours::red.darker());
             
             down2 = Drawable::createFromSVG (*svg2);
             down2->replaceColour(Colours::black, Colours::white);
@@ -81,7 +81,7 @@ private:
     {
         bool toggleState = button.getToggleState();
         
-        g.setColour (toggleState ? Colour (118, 77, 175) : Colour (129, 129, 129));
+        g.setColour (toggleState ? Colours::red.darker() : Colours::white);
         
         const bool flatOnLeft   = button.isConnectedOnLeft();
         const bool flatOnRight  = button.isConnectedOnRight();

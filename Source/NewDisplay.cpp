@@ -8,19 +8,22 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Tempo.cpp"
-#include "Sync.cpp"
+#include "ToggleTextButton.cpp"
+#include "Fraction.cpp"
 
 class NewDisplay : public Component
 {
 public:
     
     Tempo t;
-    Sync s;
+    ToggleTextButton s;
+    Fraction f;
     
     NewDisplay()
     {
         addAndMakeVisible (t);
         addAndMakeVisible (s);
+        addAndMakeVisible (f);
     }
     
     ~NewDisplay()
@@ -28,17 +31,24 @@ public:
         
     }
     
-    void paint (Graphics &g)
+    void paint (Graphics &g) override
     {
         g.fillAll (Colours::white.withAlpha (0.0f));
         g.setColour(Colour (27, 30, 44));
         g.fillRoundedRectangle (getLocalBounds().toFloat(), 2.0f);
     }
     
-    void resized()
+    void resized() override
     {
-        t.setBounds(0, 0, getWidth() * (3.0/5.0), getHeight());
-        s.setBounds(getWidth() * (3.0/5.0), 0, getWidth() * (2.0/5.0), getHeight());
+        int width = getWidth();
+        int height = getHeight();
+        int twidth = width * (2.0/4.0);
+        int swidth = width * (1.0/4.0);
+        int dwidth = width * (1.0/4.0);
+        
+        t.setBounds(0, 0, twidth, height);
+        s.setBounds(twidth, 0, swidth, height);
+        f.setBounds (twidth + swidth, 0, dwidth, height);
     }
     
 private:

@@ -26,6 +26,12 @@ public:
         }
     }
     
+    void paint (Graphics &g) override
+    {
+        g.setColour(Colours::white);
+        g.fillRoundedRectangle(getLocalBounds().toFloat(), 2.0f);
+    }
+    
     void resized() override
     {
         int cellWidth = getWidth();
