@@ -8,17 +8,15 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
-class ToggleTextButton : public Component, private LookAndFeel_V3
+class ToggleTextButton : public TextButton, private LookAndFeel_V3
 {
 public:
-    TextButton b;
     String toggleOnText, toggleOffText;
     
     ToggleTextButton()
     {
-        addAndMakeVisible(b);
-        b.setClickingTogglesState(true);
-        b.setLookAndFeel (this);
+        setClickingTogglesState(true);
+        setLookAndFeel (this);
     }
     
     void setToggleText (String toggleOnText, String toggleOffText)
@@ -26,11 +24,6 @@ public:
         this->toggleOnText = toggleOnText;
         this->toggleOffText = toggleOffText;
         repaint();
-    }
-    
-    void resized() override
-    {
-        b.setBounds(0, 0, getWidth(), getHeight());
     }
     
 private:
@@ -57,6 +50,49 @@ private:
                               leftIndent, yIndent, textWidth, button.getHeight() - yIndent * 2,
                               Justification::centred, 2);
 
+    }
+    
+    void drawButtonBackground (Graphics& g, Button& button, const Colour& backgroundColour,
+                                               bool isMouseOverButton, bool isButtonDown) override
+    {
+        Colour baseColour (backgroundColour.withMultipliedSaturation (button.hasKeyboardFocus (true) ? 1.3f : 0.9f)
+                           .withMultipliedAlpha (button.isEnabled() ? 0.9f : 0.5f));
+        
+        if (isButtonDown || isMouseOverButton)
+            baseColour = baseColour.contrasting (isButtonDown ? 0.2f : 0.1f);
+        
+        const bool flatOnLeft   = button.isConnectedOnLeft();
+        const bool flatOnRight  = button.isConnectedOnRight();
+        const bool flatOnTop    = button.isConnectedOnTop();
+        const bool flatOnBottom = button.isConnectedOnBottom();
+        
+        const float width  = button.getWidth() - 1.0f;
+        const float height = button.getHeight() - 1.0f;
+        
+        if (width > 0 && height > 0)
+        {
+            const float cornerSize = 4.0f;
+            
+            Path outline;
+            outline.addRoundedRectangle (0.5f, 0.5f, width, height, cornerSize, cornerSize,
+                                         ! (flatOnLeft  || flatOnTop),
+                                         ! (flatOnRight || flatOnTop),
+                                         ! (flatOnLeft  || flatOnBottom),
+                                         ! (flatOnRight || flatOnBottom));
+            
+            const float mainBrightness = baseColour.getBrightness();
+            const float mainAlpha = baseColour.getFloatAlpha();
+            
+            g.setGradientFill (ColourGradient (baseColour.brighter (0.2f), 0.0f, 0.0f, baseColour.darker (0.25f), 0.0f, height, false));
+            //g.fillPath (outline);
+            
+            g.setColour (Colours::white.withAlpha (0.4f * mainAlpha * mainBrightness * mainBrightness));
+            g.strokePath (outline, PathStrokeType (1.0f), AffineTransform::translation (0.0f, 1.0f)
+                          .scaled (1.0f, (height - 1.6f) / height));
+            
+            g.setColour (Colours::black.withAlpha (0.4f * mainAlpha));
+            g.strokePath (outline, PathStrokeType (1.0f));
+        }
     }
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ToggleTextButton)

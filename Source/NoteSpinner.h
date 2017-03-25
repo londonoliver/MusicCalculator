@@ -39,7 +39,8 @@ public:
     String toString();
     void fitBounds();
     void setSpinnersText (String val);
-    void attachListener(Label::Listener *listener);
+    void attachListener (Label::Listener *listener);
+    void detachListener (Label::Listener *listener);
     void resized() override;
 private:
     void mouseDoubleClick (const MouseEvent &e) override;

@@ -48,6 +48,23 @@ public:
         num.setBounds((width - numWidth)/2, 0, numWidth, numHeight);
         den.setBounds((width - denWidth)/2, numHeight, denWidth, denHeight);
     }
+    
+    void attachListener (LabelListener *l)
+    {
+        num.addListener (l);
+        den.addListener (l);
+    }
+    
+    void detachListener (LabelListener *l)
+    {
+        num.removeListener (l);
+        den.removeListener (l);
+    }
+    
+    double getFraction()
+    {
+        return (double) num.getTextValue().getValue() / (double) den.getTextValue().getValue();
+    }
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Fraction)
 };

@@ -44,6 +44,11 @@ CustomTableCell::CustomTableCell()
     addAndMakeVisible (label);
     addAndMakeVisible (button);
     addAndMakeVisible (copied);
+    addAndMakeVisible (units);
+    
+    label.setBorderSize (BorderSize<int> (0));
+    units.setBorderSize (BorderSize<int> (0));
+    copied.setBorderSize (BorderSize<int> (0));
     
     copied.setVisible (false);
     
@@ -54,7 +59,7 @@ CustomTableCell::CustomTableCell()
     
     Desktop::getInstance().getAnimator().addChangeListener (this);
     
-    bgColour = Colours::white;
+    bgColour = Colours::white.withAlpha (0.0f);
     
 }
 
@@ -122,9 +127,14 @@ void CustomTableCell::resized()
     Font font ("Roboto", fontHeight, Font::plain);
     label.setFont (font);
     copied.setFont (font);
-    label.setBorderSize (BorderSize<int> (0));
-    button->setBounds (getWidth() - buttonHeight, (rowHeight - buttonHeight)/2, buttonHeight, buttonHeight);
-    label.setBounds ((0.025 * getWidth()), (getHeight() - label.getFont().getHeight())/2, button->getX(), label.getFont().getHeight());
+    units.setFont (font);
+    int labelWidth = label.getFont().getStringWidth(label.getText());
+    int unitsWidth = units.getFont().getStringWidth(units.getText());
+    int tabWidth = label.getFont().getStringWidth(" ");
+    //button->setBounds (getWidth() - buttonHeight, (rowHeight - buttonHeight)/2, buttonHeight, buttonHeight);
+    //label.setBounds ((0.025 * getWidth()), (getHeight() - label.getFont().getHeight())/2, button->getX(), label.getFont().getHeight());
+    label.setBounds ((getWidth() - labelWidth - unitsWidth - tabWidth)/2, (getHeight() - fontHeight)/2, labelWidth, fontHeight);
+    units.setBounds (label.getX() + labelWidth + tabWidth, (getHeight() - fontHeight)/2, unitsWidth, fontHeight);
 }
 
 

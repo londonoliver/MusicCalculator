@@ -16,6 +16,7 @@ class CustomTableCell : public Component, public ButtonListener, public ChangeLi
 public:
     
     Label label;
+    Label units;
     Label copied;
     bool fadeout;
     ScopedPointer<DrawableButton> button;

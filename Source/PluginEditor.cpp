@@ -43,10 +43,6 @@ void MusicCalculatorAudioProcessorEditor::paint (Graphics& g)
 {
     g.fillAll (Colours::red);
     ColourGradient gradient (Colour (188, 188, 188), 0.0f, 0.0f, Colour (143, 143, 143), 0.0f, getHeight(), false);
-    //ColourGradient gradient (Colour (73, 85, 98), 0.0f, 0.0f, Colour (41, 50, 60), 0.0f, getHeight(), false);
-    //ColourGradient gradient (Colour (65, 67, 69), 0.0f, 0.0f, Colour (35, 37, 38), 0.0f, getHeight(), false);
-    //ColourGradient gradient (Colour (251, 128, 38), 0.0f, 0.0f, Colour (253, 198, 72), 0.0f, getHeight(), false);
-    //ColourGradient gradient (Colour (213, 61, 251), 0.0f, 0.0f, Colour (147, 67, 234), 0.0f, getHeight(), false);
     g.setGradientFill(gradient);
     //g.fillRect(getLocalBounds());
     g.setColour (Colours::black);

@@ -8,7 +8,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
-class ModeButtons : public Component, private LookAndFeel_V3, private ButtonListener
+class ModeButtons : public Component, private LookAndFeel_V3
 {
 public:
     ScopedPointer<DrawableButton> b1, b2;
@@ -18,17 +18,17 @@ public:
         b1 = new DrawableButton ("Button 1", DrawableButton::ImageFitted);
         b1->setClickingTogglesState (true);
         b1->setLookAndFeel (this);
-        b1->setButtonStyle(DrawableButton::ButtonStyle::ImageOnButtonBackground);
-        b1->setConnectedEdges(Button::ConnectedOnRight);
-        b1->addListener(this);
-        b1->setToggleState(true, dontSendNotification);
+        b1->setButtonStyle (DrawableButton::ButtonStyle::ImageOnButtonBackground);
+        b1->setConnectedEdges (Button::ConnectedOnRight);
+        b1->setToggleState (true, dontSendNotification);
+        b1->setRadioGroupId (1);
         
         b2 = new DrawableButton ("Button 2", DrawableButton::ImageFitted);
         b2->setClickingTogglesState (true);
         b2->setLookAndFeel (this);
-        b2->setButtonStyle(DrawableButton::ButtonStyle::ImageOnButtonBackground);
-        b2->setConnectedEdges(Button::ConnectedOnLeft);
-        b2->addListener(this);
+        b2->setButtonStyle (DrawableButton::ButtonStyle::ImageOnButtonBackground);
+        b2->setConnectedEdges (Button::ConnectedOnLeft);
+        b2->setRadioGroupId (1);
         
         ScopedPointer<XmlElement> svg1 (XmlDocument::parse(BinaryData::metronome_svg));
         ScopedPointer<Drawable> normal1;
@@ -64,17 +64,12 @@ public:
         addAndMakeVisible (b2);
     }
     
-    ~ModeButtons()
-    {
-        b1->removeListener(this);
-        b2->removeListener(this);
-    }
-    
     void resized() override
     {
         b1->setBounds(getLocalBounds().removeFromLeft(getWidth()/2));
         b2->setBounds(getLocalBounds().removeFromRight(getWidth()/2 +1));
     }
+    
 private:
     void drawButtonBackground (Graphics& g, Button& button, const Colour& backgroundColour,
                                bool isMouseOverButton, bool isButtonDown) override
@@ -102,20 +97,6 @@ private:
                                          ! (flatOnLeft  || flatOnBottom),
                                          ! (flatOnRight || flatOnBottom));
             g.fillPath (outline);
-        }
-    }
-    
-    void buttonClicked (Button *b) override
-    {
-        if (b->getName() == b1->getName())
-        {
-            b1->setToggleState(true, dontSendNotification);
-            b2->setToggleState(false, dontSendNotification);
-        }
-        else
-        {
-            b2->setToggleState(true, dontSendNotification);
-            b1->setToggleState(false, dontSendNotification);
         }
     }
     

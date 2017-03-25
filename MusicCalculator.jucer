@@ -12,15 +12,16 @@
               jucerVersion="4.3.1">
   <MAINGROUP id="QSE8F7" name="MusicCalculator">
     <GROUP id="{8E453A34-B25A-3B41-04E5-C3C5747C63C8}" name="Source">
-      <FILE id="CtVA3l" name="Sync.cpp" compile="1" resource="0" file="Source/Sync.cpp"/>
+      <FILE id="x0EjG2" name="ToggleTextButton.cpp" compile="1" resource="0"
+            file="Source/ToggleTextButton.cpp"/>
+      <FILE id="Qmbwjg" name="ButtonPanel.cpp" compile="1" resource="0" file="Source/ButtonPanel.cpp"/>
+      <FILE id="XQT6f3" name="Container.cpp" compile="1" resource="0" file="Source/Container.cpp"/>
+      <FILE id="ktN4Uv" name="Fraction.cpp" compile="1" resource="0" file="Source/Fraction.cpp"/>
+      <FILE id="xcNOt5" name="OutputPanel.cpp" compile="1" resource="0" file="Source/OutputPanel.cpp"/>
       <FILE id="YmicfV" name="Tempo.cpp" compile="1" resource="0" file="Source/Tempo.cpp"/>
       <FILE id="nkh97x" name="ModeButtons.cpp" compile="1" resource="0" file="Source/ModeButtons.cpp"/>
       <FILE id="lhdh4z" name="Header.cpp" compile="1" resource="0" file="Source/Header.cpp"/>
       <FILE id="NCb6hr" name="NewDisplay.cpp" compile="1" resource="0" file="Source/NewDisplay.cpp"/>
-      <FILE id="Ae8HkX" name="SyncComponent.cpp" compile="1" resource="0"
-            file="Source/SyncComponent.cpp"/>
-      <FILE id="phjOF8" name="SyncComponent.hpp" compile="0" resource="0"
-            file="Source/SyncComponent.hpp"/>
       <FILE id="bYhgvm" name="metronome.svg" compile="0" resource="1" file="Source/metronome.svg"/>
       <FILE id="HOuLwS" name="note.svg" compile="0" resource="1" file="Source/note.svg"/>
       <FILE id="JbVcPk" name="clipboard.svg" compile="0" resource="1" file="Source/clipboard.svg"/>
@@ -31,42 +32,18 @@
       <FILE id="fDHbuU" name="PluginEditor.cpp" compile="1" resource="0"
             file="Source/PluginEditor.cpp"/>
       <FILE id="K1e628" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
-      <FILE id="ODwIRW" name="AlertCompnent.cpp" compile="1" resource="0"
-            file="Source/AlertCompnent.cpp"/>
-      <FILE id="QyKPvi" name="LabelComponent.cpp" compile="1" resource="0"
-            file="Source/LabelComponent.cpp"/>
-      <FILE id="lzpfmq" name="LabelComponent.hpp" compile="0" resource="0"
-            file="Source/LabelComponent.hpp"/>
       <FILE id="vUDMcX" name="TempoSpinner.cpp" compile="1" resource="0"
             file="Source/TempoSpinner.cpp"/>
       <FILE id="oxaDuw" name="TempoSpinner.h" compile="0" resource="0" file="Source/TempoSpinner.h"/>
       <FILE id="SpdVs6" name="NoteSpinner.cpp" compile="1" resource="0" file="Source/NoteSpinner.cpp"/>
       <FILE id="AubRvi" name="NoteSpinner.h" compile="0" resource="0" file="Source/NoteSpinner.h"/>
-      <FILE id="GaRree" name="HertzSpinner.cpp" compile="1" resource="0"
-            file="Source/HertzSpinner.cpp"/>
       <FILE id="qQqXV9" name="Spinner.cpp" compile="1" resource="0" file="Source/Spinner.cpp"/>
       <FILE id="yf0Tig" name="Spinner.h" compile="0" resource="0" file="Source/Spinner.h"/>
-      <FILE id="cPOmdT" name="Table.cpp" compile="1" resource="0" file="Source/Table.cpp"/>
-      <FILE id="G2CnlF" name="Table.h" compile="0" resource="0" file="Source/Table.h"/>
       <FILE id="yGiD04" name="Display.cpp" compile="1" resource="0" file="Source/Display.cpp"/>
-      <FILE id="ayVhjI" name="Display.h" compile="0" resource="0" file="Source/Display.h"/>
-      <FILE id="GLrQDf" name="DisplayOld.cpp" compile="1" resource="0" file="Source/DisplayOld.cpp"/>
       <FILE id="RybrTs" name="CustomTableCell.cpp" compile="1" resource="0"
             file="Source/CustomTableCell.cpp"/>
       <FILE id="F29zOg" name="CustomTableCell.h" compile="0" resource="0"
             file="Source/CustomTableCell.h"/>
-      <FILE id="MzhvZI" name="TempoConversionComponent.cpp" compile="1" resource="0"
-            file="Source/TempoConversionComponent.cpp"/>
-      <FILE id="AMDvoc" name="TempoConversionComponent.h" compile="0" resource="0"
-            file="Source/TempoConversionComponent.h"/>
-      <FILE id="MK9lIw" name="NoteConversionComponent.cpp" compile="1" resource="0"
-            file="Source/NoteConversionComponent.cpp"/>
-      <FILE id="mUVYkD" name="NoteConversionComponent.h" compile="0" resource="0"
-            file="Source/NoteConversionComponent.h"/>
-      <FILE id="YsQMrF" name="CustomTabbedComponent.cpp" compile="1" resource="0"
-            file="Source/CustomTabbedComponent.cpp"/>
-      <FILE id="TuhqGH" name="CustomTabbedComponent.h" compile="0" resource="0"
-            file="Source/CustomTabbedComponent.h"/>
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>

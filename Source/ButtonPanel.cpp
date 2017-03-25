@@ -16,6 +16,7 @@ public:
     Fraction f;
     ToggleTextButton s;
     ToggleTextButton u;
+    ToggleTextButton m;
     
     Label l1, l2, l3;
     
@@ -24,12 +25,14 @@ public:
         addAndMakeVisible (f);
         addAndMakeVisible (s);
         addAndMakeVisible (u);
+        addChildComponent (m);
         addAndMakeVisible (l1);
         addAndMakeVisible (l2);
         addAndMakeVisible (l3);
         
-        s.setToggleText ("HOST", "MANUAL");
-        u.setToggleText( "MS", "HZ");
+        s.setToggleText ("HOST", "OFF");
+        u.setToggleText( "HZ", "MS");
+        m.setToggleText("MIDI", "OFF");
         l1.setText ("Sync", dontSendNotification);
         l2.setText ("Fraction", dontSendNotification);
         l3.setText ("Units", dontSendNotification);
@@ -53,7 +56,7 @@ public:
         s.setBounds(oneSixthWidth - oneTwelvethWidth, oneFifthHeight * 2, oneSixthWidth, threeFifthsHeight);
         f.setBounds(threeSixthsWidth - oneTwelvethWidth, oneFifthHeight * 2, oneSixthWidth, threeFifthsHeight);
         u.setBounds(fiveSixthsWidth - oneTwelvethWidth, oneFifthHeight * 2 , oneSixthWidth, threeFifthsHeight);
-        
+        m.setBounds(oneSixthWidth - oneTwelvethWidth, oneFifthHeight * 2, oneSixthWidth, threeFifthsHeight);
     }
     
 private:

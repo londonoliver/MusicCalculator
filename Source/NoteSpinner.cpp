@@ -86,6 +86,12 @@ void NoteSpinner::attachListener(Label::Listener *listener)
     s2.addListener (listener);
 }
 
+void NoteSpinner::detachListener(Label::Listener *listener)
+{
+    s1.removeListener (listener);
+    s2.removeListener (listener);
+}
+
 void NoteSpinner::resized()
 {
     fitBounds();
