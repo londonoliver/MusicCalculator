@@ -22,7 +22,7 @@ public:
     Point<int> mousePoint;
     SpinnerType type;
     int value;
-    Colour bgColourClicked;
+    Colour highlightColour;
     Colour bgColour;
     bool draggable;
     Font font;
@@ -37,7 +37,7 @@ public:
     void setText (int val);
     static String getNote (int value);
     void setBgColour (Colour colour);
-    void setBgColourClicked (Colour colour);
+    void setHighlightColour (Colour colour);
     void resized() override;
     
 private:

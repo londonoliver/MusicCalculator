@@ -28,7 +28,7 @@ Spinner::Spinner (SpinnerType type, int min, int max)
     setEditable (false);
     
     bgColour = Colours::white.withAlpha(0.0f);
-    bgColourClicked = Colours::white.withAlpha(0.15f);
+    highlightColour = Colours::white.withAlpha(0.4f);
     setColour (Label::ColourIds::backgroundColourId, bgColour);
     
     draggable = true;
@@ -51,7 +51,7 @@ Spinner::Spinner (SpinnerType type, Array<int> a)
     setEditable (false);
     
     bgColour = Colours::white.withAlpha(0.0f);
-    bgColourClicked = Colours::white.withAlpha(0.15f);
+    highlightColour = Colours::white.withAlpha(0.4f);
     setColour (Label::ColourIds::backgroundColourId, bgColour);
     
     draggable = true;
@@ -101,7 +101,7 @@ int Spinner::inRange (int val)
 
 void Spinner::mouseDown(const MouseEvent &event)
 {
-    if (type != SpinnerType::PERIOD) setColour (ColourIds::backgroundColourId, bgColourClicked);
+    if (type != SpinnerType::PERIOD && isEnabled()) setColour (ColourIds::backgroundColourId, highlightColour);
     
     enabled = false;
     mousePoint.setY(event.y);
@@ -113,9 +113,9 @@ void Spinner::setBgColour (Colour colour)
     setColour(ColourIds::backgroundColourId, bgColour);
 }
 
-void Spinner::setBgColourClicked(Colour colour)
+void Spinner::setHighlightColour (Colour colour)
 {
-    bgColourClicked = colour;
+    highlightColour = colour;
 }
 
 void Spinner::setDraggable (bool draggable)
@@ -125,7 +125,7 @@ void Spinner::setDraggable (bool draggable)
 
 void Spinner::mouseDrag(const MouseEvent &event)
 {
-    if (draggable)
+    if (draggable && isEnabled())
     {
         int delta = mousePoint.getY() - event.y;
         int absDelta = abs(delta);
@@ -156,9 +156,8 @@ void Spinner::mouseDrag(const MouseEvent &event)
 
             if (delta < 0) val -= 1;
             else val += 1;
-
-            setText (val);
         }
+        setText (val);
         mousePoint.setY (event.y);
     }
 }
@@ -172,7 +171,7 @@ void Spinner::mouseDoubleClick (const MouseEvent &event)
 
 void Spinner::mouseEnter (const MouseEvent &event)
 {
-    if (type != SpinnerType::PERIOD) setColour (ColourIds::backgroundColourId, bgColourClicked);
+    if (type != SpinnerType::PERIOD && isEnabled()) setColour (ColourIds::backgroundColourId, highlightColour);
 }
 
 void Spinner::mouseExit (const MouseEvent &event)

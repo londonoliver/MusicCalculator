@@ -18,6 +18,7 @@ public:
     Label label;
     Label units;
     Label copied;
+    TextButton tip;
     bool fadeout;
     ScopedPointer<DrawableButton> button;
     Colour bgColour;

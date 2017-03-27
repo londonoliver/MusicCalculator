@@ -18,7 +18,7 @@ public:
     ToggleTextButton u;
     ToggleTextButton m;
     
-    Label l1, l2, l3;
+    Label l1, l2, l3, l4;
     
     ButtonPanel()
     {
@@ -29,6 +29,7 @@ public:
         addAndMakeVisible (l1);
         addAndMakeVisible (l2);
         addAndMakeVisible (l3);
+        addChildComponent (l4);
         
         s.setToggleText ("HOST", "OFF");
         u.setToggleText( "HZ", "MS");
@@ -36,9 +37,11 @@ public:
         l1.setText ("Sync", dontSendNotification);
         l2.setText ("Fraction", dontSendNotification);
         l3.setText ("Units", dontSendNotification);
-        l1.setJustificationType(Justification::centred);
-        l2.setJustificationType(Justification::centred);
-        l3.setJustificationType(Justification::centred);
+        l4.setText ("Sync", dontSendNotification);
+        l1.setJustificationType (Justification::centred);
+        l2.setJustificationType (Justification::centred);
+        l3.setJustificationType (Justification::centred);
+        l4.setJustificationType (Justification::centred);
     }
     
     void resized() override
@@ -53,10 +56,11 @@ public:
         l1.setBounds(oneSixthWidth - oneTwelvethWidth, 0, oneSixthWidth, oneFifthHeight);
         l2.setBounds(threeSixthsWidth - oneTwelvethWidth, 0, oneSixthWidth, oneFifthHeight);
         l3.setBounds(fiveSixthsWidth - oneTwelvethWidth, 0, oneSixthWidth, oneFifthHeight);
+        l4.setBounds (threeSixthsWidth - oneTwelvethWidth, 0, oneSixthWidth, oneFifthHeight);
         s.setBounds(oneSixthWidth - oneTwelvethWidth, oneFifthHeight * 2, oneSixthWidth, threeFifthsHeight);
         f.setBounds(threeSixthsWidth - oneTwelvethWidth, oneFifthHeight * 2, oneSixthWidth, threeFifthsHeight);
         u.setBounds(fiveSixthsWidth - oneTwelvethWidth, oneFifthHeight * 2 , oneSixthWidth, threeFifthsHeight);
-        m.setBounds(oneSixthWidth - oneTwelvethWidth, oneFifthHeight * 2, oneSixthWidth, threeFifthsHeight);
+        m.setBounds(threeSixthsWidth - oneTwelvethWidth, oneFifthHeight * 2, oneSixthWidth, threeFifthsHeight);
     }
     
 private:

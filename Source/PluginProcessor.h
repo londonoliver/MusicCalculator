@@ -57,28 +57,20 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
     
     //==============================================================================
-    double* getTempo();
-    void setTempo (double d);
+    bool isTempoInformationAvailable();
     
-    bool setSync (bool b);
-    bool getSync();
-    
-    int getNote();
-    void setNote (int val);
-    
-    int getOctave();
-    void setOctave (int val);
-   
-    bool tempoInformationAvailable();
+    bool mode;
+    String tempo;
+    bool tempoSync;
+    int numerator;
+    int denominator;
+    bool units;
+    String note;
+    bool midiSync;
 
-private:
-    //==============================================================================
-    double bpm;
     double hostBpm;
-    bool sync;
-    int note;
-    int octave;
-    //==============================================================================
+    
+private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MusicCalculatorAudioProcessor)
     
     //==============================================================================

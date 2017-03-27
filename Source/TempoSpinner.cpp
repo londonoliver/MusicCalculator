@@ -18,7 +18,7 @@ TempoSpinner::TempoSpinner() :  s1 {Spinner::SpinnerType::NUMBER, 5, 990},
                                 s5 {Spinner::SpinnerType::NUMBER, 0, 9},
                                 s6 {Spinner::SpinnerType::NUMBER, 0, 9}
 {
-    f = "Roboto";
+    f = s1.getFont().getTypefaceName();
     font = Font (f, 50, Font::plain);
     
     s1.setText (120);
@@ -45,6 +45,8 @@ TempoSpinner::TempoSpinner() :  s1 {Spinner::SpinnerType::NUMBER, 5, 990},
     ed.setVisible (false);
     ed.addListener (this);
     ed.setLookAndFeel (this);
+    
+    highlightColour = Colours::white.withAlpha(0.5f);
 }
 
 TempoSpinner::~TempoSpinner()
@@ -148,9 +150,8 @@ void TempoSpinner::mouseDoubleClick (const MouseEvent &e)
     ed.showEditor();
     
     ed.getCurrentTextEditor()->setColour (TextEditor::ColourIds::focusedOutlineColourId, Colours::white.withAlpha(0.0f));
-    ed.getCurrentTextEditor()->setColour (TextEditor::ColourIds::highlightColourId, Colours::white.withAlpha(0.15f));
-    ed.getCurrentTextEditor()->setColour (TextEditor::ColourIds::highlightedTextColourId, Colour (177, 202, 225));
-    ed.getCurrentTextEditor()->setColour (CaretComponent::caretColourId, Colour (177, 202, 225));
+    ed.getCurrentTextEditor()->setColour (TextEditor::ColourIds::highlightColourId, highlightColour);
+    //ed.getCurrentTextEditor()->setColour (TextEditor::ColourIds::highlightedTextColourId, Colour (177, 202, 225));
 }
 
 void TempoSpinner::setSpinnersVisible (bool visible)
@@ -204,24 +205,24 @@ void TempoSpinner::setFontHeight (float fontHeight)
 
 void TempoSpinner::setBackgroundColour (Colour colour)
 {
-    s1.setBgColour(colour);
-    s2.setBgColour(colour);
-    s3.setBgColour(colour);
-    s4.setBgColour(colour);
-    s5.setBgColour(colour);
-    s6.setBgColour(colour);
+    s1.setBgColour (colour);
+    s2.setBgColour (colour);
+    s3.setBgColour (colour);
+    s4.setBgColour (colour);
+    s5.setBgColour (colour);
+    s6.setBgColour (colour);
     
     ed.setColour(Label::ColourIds::backgroundWhenEditingColourId, colour);
 }
 
 void TempoSpinner::setTextColour (Colour colour)
 {
-    s1.setColour(Label::ColourIds::textColourId, colour);
-    s2.setColour(Label::ColourIds::textColourId, colour);
-    s3.setColour(Label::ColourIds::textColourId, colour);
-    s4.setColour(Label::ColourIds::textColourId, colour);
-    s5.setColour(Label::ColourIds::textColourId, colour);
-    s6.setColour(Label::ColourIds::textColourId, colour);
+    s1.setColour (Label::ColourIds::textColourId, colour);
+    s2.setColour (Label::ColourIds::textColourId, colour);
+    s3.setColour (Label::ColourIds::textColourId, colour);
+    s4.setColour (Label::ColourIds::textColourId, colour);
+    s5.setColour (Label::ColourIds::textColourId, colour);
+    s6.setColour (Label::ColourIds::textColourId, colour);
     
-    ed.setColour(Label::ColourIds::textWhenEditingColourId, colour);
+    ed.setColour (Label::ColourIds::textWhenEditingColourId, colour);
 }

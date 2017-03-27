@@ -37,6 +37,8 @@ public:
     int s5Width;
     int s6Width;
     
+    Colour highlightColour;
+    
     TempoSpinner();
     ~TempoSpinner();
     

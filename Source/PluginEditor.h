@@ -13,7 +13,10 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "PluginProcessor.h"
-#include "Container.cpp"
+#include "TempoSpinner.h"
+#include "NoteSpinner.h"
+#include "Fraction.cpp"
+#include "ToggleTextButton.cpp"
 
 
 
@@ -25,9 +28,37 @@ class MusicCalculatorAudioProcessorEditor : public AudioProcessorEditor,
                                             private MidiInputCallback,
                                             private MidiKeyboardStateListener,
                                             private LookAndFeel_V3,
-                                            private ComponentBoundsConstrainer
+                                            private ComponentBoundsConstrainer,
+                                            private ButtonListener,
+                                            private LabelListener
 {
 public:
+    //
+    ToggleButton tempoToggle, noteToggle;
+    //
+    //
+    TempoSpinner tempoSpinner;
+    NoteSpinner noteSpinner;
+    Label displayLabel;
+    //
+    //
+    Fraction tempoFraction;
+    ToggleTextButton tempoSyncButton;
+    ToggleTextButton tempoUnitsButton;
+    ToggleTextButton midiSyncButton;
+    Label tempoSyncLabel;
+    Label tempoFractionLabel;
+    Label tempoUnitsLabel;
+    Label midiSyncLabel;
+    //
+    //
+    Label conversionLabel;
+    Label conversionValueLabel;
+    Label conversionUnitsLabel;
+    TextButton copy;
+    //
+    
+    
     MusicCalculatorAudioProcessorEditor (MusicCalculatorAudioProcessor&);
     ~MusicCalculatorAudioProcessorEditor();
 
@@ -44,15 +75,11 @@ private:
 
     int width, height;
     
-    int note, octave;
-    
     void timerCallback() override;
-
-
-    Container c;
+    void setConversion();
+    void labelTextChanged (Label *label) override;
     
-    void drawCornerResizer (Graphics& g, int w, int h, bool /*isMouseOver*/, bool /*isMouseDragging*/) override;
-    
+    void buttonClicked (Button *) override;
     
     void setMidiInput (int index);
     void handleIncomingMidiMessage (MidiInput* source, const MidiMessage& message) override;
@@ -63,8 +90,6 @@ private:
     
     //==============================================================================
     AudioDeviceManager deviceManager;           // [1]
-    ComboBox midiInputList;                     // [2]
-    Label midiInputListLabel;
     int lastInputIndex;                         // [3]
     
     MidiKeyboardState keyboardState;            // [5]

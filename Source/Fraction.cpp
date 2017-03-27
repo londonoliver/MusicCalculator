@@ -14,56 +14,65 @@ using namespace std;
 class Fraction : public Component
 {
 public:
-    Spinner num, den;
+    Spinner numerator, denominator;
     
-    Fraction() :    num {Spinner::SpinnerType::ARRAY, Array<int> {1, 2, 3, 4, 5, 6, 7, 8} },
-                    den {Spinner::SpinnerType::ARRAY, Array<int> {1, 2, 3, 4, 6, 8, 12, 16, 24, 32, 48, 64, 96, 128, 192} }
+    Fraction() :    numerator {Spinner::SpinnerType::ARRAY, Array<int> {1, 2, 3, 4, 5, 6, 7, 8} },
+                    denominator {Spinner::SpinnerType::ARRAY, Array<int> {1, 2, 3, 4, 6, 8, 12, 16, 24, 32, 48, 64, 96, 128, 192} }
     {
-        addAndMakeVisible (num);
-        addAndMakeVisible (den);
+        addAndMakeVisible (numerator);
+        addAndMakeVisible (denominator);
         
-        num.setText(0);
-        den.setText(3);
+        numerator.setText(0);
+        denominator.setText(3);
     }
     
     void paint (Graphics &g) override
     {
         g.fillAll (Colours::white.withAlpha (0.0f));
         g.setColour (Colours::black);
-        int lwidth = num.getFont().getStringWidth("128");
+        int lwidth = numerator.getFont().getStringWidth("128");
         g.drawHorizontalLine(getHeight()/2, (getWidth() - lwidth)/2, (getWidth() + lwidth)/2);
     }
     
     void resized() override
     {
-        num.setFont (Font (getHeight()/2.0f));
-        den.setFont (Font (getHeight()/2.0f));
+        numerator.setFont (Font (getHeight()/2.0f));
+        denominator.setFont (Font (getHeight()/2.0f));
         
         int width = getWidth();
         int height = getHeight();
-        int numWidth = num.getFont().getStringWidth(num.getText());
+        int numWidth = numerator.getFont().getStringWidth(numerator.getText());
         int numHeight = height/2;
-        int denWidth = den.getFont().getStringWidth(den.getText());
+        int denWidth = denominator.getFont().getStringWidth(denominator.getText());
         int denHeight = height/2;
-        num.setBounds((width - numWidth)/2, 0, numWidth, numHeight);
-        den.setBounds((width - denWidth)/2, numHeight, denWidth, denHeight);
+        numerator.setBounds((width - numWidth)/2, 0, numWidth, numHeight);
+        denominator.setBounds((width - denWidth)/2, numHeight, denWidth, denHeight);
     }
     
     void attachListener (LabelListener *l)
     {
-        num.addListener (l);
-        den.addListener (l);
+        numerator.addListener (l);
+        denominator.addListener (l);
     }
     
     void detachListener (LabelListener *l)
     {
-        num.removeListener (l);
-        den.removeListener (l);
+        numerator.removeListener (l);
+        denominator.removeListener (l);
+    }
+    
+    int getNumerator()      {   return numerator.getTextValue().getValue();     }
+    int getDenominator()    {   return denominator.getTextValue().getValue();   }
+    
+    void setFraction (int numerator, int denominator)
+    {
+        this->numerator.setText (numerator);
+        this->denominator.setText (denominator);
     }
     
     double getFraction()
     {
-        return (double) num.getTextValue().getValue() / (double) den.getTextValue().getValue();
+        return (double) numerator.getTextValue().getValue() / (double) denominator.getTextValue().getValue();
     }
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Fraction)

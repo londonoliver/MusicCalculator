@@ -20,7 +20,7 @@ CustomTableCell::CustomTableCell()
     if (svg != nullptr)
     {
         normal = Drawable::createFromSVG (*svg);
-        normal->replaceColour(Colours::black, Colours::grey);
+        normal->replaceColour(Colours::black, Colours::black);
         
         over = Drawable::createFromSVG (*svg);
         over->replaceColour(Colours::black, Colours::grey.darker());
@@ -37,14 +37,16 @@ CustomTableCell::CustomTableCell()
     label.setColour (Label::textColourId, Colours::black);
     
     copied.setEditable (false);
-    copied.setColour (Label::backgroundColourId, Colours::black.withAlpha(0.0f));
     copied.setText ("Copied", dontSendNotification);
     copied.setJustificationType (Justification::centredLeft);
     
+    tip.setButtonText ("Copy");
+    
     addAndMakeVisible (label);
-    addAndMakeVisible (button);
+    //addChildComponent (button);
     addAndMakeVisible (copied);
     addAndMakeVisible (units);
+    addAndMakeVisible (tip);
     
     label.setBorderSize (BorderSize<int> (0));
     units.setBorderSize (BorderSize<int> (0));
@@ -54,6 +56,7 @@ CustomTableCell::CustomTableCell()
     
     button->setVisible (false);
     button->addListener (this);
+    tip.addListener (this);
     
     addMouseListener(this, true);
     
@@ -93,9 +96,9 @@ void CustomTableCell::buttonClicked (Button *button)
     
     copied.setBounds(-getWidth(), 0, getWidth(), getHeight());
     copied.setVisible (true);
-    button->setVisible (false);
+    label.setVisible (false);
     fadeout = true;
-    Desktop::getInstance().getAnimator().animateComponent (&copied, Rectangle<int> (0, 0, getWidth(), getHeight()), 0.7f, 250, true, 1.0, 1.0);
+    Desktop::getInstance().getAnimator().fadeIn(&label, 100);
 }
 
 void CustomTableCell::changeListenerCallback (ChangeBroadcaster *source)
@@ -131,17 +134,19 @@ void CustomTableCell::resized()
     int labelWidth = label.getFont().getStringWidth(label.getText());
     int unitsWidth = units.getFont().getStringWidth(units.getText());
     int tabWidth = label.getFont().getStringWidth(" ");
-    //button->setBounds (getWidth() - buttonHeight, (rowHeight - buttonHeight)/2, buttonHeight, buttonHeight);
-    //label.setBounds ((0.025 * getWidth()), (getHeight() - label.getFont().getHeight())/2, button->getX(), label.getFont().getHeight());
     label.setBounds ((getWidth() - labelWidth - unitsWidth - tabWidth)/2, (getHeight() - fontHeight)/2, labelWidth, fontHeight);
     units.setBounds (label.getX() + labelWidth + tabWidth, (getHeight() - fontHeight)/2, unitsWidth, fontHeight);
+    //button->setBounds (units.getX() + unitsWidth + tabWidth, (rowHeight - buttonHeight)/2, buttonHeight, buttonHeight);
+    tip.setBounds(units.getX() + unitsWidth + tabWidth, (getHeight() - fontHeight)/2, 40, fontHeight);
 }
 
 
 void CustomTableCell::mouseEnter (const MouseEvent &event)
 {
     if (! Desktop::getInstance().getAnimator().isAnimating(&copied) )
+    {
         button->setVisible (true);
+    }
 }
 
 

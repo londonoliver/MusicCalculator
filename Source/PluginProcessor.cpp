@@ -11,6 +11,7 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
+using namespace std;
 
 //==============================================================================
 MusicCalculatorAudioProcessor::MusicCalculatorAudioProcessor()
@@ -126,8 +127,7 @@ void MusicCalculatorAudioProcessor::processBlock (AudioSampleBuffer& buffer, Mid
     playHead = this->getPlayHead();
     playHead->getCurrentPosition (currentPositionInfo);
     hostBpm = currentPositionInfo.bpm;
-    if (sync)
-        bpm = hostBpm;
+    if (tempoSync) tempo = String (hostBpm);
     
     const int totalNumInputChannels  = getTotalNumInputChannels();
     const int totalNumOutputChannels = getTotalNumOutputChannels();
@@ -178,46 +178,10 @@ void MusicCalculatorAudioProcessor::setStateInformation (const void* data, int s
 
 //==============================================================================
 // This creates new instances of the plugin..
-AudioProcessor* JUCE_CALLTYPE createPluginFilter()
-{
-    return new MusicCalculatorAudioProcessor();
-}
+AudioProcessor* JUCE_CALLTYPE createPluginFilter()  {   return new MusicCalculatorAudioProcessor(); }
 
 //==============================================================================
-double* MusicCalculatorAudioProcessor::getTempo()
+bool MusicCalculatorAudioProcessor::isTempoInformationAvailable()
 {
-    return &bpm;
-}
-
-void MusicCalculatorAudioProcessor::setTempo (double d)
-{
-    if (!sync)
-        bpm = d;
-}
-
-bool MusicCalculatorAudioProcessor::getSync()
-{
-    return sync;
-}
-
-bool MusicCalculatorAudioProcessor::setSync (bool b)
-{
-    if (b && tempoInformationAvailable())
-    {
-        sync = true;
-        return true;
-    }
-    else
-    {
-        sync = false;
-        return false;
-    }
-}
-
-bool MusicCalculatorAudioProcessor::tempoInformationAvailable()
-{
-    if (hostBpm >= 5.0 && hostBpm <= 990.0)
-        return true;
-    else
-        return false;
+    return (hostBpm >= 5.0 && hostBpm <= 990.0) ? true : false;
 }
