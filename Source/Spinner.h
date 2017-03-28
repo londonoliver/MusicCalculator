@@ -34,7 +34,7 @@ public:
     void setFontHeight (float fontHeight);
     void setDraggable (bool draggable);
     void setRange (int min, int max);
-    void setText (int val);
+    void setText (int val, NotificationType notification);
     static String getNote (int value);
     void setBgColour (Colour colour);
     void setHighlightColour (Colour colour);

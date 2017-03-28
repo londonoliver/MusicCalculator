@@ -34,6 +34,7 @@ class MusicCalculatorAudioProcessorEditor : public AudioProcessorEditor,
 {
 public:
     //
+    Label toggleLabel;
     ToggleButton tempoToggle, noteToggle;
     //
     //
@@ -80,6 +81,9 @@ private:
     void labelTextChanged (Label *label) override;
     
     void buttonClicked (Button *) override;
+    
+    void drawButtonText (Graphics& g, TextButton& button, bool /*isMouseOverButton*/, bool /*isButtonDown*/) override;
+    void drawButtonBackground (Graphics& g, Button& button, const Colour& backgroundColour, bool isMouseOverButton, bool isButtonDown) override;
     
     void setMidiInput (int index);
     void handleIncomingMidiMessage (MidiInput* source, const MidiMessage& message) override;

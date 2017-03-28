@@ -38,7 +38,7 @@ public:
     void setFontHeight (float fontHeight);
     String toString();
     void fitBounds();
-    void setSpinnersText (String val);
+    void setSpinnersText (String val, NotificationType notification);
     void attachListener (Label::Listener *listener);
     void detachListener (Label::Listener *listener);
     void resized() override;

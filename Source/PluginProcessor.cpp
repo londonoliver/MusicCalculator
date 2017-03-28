@@ -26,6 +26,14 @@ MusicCalculatorAudioProcessor::MusicCalculatorAudioProcessor()
                        )
 #endif
 {
+    mode = true;
+    tempo = "120";
+    tempoSync = false;
+    numerator = 0;
+    denominator = 4;
+    units = false;
+    note = "C4";
+    midiSync = false;
 }
 
 MusicCalculatorAudioProcessor::~MusicCalculatorAudioProcessor()
@@ -184,4 +192,14 @@ AudioProcessor* JUCE_CALLTYPE createPluginFilter()  {   return new MusicCalculat
 bool MusicCalculatorAudioProcessor::isTempoInformationAvailable()
 {
     return (hostBpm >= 5.0 && hostBpm <= 990.0) ? true : false;
+}
+
+int MusicCalculatorAudioProcessor::getNumerator()
+{
+    return numerator;
+}
+
+int MusicCalculatorAudioProcessor::getDenominator()
+{
+    return denominator;
 }

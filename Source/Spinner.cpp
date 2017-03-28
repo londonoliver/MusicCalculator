@@ -69,23 +69,23 @@ void Spinner::setRange (int min, int max)
     this->max = max;
 }
 
-void Spinner::setText (int val)
+void Spinner::setText (int val, NotificationType notification)
 {
     value = inRange (val);
     
     if (type == SpinnerType::NUMBER)
-        Label::setText (String (value), sendNotification);
+        Label::setText (String (value), notification);
     else if (type == SpinnerType::NOTE)
     {
-        Label::setText (getNote (value), sendNotification);
+        Label::setText (getNote (value), notification);
     }
     else if (type == SpinnerType::PERIOD)
     {
-        Label::setText (".", sendNotification);
+        Label::setText (".", notification);
     }
     else
     {
-        Label::setText(String (arr [value]), sendNotification);
+        Label::setText(String (arr [value]), notification);
     }
     
     resized();
@@ -157,7 +157,7 @@ void Spinner::mouseDrag(const MouseEvent &event)
             if (delta < 0) val -= 1;
             else val += 1;
         }
-        setText (val);
+        setText (val, sendNotification);
         mousePoint.setY (event.y);
     }
 }

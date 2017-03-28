@@ -12,9 +12,6 @@
 
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
-#include <iostream>
-#include <sstream>
-#include <iomanip>
 
 using namespace std;
 
@@ -26,41 +23,54 @@ MusicCalculatorAudioProcessorEditor::MusicCalculatorAudioProcessorEditor (MusicC
     setSize (300, 350);
     
     {
+        toggleLabel.setText("Conversion Type:", dontSendNotification);
+        toggleLabel.setBorderSize (BorderSize<int> (0));
+        addAndMakeVisible (toggleLabel);
+        
         tempoToggle.setButtonText("Tempo");
         tempoToggle.setRadioGroupId (1);
         tempoToggle.addListener (this);
+        tempoToggle.setToggleState (processor.mode, dontSendNotification);
+        tempoToggle.setWantsKeyboardFocus (false);
         addAndMakeVisible (tempoToggle);
         
         noteToggle.setButtonText("Note");
         noteToggle.setRadioGroupId (1);
         noteToggle.addListener (this);
+        noteToggle.setToggleState (!processor.mode, dontSendNotification);
+        noteToggle.setWantsKeyboardFocus (false);
         addAndMakeVisible (noteToggle);
     }
     {
         tempoSpinner.attachListener (this);
+        tempoSpinner.setSpinnersText (processor.tempo, dontSendNotification);
         addChildComponent (tempoSpinner);
         
         noteSpinner.attachListener (this);
+        noteSpinner.setSpinnersText (processor.note, dontSendNotification);
         addChildComponent (noteSpinner);
         
-        displayLabel.setEditable (false);
         displayLabel.setBorderSize (BorderSize<int> (0));
         addAndMakeVisible (displayLabel);
     }
     {
         tempoSyncButton.setToggleText ("HOST", "OFF");
         tempoSyncButton.addListener (this);
+        tempoSyncButton.setToggleState (processor.tempoSync, dontSendNotification);
         addChildComponent (tempoSyncButton);
         
         tempoFraction.attachListener (this);
+        tempoFraction.setFraction (processor.numerator, processor.denominator);
         addChildComponent (tempoFraction);
         
         tempoUnitsButton.setToggleText ("HZ", "MS");
         tempoUnitsButton.addListener (this);
+        tempoUnitsButton.setToggleState (processor.units, dontSendNotification);
         addChildComponent (tempoUnitsButton);
         
         midiSyncButton.setToggleText ("MIDI", "OFF");
         midiSyncButton.addListener (this);
+        midiSyncButton.setToggleState (processor.midiSync, dontSendNotification);
         addChildComponent (midiSyncButton);
         
         tempoSyncLabel.setText ("Sync", dontSendNotification);
@@ -95,6 +105,9 @@ MusicCalculatorAudioProcessorEditor::MusicCalculatorAudioProcessorEditor (MusicC
         addAndMakeVisible (conversionUnitsLabel);
         
         copy.setButtonText ("Copy");
+        copy.setName ("Copy");
+        copy.addListener (this);
+        copy.setLookAndFeel (this);
         addAndMakeVisible (copy);
     }
     
@@ -102,6 +115,10 @@ MusicCalculatorAudioProcessorEditor::MusicCalculatorAudioProcessorEditor (MusicC
     setMidiInput (0);
     keyboardState.addListener (this);
     startTimer (100);
+    
+    setConversion();
+    
+    setResizable (true, true);
 }
 
 MusicCalculatorAudioProcessorEditor::~MusicCalculatorAudioProcessorEditor()
@@ -114,6 +131,7 @@ MusicCalculatorAudioProcessorEditor::~MusicCalculatorAudioProcessorEditor()
     tempoFraction.detachListener (this);
     tempoUnitsButton.removeListener (this);
     midiSyncButton.removeListener (this);
+    copy.removeListener (this);
     keyboardState.removeListener(this);
 }
 
@@ -130,31 +148,31 @@ void MusicCalculatorAudioProcessorEditor::resized()
     width = getWidth();
     height = getHeight();
     
-    //c.setBounds(0, 0, width, height);
-    
     int margin = (3.0 / 40.0) * height;
     int smallPanelHeight = (1.0 / 10.0) * height;
     int bigPanelHeight = (2.0 / 10.0) * height;
     
     {
         int toggleWidth = 0.2 * width;
-        tempoToggle.setBounds (0, 0, toggleWidth, smallPanelHeight);
-        noteToggle.setBounds (toggleWidth, 0, toggleWidth, smallPanelHeight);
+        int toggleLabelWidth = toggleLabel.getFont().getStringWidth (toggleLabel.getText());
+        toggleLabel.setBounds(toggleWidth/4, 0, toggleLabelWidth, smallPanelHeight);
+        tempoToggle.setBounds (toggleLabel.getX() + toggleLabel.getWidth(), 0, toggleWidth, smallPanelHeight);
+        noteToggle.setBounds (tempoToggle.getX() + tempoToggle.getWidth(), 0, toggleWidth, smallPanelHeight);
     }
     {
         int displayLabelHeight = (1.0 / 5.0) * bigPanelHeight;
-        displayLabel.setFont(Font (displayLabelHeight));
+        displayLabel.setFont (Font (displayLabelHeight));
         int displayLabelWidth =  displayLabel.getFont().getStringWidth(displayLabel.getText());
         
-        displayLabel.setBounds ((width - displayLabelWidth)/2, smallPanelHeight + margin, displayLabelWidth, displayLabelHeight);
+        displayLabel.setBounds ((width - displayLabelWidth)/2, smallPanelHeight + margin/2, displayLabelWidth, displayLabelHeight);
     
         int displayHeight = (3.0 / 5.0) * bigPanelHeight;
         
-        tempoSpinner.setFontHeight((float) displayHeight);
-        tempoSpinner.setBounds((width - tempoSpinner.width)/2, displayLabel.getY() + 2 * displayLabel.getHeight(), tempoSpinner.width, displayHeight);
+        tempoSpinner.setFontHeight ((float) displayHeight);
+        tempoSpinner.setBounds ((width - tempoSpinner.width)/2, displayLabel.getY() + 2 * displayLabel.getHeight(), tempoSpinner.width, displayHeight);
         
-        noteSpinner.setFontHeight((float) displayHeight);
-        noteSpinner.setBounds((width - noteSpinner.width)/2, displayLabel.getY() + 2 * displayLabel.getHeight(), noteSpinner.width, displayHeight);
+        noteSpinner.setFontHeight ((float) displayHeight);
+        noteSpinner.setBounds ((width - noteSpinner.width)/2, displayLabel.getY() + 2 * displayLabel.getHeight(), noteSpinner.width, displayHeight);
     }
     {
         int buttonLabelHeight = (1.0 / 5.0) * bigPanelHeight;
@@ -183,7 +201,7 @@ void MusicCalculatorAudioProcessorEditor::resized()
     }
     {
         int conversionLabelHeight = (1.0 / 5.0) * bigPanelHeight;
-        int conversionValueLabelHeight = (3.0 / 5.0) * bigPanelHeight;
+        int conversionValueLabelHeight = (2.0 / 5.0) * bigPanelHeight;
         conversionLabel.setFont (Font (conversionLabelHeight));
         conversionValueLabel.setFont (Font (conversionValueLabelHeight));
         conversionUnitsLabel.setFont (Font (conversionValueLabelHeight));
@@ -191,41 +209,32 @@ void MusicCalculatorAudioProcessorEditor::resized()
         int spaceWidth = conversionValueLabel.getFont().getStringWidth(" ");
         int conversionValueLabelWidth = conversionValueLabel.getFont().getStringWidth (conversionValueLabel.getText());
         int conversionUnitsLabelWidth = conversionValueLabel.getFont().getStringWidth (conversionUnitsLabel.getText());
+        int copyWidth = conversionLabelWidth;
+        int copyHeight = 2 * conversionLabelHeight;
         
         conversionLabel.setBounds ((width - conversionLabelWidth)/2, tempoSyncButton.getY() + tempoSyncButton.getHeight() + margin, conversionLabelWidth, conversionLabelHeight);
         
-        conversionValueLabel.setBounds ((width - conversionValueLabelWidth - spaceWidth - conversionUnitsLabelWidth)/2, conversionLabel.getY() + 2 * conversionLabelHeight, conversionValueLabelWidth, conversionValueLabelHeight);
+        copy.setBounds ((width - copyWidth)/2, conversionLabel.getY() + 2 * conversionLabel.getHeight(), copyWidth, copyHeight);
         
-        conversionUnitsLabel.setBounds (conversionValueLabel.getX() + conversionValueLabelWidth + spaceWidth, conversionLabel.getY() + 2 * conversionLabelHeight, conversionValueLabelWidth, conversionValueLabelHeight);
+        conversionValueLabel.setBounds ((width - conversionValueLabelWidth - spaceWidth - conversionUnitsLabelWidth)/2, copy.getY() + 3 * conversionLabelHeight, conversionValueLabelWidth, conversionValueLabelHeight);
         
-        //copy.setBounds (conversionUnitsLabel.getX() + conversionUnitsLabel.getWidth() + (width - (conversionUnitsLabel.getX() + conversionUnitsLabel.getWidth()))/2, conversionLabel.getY() + 2 * conversionLabelHeight, (width - (conversionUnitsLabel.getX() + conversionUnitsLabel.getWidth()))/2, conversionValueLabelHeight);
-        
+        conversionUnitsLabel.setBounds (conversionValueLabel.getX() + conversionValueLabelWidth + spaceWidth, copy.getY() + 3 * conversionLabelHeight, conversionUnitsLabelWidth, conversionValueLabelHeight);
     }
 }
 
-void MusicCalculatorAudioProcessorEditor::buttonClicked (Button *)
+void MusicCalculatorAudioProcessorEditor::buttonClicked (Button *button)
 {
-    setConversion();
-    
+    if (button->getName() == copy.getName())
     {
-        tempoSpinner.setVisible (tempoToggle.getToggleState());
-        tempoSpinner.setEnabled ( ! tempoSyncButton.getToggleState() );
-        noteSpinner.setVisible (noteToggle.getToggleState());
-        displayLabel.setText((tempoToggle.getToggleState()) ? "Tempo" : "Note", dontSendNotification);
+        conversionValueLabel.showEditor();
+        conversionValueLabel.getCurrentTextEditor()->selectAll();
+        conversionValueLabel.getCurrentTextEditor()->copyToClipboard();
+        conversionValueLabel.hideEditor (false);
     }
+    else
     {
-        tempoSyncLabel.setVisible (tempoToggle.getToggleState());
-        tempoFractionLabel.setVisible (tempoToggle.getToggleState());
-        tempoUnitsLabel.setVisible (tempoToggle.getToggleState());
-        midiSyncLabel.setVisible (noteToggle.getToggleState());
-        
-        tempoSyncButton.setVisible (tempoToggle.getToggleState());
-        tempoFraction.setVisible (tempoToggle.getToggleState());
-        tempoUnitsButton.setVisible (tempoToggle.getToggleState());
-        midiSyncButton.setVisible (noteToggle.getToggleState());
+        setConversion();
     }
-    
-    resized();
 }
 
 void MusicCalculatorAudioProcessorEditor::labelTextChanged (Label *) {  setConversion();    }
@@ -253,6 +262,24 @@ void MusicCalculatorAudioProcessorEditor::setConversion()
     processor.note = noteSpinner.toString();
     processor.midiSync = midiSyncButton.getToggleState();
     
+    {
+        tempoSpinner.setVisible (tempoToggle.getToggleState());
+        tempoSpinner.setEnabled ( ! tempoSyncButton.getToggleState() );
+        noteSpinner.setVisible (noteToggle.getToggleState());
+        displayLabel.setText((tempoToggle.getToggleState()) ? "Tempo" : "Note", dontSendNotification);
+    }
+    {
+        tempoSyncLabel.setVisible (tempoToggle.getToggleState());
+        tempoFractionLabel.setVisible (tempoToggle.getToggleState());
+        tempoUnitsLabel.setVisible (tempoToggle.getToggleState());
+        midiSyncLabel.setVisible (noteToggle.getToggleState());
+        
+        tempoSyncButton.setVisible (tempoToggle.getToggleState());
+        tempoFraction.setVisible (tempoToggle.getToggleState());
+        tempoUnitsButton.setVisible (tempoToggle.getToggleState());
+        midiSyncButton.setVisible (noteToggle.getToggleState());
+    }
+    
     resized();
 }
 
@@ -262,7 +289,7 @@ void MusicCalculatorAudioProcessorEditor::timerCallback()
     midiSyncButton.setEnabled( ! MidiInput::getDevices().isEmpty() );
     
     if (tempoToggle.getToggleState() && tempoSyncButton.getToggleState())
-        tempoSpinner.setSpinnersText (String (processor.tempo));
+        tempoSpinner.setSpinnersText (String (processor.tempo), sendNotification);
     else if (noteToggle.getToggleState() && midiSyncButton.getToggleState())
         setMidiInput(0);
 }
@@ -297,10 +324,79 @@ void MusicCalculatorAudioProcessorEditor::handleNoteOn (MidiKeyboardState*, int 
     {
         int note = midiNoteNumber % 12;
         int octave = midiNoteNumber / 12 + (3 - 5);  // octave = midiNoteNumber / 12 + (middleC - 5)
-        noteSpinner.setSpinnersText (Spinner::getNote (note) + String(octave));
+        noteSpinner.setSpinnersText (Spinner::getNote (note) + String(octave), sendNotification);
     }
 }
 
 void MusicCalculatorAudioProcessorEditor::handleNoteOff (MidiKeyboardState*, int midiChannel, int midiNoteNumber, float /*velocity*/)
 {
+}
+
+void MusicCalculatorAudioProcessorEditor::drawButtonText (Graphics& g, TextButton& button, bool /*isMouseOverButton*/, bool /*isButtonDown*/)
+{
+    Font font (getTextButtonFont (button, button.getHeight()));
+    g.setFont (font);
+    g.setColour (button.findColour (button.getToggleState() ? TextButton::textColourOnId
+                                    : TextButton::textColourOffId)
+                 .withMultipliedAlpha (button.isEnabled() ? 1.0f : 0.5f));
+    
+    const int yIndent = jmin (4, button.proportionOfHeight (0.3f));
+    const int cornerSize = jmin (button.getHeight(), button.getWidth()) / 2;
+    
+    const int fontHeight = roundToInt (font.getHeight() * 0.6f);
+    const int leftIndent  = jmin (fontHeight, 2 + cornerSize / (button.isConnectedOnLeft() ? 4 : 2));
+    const int rightIndent = jmin (fontHeight, 2 + cornerSize / (button.isConnectedOnRight() ? 4 : 2));
+    const int textWidth = button.getWidth() - leftIndent - rightIndent;
+    
+    if (textWidth > 0)
+        g.drawFittedText (button.getButtonText(),
+                          leftIndent, yIndent, textWidth, button.getHeight() - yIndent * 2,
+                          Justification::centred, 2);
+    
+}
+
+void MusicCalculatorAudioProcessorEditor::drawButtonBackground (Graphics& g, Button& button, const Colour& backgroundColour,
+                           bool isMouseOverButton, bool isButtonDown)
+{
+    Colour baseColour (backgroundColour.withMultipliedSaturation (button.hasKeyboardFocus (true) ? 1.3f : 0.9f)
+                       .withMultipliedAlpha (button.isEnabled() ? 0.9f : 0.5f));
+    
+    if (isButtonDown || isMouseOverButton)
+        baseColour = baseColour.contrasting (isButtonDown ? 0.2f : 0.1f);
+    
+    const bool flatOnLeft   = button.isConnectedOnLeft();
+    const bool flatOnRight  = button.isConnectedOnRight();
+    const bool flatOnTop    = button.isConnectedOnTop();
+    const bool flatOnBottom = button.isConnectedOnBottom();
+    
+    const float width  = button.getWidth() - 1.0f;
+    const float height = button.getHeight() - 1.0f;
+    
+    if (width > 0 && height > 0)
+    {
+        const float cornerSize = 4.0f;
+        
+        Path outline;
+        outline.addRoundedRectangle (0.5f, 0.5f, width, height, cornerSize, cornerSize,
+                                     ! (flatOnLeft  || flatOnTop),
+                                     ! (flatOnRight || flatOnTop),
+                                     ! (flatOnLeft  || flatOnBottom),
+                                     ! (flatOnRight || flatOnBottom));
+        
+        const float mainBrightness = baseColour.getBrightness();
+        const float mainAlpha = baseColour.getFloatAlpha();
+        
+        if (isButtonDown || isMouseOverButton)
+        {
+            g.setColour ((isButtonDown) ? Colours::white.withAlpha (0.4f) : Colours::white.withAlpha (0.2f));
+            g.fillPath (outline);
+        }
+        
+        g.setColour (Colours::white.withAlpha (0.4f * mainAlpha * mainBrightness * mainBrightness));
+        g.strokePath (outline, PathStrokeType (1.0f), AffineTransform::translation (0.0f, 1.0f)
+                      .scaled (1.0f, (height - 1.6f) / height));
+        
+        g.setColour (Colours::black.withAlpha (0.4f * mainAlpha));
+        g.strokePath (outline, PathStrokeType (1.0f));
+    }
 }

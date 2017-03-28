@@ -17,8 +17,8 @@ NoteSpinner::NoteSpinner()  :   s1 {Spinner::SpinnerType::NOTE, 0, 11},
 {
     font = Font ("Roboto", 50, Font::plain);
     
-    s1.setText (0);
-    s2.setText (3);
+    s1.setText (0, dontSendNotification);
+    s2.setText (3, dontSendNotification);
     
     fitBounds();
     
@@ -55,28 +55,28 @@ void NoteSpinner::fitBounds()
     ed.setBounds (0, 0, width, height);
 }
 
-void NoteSpinner::setSpinnersText (String val)
+void NoteSpinner::setSpinnersText (String val, NotificationType notification)
 {
     int len = val.length();
     
     String str1;
     String str2;
     
-    str2 = val.substring(len - 1, len);
+    str2 = val.substring (len - 1, len);
     if (regex_match (str2.toStdString(), regex ("^[0-8]$")))
     {
         str1 = val.substring(0, len - 1);
         if (noteIndex(str1) != -1)
         {
-            s1.setText(noteIndex (str1));
-            s2.setText (stoi (str2.toStdString()));
+            s1.setText (noteIndex (str1), notification);
+            s2.setText (stoi (str2.toStdString()), notification);
         }
     }
     else
     {
         str1 = val.substring(0, len);
         if (noteIndex (str1) != -1)
-            s1.setText(noteIndex (str1));
+            s1.setText (noteIndex (str1), notification);
     }
 }
 
@@ -123,7 +123,7 @@ void NoteSpinner::editorHidden (Label *label, TextEditor &editor)
     
     setSpinnersVisible (true);
     
-    setSpinnersText (ed.getTextValue().toString().trim());
+    setSpinnersText (ed.getTextValue().toString().trim(), sendNotification);
 }
 
 void NoteSpinner::labelTextChanged (Label *labelThatHasChanged)
@@ -147,7 +147,7 @@ int NoteSpinner::getNote()
 
 void NoteSpinner::setNote (int note)
 {
-    s1.setText (note);
+    s1.setText (note, sendNotification);
 }
 
 int NoteSpinner::getOctave()
@@ -157,7 +157,7 @@ int NoteSpinner::getOctave()
 
 void NoteSpinner::setOctave (int octave)
 {
-    s2.setText (octave);
+    s2.setText (octave, sendNotification);
 }
 
 int NoteSpinner::noteIndex (String val)

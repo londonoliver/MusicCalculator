@@ -80,6 +80,12 @@ private:
                                          ! (flatOnLeft  || flatOnBottom),
                                          ! (flatOnRight || flatOnBottom));
             
+            if (isButtonDown || isMouseOverButton)
+            {
+                g.setColour ((isButtonDown) ? Colours::white.withAlpha (0.4f) : Colours::white.withAlpha (0.2f));
+                g.fillPath (outline);
+            }
+            
             const float mainBrightness = baseColour.getBrightness();
             const float mainAlpha = baseColour.getFloatAlpha();
             

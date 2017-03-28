@@ -48,7 +48,7 @@ public:
     String toString();
     double getValue();
     void fitBounds();
-    void setSpinnersText (String val);
+    void setSpinnersText (String val, NotificationType notification);
     void attachListener(Label::Listener *listener);
     void detachListener(Label::Listener *listener);
     void resized() override;

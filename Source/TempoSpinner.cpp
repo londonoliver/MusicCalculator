@@ -21,12 +21,12 @@ TempoSpinner::TempoSpinner() :  s1 {Spinner::SpinnerType::NUMBER, 5, 990},
     f = s1.getFont().getTypefaceName();
     font = Font (f, 50, Font::plain);
     
-    s1.setText (120);
-    s2.Label::setText (".", sendNotification);
-    s3.setText (0);
-    s4.setText (0);
-    s5.setText (0);
-    s6.setText (0);
+    s1.setText (120, dontSendNotification);
+    s2.Label::setText (".", dontSendNotification);
+    s3.setText (0, dontSendNotification);
+    s4.setText (0, dontSendNotification);
+    s5.setText (0, dontSendNotification);
+    s6.setText (0, dontSendNotification);
     
     fitBounds();
     
@@ -94,7 +94,7 @@ void TempoSpinner::fitBounds()
     ed.setBounds (0, 0, width, height);
 }
 
-void TempoSpinner::setSpinnersText (String val)
+void TempoSpinner::setSpinnersText (String val, NotificationType notification)
 {
     int len = val.length();
     
@@ -104,11 +104,11 @@ void TempoSpinner::setSpinnersText (String val)
     
     int i1 = stoi (val.substring (0, i).toStdString());
     
-    s1.setText (i1);
-    s3.setText ((++i < len) ? stoi (val.substring (i, i + 1).toStdString()) : 0);
-    s4.setText ((++i < len) ? stoi (val.substring (i, i + 1).toStdString()) : 0);
-    s5.setText ((++i < len) ? stoi (val.substring (i, i + 1).toStdString()) : 0);
-    s6.setText ((++i < len) ? stoi (val.substring (i, i + 1).toStdString()) : 0);
+    s1.setText (i1, notification);
+    s3.setText ((++i < len) ? stoi (val.substring (i, i + 1).toStdString()) : 0, notification);
+    s4.setText ((++i < len) ? stoi (val.substring (i, i + 1).toStdString()) : 0, notification);
+    s5.setText ((++i < len) ? stoi (val.substring (i, i + 1).toStdString()) : 0, notification);
+    s6.setText ((++i < len) ? stoi (val.substring (i, i + 1).toStdString()) : 0, notification);
 }
 
 void TempoSpinner::attachListener(Label::Listener *listener)
@@ -174,7 +174,7 @@ void TempoSpinner::editorHidden (Label *label, TextEditor &editor)
     
     if (regex_match (val.toStdString(), regex ("(\\d+)((\\.)(\\d*)?)?")))
     {
-        setSpinnersText (val);
+        setSpinnersText (val, sendNotification);
     }
 }
 

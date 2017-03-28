@@ -22,8 +22,8 @@ public:
         addAndMakeVisible (numerator);
         addAndMakeVisible (denominator);
         
-        numerator.setText(0);
-        denominator.setText(3);
+        numerator.setText(0, dontSendNotification);
+        denominator.setText(3, dontSendNotification);
     }
     
     void paint (Graphics &g) override
@@ -66,8 +66,8 @@ public:
     
     void setFraction (int numerator, int denominator)
     {
-        this->numerator.setText (numerator);
-        this->denominator.setText (denominator);
+        this->numerator.setText (this->numerator.arr.indexOf (numerator), dontSendNotification);
+        this->denominator.setText (this->denominator.arr.indexOf (denominator), dontSendNotification);
     }
     
     double getFraction()
