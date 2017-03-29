@@ -29,6 +29,8 @@ public:
     int s2Width;
     
     NoteSpinner();
+    ~NoteSpinner();
+    
     
     void setTextColour (Colour colour);
     int getNote();

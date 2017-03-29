@@ -26,6 +26,12 @@ public:
         repaint();
     }
     
+    void setColour (Colour colour)
+    {
+        Component::setColour (TextButton::ColourIds::textColourOffId, colour);
+        Component::setColour (TextButton::ColourIds::textColourOnId, colour);
+    }
+    
 private:
     void drawButtonText (Graphics& g, TextButton& button, bool /*isMouseOverButton*/, bool /*isButtonDown*/) override
     {
@@ -99,6 +105,11 @@ private:
             g.setColour (Colours::black.withAlpha (0.4f * mainAlpha));
             g.strokePath (outline, PathStrokeType (1.0f));
         }
+    }
+    
+    Font getTextButtonFont (TextButton&, int buttonHeight) override
+    {
+        return Font (buttonHeight * 0.4f);
     }
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ToggleTextButton)

@@ -17,6 +17,7 @@
 #include "NoteSpinner.h"
 #include "Fraction.cpp"
 #include "ToggleTextButton.cpp"
+#include "Checkmark.cpp"
 
 
 
@@ -57,6 +58,7 @@ public:
     Label conversionValueLabel;
     Label conversionUnitsLabel;
     TextButton copy;
+    Checkmark check;
     //
     
     
@@ -84,6 +86,9 @@ private:
     
     void drawButtonText (Graphics& g, TextButton& button, bool /*isMouseOverButton*/, bool /*isButtonDown*/) override;
     void drawButtonBackground (Graphics& g, Button& button, const Colour& backgroundColour, bool isMouseOverButton, bool isButtonDown) override;
+    Font getTextButtonFont (TextButton&, int buttonHeight) override;
+    void drawToggleButton (Graphics& g, ToggleButton& button, bool isMouseOverButton, bool isButtonDown) override;
+    void drawTickBox (Graphics& g, Component& component, float x, float y, float w, float h,const bool ticked, const bool isEnabled, const bool isMouseOverButton, const bool isButtonDown) override;
     
     void setMidiInput (int index);
     void handleIncomingMidiMessage (MidiInput* source, const MidiMessage& message) override;

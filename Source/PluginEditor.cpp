@@ -20,7 +20,14 @@ using namespace std;
 MusicCalculatorAudioProcessorEditor::MusicCalculatorAudioProcessorEditor (MusicCalculatorAudioProcessor& p)
 : AudioProcessorEditor (&p), processor (p)
 {
-    setSize (300, 350);
+    width = 300;
+    height = 1.167 * width;
+    
+    setResizable(true, true);
+    setResizeLimits(width, height, 3 * width, 3 * height);
+    setSize (width, height);
+    getConstrainer()->setFixedAspectRatio ( (double) width / (double) height );
+    setConstrainer(this);
     
     {
         toggleLabel.setText("Conversion Type:", dontSendNotification);
@@ -32,6 +39,7 @@ MusicCalculatorAudioProcessorEditor::MusicCalculatorAudioProcessorEditor (MusicC
         tempoToggle.addListener (this);
         tempoToggle.setToggleState (processor.mode, dontSendNotification);
         tempoToggle.setWantsKeyboardFocus (false);
+        tempoToggle.setLookAndFeel (this);
         addAndMakeVisible (tempoToggle);
         
         noteToggle.setButtonText("Note");
@@ -39,6 +47,7 @@ MusicCalculatorAudioProcessorEditor::MusicCalculatorAudioProcessorEditor (MusicC
         noteToggle.addListener (this);
         noteToggle.setToggleState (!processor.mode, dontSendNotification);
         noteToggle.setWantsKeyboardFocus (false);
+        noteToggle.setLookAndFeel (this);
         addAndMakeVisible (noteToggle);
     }
     {
@@ -109,6 +118,8 @@ MusicCalculatorAudioProcessorEditor::MusicCalculatorAudioProcessorEditor (MusicC
         copy.addListener (this);
         copy.setLookAndFeel (this);
         addAndMakeVisible (copy);
+        
+        addChildComponent (check);
     }
     
     lastInputIndex = 0;
@@ -117,8 +128,6 @@ MusicCalculatorAudioProcessorEditor::MusicCalculatorAudioProcessorEditor (MusicC
     startTimer (100);
     
     setConversion();
-    
-    setResizable (true, true);
 }
 
 MusicCalculatorAudioProcessorEditor::~MusicCalculatorAudioProcessorEditor()
@@ -138,7 +147,141 @@ MusicCalculatorAudioProcessorEditor::~MusicCalculatorAudioProcessorEditor()
 //==============================================================================
 void MusicCalculatorAudioProcessorEditor::paint (Graphics& g)
 {
-    g.fillAll (Colours::red);
+    Colour displayColour = Colours::maroon;
+    Colour skinColour = Colour (82, 87, 88);
+    Colour skinTextColour = Colour (242, 242, 242);
+    Colour displayTextColour = Colour (254, 236, 220);
+    Colour skinBrighter = Colours::white.withAlpha(0.2f);
+    
+
+    
+    toggleLabel.setColour (Label::ColourIds::textColourId, skinTextColour);
+    displayLabel.setColour(Label::ColourIds::textColourId, displayTextColour);
+    tempoSyncLabel.setColour (Label::ColourIds::textColourId, skinTextColour);
+    tempoFractionLabel.setColour (Label::ColourIds::textColourId, skinTextColour);
+    tempoUnitsLabel.setColour (Label::ColourIds::textColourId, skinTextColour);
+    midiSyncLabel.setColour (Label::ColourIds::textColourId, skinTextColour);
+    conversionLabel.setColour (Label::ColourIds::textColourId, skinTextColour);
+    conversionValueLabel.setColour (Label::ColourIds::textColourId, skinTextColour);
+    conversionUnitsLabel.setColour (Label::ColourIds::textColourId, skinTextColour);
+    
+    tempoToggle.setColour(ToggleButton::ColourIds::textColourId, skinTextColour);
+    //tempoToggle.setColour(ToggleButton::ColourIds::tickColourId, skinTextColour);
+    noteToggle.setColour(ToggleButton::ColourIds::textColourId, skinTextColour);
+    //noteToggle.setColour(ToggleButton::ColourIds::tickColourId, skinTextColour);
+    tempoSpinner.setTextColour (displayTextColour);
+    noteSpinner.setTextColour (displayTextColour);
+    tempoFraction.setColour (skinTextColour);
+    tempoSyncButton.setColour (skinTextColour);
+    //tempoSyncButton.juce::Component::setColour (TextButton::ColourIds::buttonColourId, skinColour);
+    tempoUnitsButton.setColour (skinTextColour);
+    //tempoUnitsButton.juce::Component::setColour (TextButton::ColourIds::buttonColourId, skinColour);
+    copy.setColour (TextButton::ColourIds::textColourOffId, skinTextColour);
+    check.setColour (skinTextColour);
+    midiSyncButton.setColour (skinTextColour);
+    
+    int lineHeight = height/350;
+    
+    int toggleEnd = toggleLabel.getY() + toggleLabel.getHeight() + width * 0.02;
+    int margin = (3.0 / 40.0) * height;
+    int buttonsBegin = tempoSpinner.getY() + tempoSpinner.getHeight() + margin/2;
+    int conversionBegin = tempoSyncButton.getY() + tempoSyncButton.getHeight() + margin/2;
+    
+    int buttonWidth = (1.0 / 6.0) * width;
+    int button1End = 2 * buttonWidth;
+    int button2End = 4 * buttonWidth;
+    
+    g.setGradientFill(ColourGradient (skinColour.brighter(0.2f), 0.0f, 0, skinColour, 0.0f, height, false));
+    g.fillRect(0, 0, width, height);
+    
+    // toggle fill
+    g.setColour(skinColour);
+    g.fillRect(0, 0, width, toggleEnd);
+    
+    // display fill
+    g.setColour(displayColour);
+    g.fillRect (0, toggleEnd, width, buttonsBegin - toggleEnd);
+    
+    // display glare
+    g.setColour(Colours::white.withAlpha(0.1f));
+    Rectangle<int> r (0, toggleEnd, width, (buttonsBegin - toggleEnd)/2);
+    r.reduce(lineHeight * 2, lineHeight * 2);
+    g.fillRoundedRectangle (r.toFloat(), lineHeight * 3);
+    
+    // buttons gradient fill
+    g.setGradientFill(ColourGradient (skinColour.brighter(0.2f), 0.0f, buttonsBegin, skinColour, 0.0f, height - buttonsBegin, false));
+    g.fillRect(0, buttonsBegin, width, conversionBegin - buttonsBegin);
+    
+    //conversion gradient fill
+    g.setGradientFill(ColourGradient (skinColour.brighter(0.1f), 0.0f, conversionBegin, skinColour.darker(0.1f), 0.0f, height, false));
+    g.fillRect(0, conversionBegin, width, height);
+    
+    // lines
+    
+    { // toggle
+        g.setColour (skinColour.darker());
+        g.fillRect (0, toggleEnd - lineHeight, width, lineHeight);
+        
+        g.setColour (displayColour.brighter());
+        g.fillRect (0, toggleEnd, width, lineHeight);
+    }
+    {   // buttons top
+        g.setColour (displayColour.darker());
+        g.fillRect (0, buttonsBegin - lineHeight, width, lineHeight);
+        
+        g.setColour (skinBrighter);
+        g.fillRect (lineHeight * 2, buttonsBegin, width - lineHeight * 2, lineHeight);
+    }
+    {   // buttons vertical
+        if (tempoToggle.getToggleState())
+        {
+            g.setColour (skinColour.darker());
+            g.fillRect (button1End, buttonsBegin, lineHeight, conversionBegin - buttonsBegin - lineHeight);
+            g.fillRect (button2End , buttonsBegin, lineHeight, conversionBegin - buttonsBegin - lineHeight);
+            
+            g.setColour (skinBrighter);
+            g.fillRect (button1End + lineHeight, buttonsBegin + lineHeight, lineHeight, conversionBegin - buttonsBegin -  2 * lineHeight);
+            g.fillRect (button2End + lineHeight, buttonsBegin + lineHeight, lineHeight, conversionBegin - buttonsBegin - 2 * lineHeight);
+        }
+    }
+    {   // conversion top
+        g.setColour (skinColour.darker());
+        g.fillRect(lineHeight, conversionBegin - lineHeight, width, lineHeight);
+        
+        g.setColour (skinBrighter);
+        g.fillRect(lineHeight * 2, conversionBegin, width - lineHeight * 2, lineHeight);
+    }
+    {   // bottom
+        g.setColour (skinColour.darker());
+        g.fillRect(lineHeight, height - lineHeight, width, lineHeight);
+    }
+    {   // sides
+        g.setColour(skinColour.darker());
+        g.fillRect (0, 0, lineHeight, toggleEnd);
+        g.fillRect (width - lineHeight, 0, lineHeight, toggleEnd);
+        
+        g.fillRect (0, buttonsBegin, lineHeight, height - buttonsBegin);
+        g.fillRect (width - lineHeight, buttonsBegin, lineHeight, height - buttonsBegin);
+        
+        g.setColour (skinBrighter);
+        //g.fillRect (lineHeight, buttonsBegin, lineHeight, height - buttonsBegin - lineHeight);
+        //g.fillRect (lineHeight, 0, lineHeight, toggleEnd - lineHeight);
+        
+        
+        
+        g.setColour(displayColour.darker());
+        g.fillRect(0, toggleEnd, lineHeight, buttonsBegin - toggleEnd);
+        g.fillRect(width - lineHeight, toggleEnd, lineHeight, buttonsBegin - toggleEnd);
+        
+        g.setColour(displayColour.brighter());
+        //g.fillRect(lineHeight, toggleEnd, lineHeight, buttonsBegin - toggleEnd - lineHeight);
+        
+    }
+    
+
+    
+    
+    
     g.setColour (Colours::black);
     g.setFont (15.0f);
 }
@@ -149,30 +292,32 @@ void MusicCalculatorAudioProcessorEditor::resized()
     height = getHeight();
     
     int margin = (3.0 / 40.0) * height;
-    int smallPanelHeight = (1.0 / 10.0) * height;
+    int smallPanelHeight = (1.0 / 20.0) * height;
     int bigPanelHeight = (2.0 / 10.0) * height;
     
     {
         int toggleWidth = 0.2 * width;
+        int toggleMargin = width * 0.02;
+        toggleLabel.setFont (Font (smallPanelHeight * 0.75f));
         int toggleLabelWidth = toggleLabel.getFont().getStringWidth (toggleLabel.getText());
-        toggleLabel.setBounds(toggleWidth/4, 0, toggleLabelWidth, smallPanelHeight);
-        tempoToggle.setBounds (toggleLabel.getX() + toggleLabel.getWidth(), 0, toggleWidth, smallPanelHeight);
-        noteToggle.setBounds (tempoToggle.getX() + tempoToggle.getWidth(), 0, toggleWidth, smallPanelHeight);
+        toggleLabel.setBounds(toggleMargin, toggleMargin, toggleLabelWidth, smallPanelHeight);
+        tempoToggle.setBounds (toggleLabel.getX() + toggleLabel.getWidth(), toggleMargin, toggleWidth, smallPanelHeight);
+        noteToggle.setBounds (tempoToggle.getX() + tempoToggle.getWidth(), toggleMargin, toggleWidth, smallPanelHeight);
     }
     {
         int displayLabelHeight = (1.0 / 5.0) * bigPanelHeight;
         displayLabel.setFont (Font (displayLabelHeight));
-        int displayLabelWidth =  displayLabel.getFont().getStringWidth(displayLabel.getText());
+        int displayLabelWidth =  displayLabel.getFont().getStringWidth (displayLabel.getText());
         
-        displayLabel.setBounds ((width - displayLabelWidth)/2, smallPanelHeight + margin/2, displayLabelWidth, displayLabelHeight);
+        displayLabel.setBounds ((width - displayLabelWidth)/2, smallPanelHeight + margin, displayLabelWidth, displayLabelHeight);
     
         int displayHeight = (3.0 / 5.0) * bigPanelHeight;
         
         tempoSpinner.setFontHeight ((float) displayHeight);
-        tempoSpinner.setBounds ((width - tempoSpinner.width)/2, displayLabel.getY() + 2 * displayLabel.getHeight(), tempoSpinner.width, displayHeight);
+        tempoSpinner.setBounds ((width - tempoSpinner.width)/2, displayLabel.getY() + 1.5 * displayLabel.getHeight(), tempoSpinner.width, displayHeight);
         
         noteSpinner.setFontHeight ((float) displayHeight);
-        noteSpinner.setBounds ((width - noteSpinner.width)/2, displayLabel.getY() + 2 * displayLabel.getHeight(), noteSpinner.width, displayHeight);
+        noteSpinner.setBounds ((width - noteSpinner.width)/2, displayLabel.getY() + 1.5 * displayLabel.getHeight(), noteSpinner.width, displayHeight);
     }
     {
         int buttonLabelHeight = (1.0 / 5.0) * bigPanelHeight;
@@ -216,6 +361,8 @@ void MusicCalculatorAudioProcessorEditor::resized()
         
         copy.setBounds ((width - copyWidth)/2, conversionLabel.getY() + 2 * conversionLabel.getHeight(), copyWidth, copyHeight);
         
+        check.setBounds (copy.getX() + copy.getWidth() + copyHeight/2, copy.getY(), copyHeight/1.5, copyHeight/1.5);
+        
         conversionValueLabel.setBounds ((width - conversionValueLabelWidth - spaceWidth - conversionUnitsLabelWidth)/2, copy.getY() + 3 * conversionLabelHeight, conversionValueLabelWidth, conversionValueLabelHeight);
         
         conversionUnitsLabel.setBounds (conversionValueLabel.getX() + conversionValueLabelWidth + spaceWidth, copy.getY() + 3 * conversionLabelHeight, conversionUnitsLabelWidth, conversionValueLabelHeight);
@@ -230,6 +377,10 @@ void MusicCalculatorAudioProcessorEditor::buttonClicked (Button *button)
         conversionValueLabel.getCurrentTextEditor()->selectAll();
         conversionValueLabel.getCurrentTextEditor()->copyToClipboard();
         conversionValueLabel.hideEditor (false);
+
+        check.setVisible (true);
+        check.setAlpha (1.0f);
+        Desktop::getInstance().getAnimator().fadeOut (&check, 500);
     }
     else
     {
@@ -281,6 +432,7 @@ void MusicCalculatorAudioProcessorEditor::setConversion()
     }
     
     resized();
+    repaint();
 }
 
 void MusicCalculatorAudioProcessorEditor::timerCallback()
@@ -398,5 +550,80 @@ void MusicCalculatorAudioProcessorEditor::drawButtonBackground (Graphics& g, But
         
         g.setColour (Colours::black.withAlpha (0.4f * mainAlpha));
         g.strokePath (outline, PathStrokeType (1.0f));
+    }
+}
+
+Font MusicCalculatorAudioProcessorEditor::getTextButtonFont (TextButton&, int buttonHeight)
+{
+    return Font (buttonHeight * 0.6f);
+}
+
+void MusicCalculatorAudioProcessorEditor::drawToggleButton (Graphics& g, ToggleButton& button,
+                                       bool isMouseOverButton, bool isButtonDown)
+{
+    if (button.hasKeyboardFocus (true))
+    {
+        g.setColour (button.findColour (TextEditor::focusedOutlineColourId));
+        g.drawRect (0, 0, button.getWidth(), button.getHeight());
+    }
+    
+    float fontSize = button.getHeight() * 0.75f;
+    const float tickWidth = fontSize * 1.1f;
+    
+    drawTickBox (g, button, 4.0f, (button.getHeight() - tickWidth) * 0.5f,
+                 tickWidth, tickWidth,
+                 button.getToggleState(),
+                 button.isEnabled(),
+                 isMouseOverButton,
+                 isButtonDown);
+    
+    g.setColour (button.findColour (ToggleButton::textColourId));
+    g.setFont (fontSize);
+    
+    if (! button.isEnabled())
+        g.setOpacity (0.5f);
+    
+    const int textX = (int) tickWidth + 5;
+    
+    g.drawFittedText (button.getButtonText(),
+                      textX, 0,
+                      button.getWidth() - textX - 2, button.getHeight(),
+                      Justification::centredLeft, 10);
+}
+
+void MusicCalculatorAudioProcessorEditor::drawTickBox (Graphics& g, Component& component,
+                                  float x, float y, float w, float h,
+                                  const bool ticked,
+                                  const bool isEnabled,
+                                  const bool isMouseOverButton,
+                                  const bool isButtonDown)
+{
+    const float boxSize = w * 0.7f;
+    
+    const float sat = 1.3f;
+    const Colour baseColour (component.findColour (TextButton::buttonColourId)
+                             .withMultipliedAlpha (isEnabled ? 1.0f : 0.5f).withMultipliedSaturation (sat));
+    
+    if (isButtonDown)      baseColour.contrasting (0.2f);
+    if (isMouseOverButton) baseColour.contrasting (0.1f);
+    
+    
+    drawGlassSphere (g, x, y + (h - boxSize) * 0.5f, boxSize,
+                     baseColour, isEnabled ? ((isButtonDown || isMouseOverButton) ? 1.1f : 0.5f) : 0.3f);
+    
+    if (ticked)
+    {
+        Path tick;
+        tick.startNewSubPath (1.5f, 3.0f);
+        tick.lineTo (3.0f, 6.0f);
+        tick.lineTo (6.0f, 0.0f);
+        
+        g.setColour (component.findColour (isEnabled ? ToggleButton::tickColourId
+                                           : ToggleButton::tickDisabledColourId));
+        
+        const AffineTransform trans (AffineTransform::scale (w / 9.0f, h / 9.0f)
+                                     .translated (x, y));
+        
+        g.strokePath (tick, PathStrokeType (h/8), trans);
     }
 }

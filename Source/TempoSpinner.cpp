@@ -45,12 +45,13 @@ TempoSpinner::TempoSpinner() :  s1 {Spinner::SpinnerType::NUMBER, 5, 990},
     ed.setVisible (false);
     ed.addListener (this);
     ed.setLookAndFeel (this);
-    
-    highlightColour = Colours::white.withAlpha(0.5f);
+    ed.setColour (TextEditor::ColourIds::focusedOutlineColourId, Colours::white.withAlpha(0.0f));
+    ed.setColour (TextEditor::ColourIds::highlightColourId, Colours::white.withAlpha(0.5f));
 }
 
 TempoSpinner::~TempoSpinner()
 {
+    detachListener (this);
     ed.removeListener (this);
 }
 String TempoSpinner::toString()
@@ -144,14 +145,20 @@ void TempoSpinner::mouseDoubleClick (const MouseEvent &e)
     setSpinnersVisible (false);
     
     ed.setVisible (true);
-    
-    ed.setText (toString(), sendNotification);
-    
+    ed.setText (toString(), dontSendNotification);
     ed.showEditor();
-    
-    ed.getCurrentTextEditor()->setColour (TextEditor::ColourIds::focusedOutlineColourId, Colours::white.withAlpha(0.0f));
-    ed.getCurrentTextEditor()->setColour (TextEditor::ColourIds::highlightColourId, highlightColour);
-    //ed.getCurrentTextEditor()->setColour (TextEditor::ColourIds::highlightedTextColourId, Colour (177, 202, 225));
+}
+
+void TempoSpinner::mouseDown (const MouseEvent &e)
+{
+    if (e.mods.isCtrlDown())
+    {
+        s3.setText(0, sendNotification);
+        s4.setText(0, sendNotification);
+        s5.setText(0, sendNotification);
+        s6.setText(0, sendNotification);
+        
+    }
 }
 
 void TempoSpinner::setSpinnersVisible (bool visible)
@@ -188,17 +195,15 @@ void TempoSpinner::editorShown (Label *, TextEditor &)
 }
 
 void TempoSpinner::setFontHeight (float fontHeight)
-{
-    font = Font (f, fontHeight, Font::plain);
+{    
+    s1.setFont (Font (fontHeight));
+    s2.setFont (Font (fontHeight));
+    s3.setFont (Font (fontHeight));
+    s4.setFont (Font (fontHeight));
+    s5.setFont (Font (fontHeight));
+    s6.setFont (Font (fontHeight));
     
-    s1.setFont (Font (f, fontHeight, Font::plain));
-    s2.setFont (Font (f, fontHeight, Font::plain));
-    s3.setFont (Font (f, fontHeight, Font::plain));
-    s4.setFont (Font (f, fontHeight, Font::plain));
-    s5.setFont (Font (f, fontHeight, Font::plain));
-    s6.setFont (Font (f, fontHeight, Font::plain));
-    
-    ed.setFont (Font (f, fontHeight, Font::plain));
+    ed.setFont (Font (fontHeight));
     
     fitBounds();
 }

@@ -32,6 +32,14 @@ NoteSpinner::NoteSpinner()  :   s1 {Spinner::SpinnerType::NOTE, 0, 11},
     addAndMakeVisible (ed);
     ed.setVisible (false);
     ed.addListener (this);
+    ed.setColour (TextEditor::ColourIds::focusedOutlineColourId, Colours::white.withAlpha(0.0f));
+    ed.setColour (TextEditor::ColourIds::highlightColourId, Colours::white.withAlpha(0.5f));
+}
+
+NoteSpinner::~NoteSpinner()
+{
+    detachListener (this);
+    ed.removeListener (this);
 }
 
 String NoteSpinner::toString()
@@ -46,6 +54,7 @@ void NoteSpinner::fitBounds()
     
     height = font.getHeight();
     width = s1Width + s2Width;
+    width *= 1.1; // to make up for caret in editor
     
     Component::setBounds (0, 0, width, height);
     
@@ -105,9 +114,7 @@ void NoteSpinner::mouseDoubleClick (const MouseEvent &e)
     setSpinnersVisible (false);
     
     ed.setVisible (true);
-    
-    ed.setText (toString(), sendNotification);
-    
+    ed.setText (toString(), dontSendNotification);
     ed.showEditor();
 }
 
@@ -131,7 +138,7 @@ void NoteSpinner::labelTextChanged (Label *labelThatHasChanged)
     resized();
 }
 
-void NoteSpinner::editorShown (Label *, TextEditor &)
+void NoteSpinner::editorShown (Label *l, TextEditor &ed)
 {
 }
 

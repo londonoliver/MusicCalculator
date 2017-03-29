@@ -103,6 +103,8 @@ void Spinner::mouseDown(const MouseEvent &event)
 {
     if (type != SpinnerType::PERIOD && isEnabled()) setColour (ColourIds::backgroundColourId, highlightColour);
     
+    if (getParentComponent()) getParentComponent()->mouseDown (event);
+    
     enabled = false;
     mousePoint.setY(event.y);
 }
