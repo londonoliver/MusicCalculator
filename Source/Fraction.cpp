@@ -57,9 +57,8 @@ public:
         g.fillAll (Colours::white.withAlpha (0.0f));
         g.setColour (colour);
         int lineWidth = numerator.getFont().getStringWidth("128");
-        int lineThickness = getHeight()/42;
         //g.drawHorizontalLine(getHeight()/2, (getWidth() - lineWidth)/2, (getWidth() + lineWidth)/2);
-        g.fillRect((getWidth() - lineWidth)/2, (getHeight() - lineThickness)/2, lineWidth, lineThickness);
+        //g.fillRect((getWidth() - lineWidth)/2, (getHeight() - lineThickness)/2, lineWidth, lineThickness);
     }
     
     void resized() override

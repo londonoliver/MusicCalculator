@@ -34,6 +34,8 @@ class MusicCalculatorAudioProcessorEditor : public AudioProcessorEditor,
                                             private LabelListener
 {
 public:
+    
+    Component container;
     //
     Label toggleLabel;
     ToggleButton tempoToggle, noteToggle;
@@ -61,6 +63,7 @@ public:
     Checkmark check;
     //
     
+    Point<int> p1, p2, p3, p4, p5;
     
     MusicCalculatorAudioProcessorEditor (MusicCalculatorAudioProcessor&);
     ~MusicCalculatorAudioProcessorEditor();
@@ -75,8 +78,6 @@ private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
     MusicCalculatorAudioProcessor& processor;
-
-    int width, height;
     
     void timerCallback() override;
     void setConversion();

@@ -28,8 +28,6 @@ TempoSpinner::TempoSpinner() :  s1 {Spinner::SpinnerType::NUMBER, 5, 990},
     s5.setText (0, dontSendNotification);
     s6.setText (0, dontSendNotification);
     
-    fitBounds();
-    
     addAndMakeVisible (s1);
     addAndMakeVisible (s2);
     addAndMakeVisible (s3);
@@ -67,32 +65,6 @@ double TempoSpinner::getValue()
             (double) s5.getTextValue().getValue() * 0.001 +
             (double) s6.getTextValue().getValue() * 0.0001;
     
-}
-
-void TempoSpinner::fitBounds()
-{
-    
-    s1Width = s1.getFont().getStringWidth (s1.getTextValue().toString());
-    s2Width = s2.getFont().getStringWidth (s2.getTextValue().toString());
-    s3Width = s3.getFont().getStringWidth (s3.getTextValue().toString());
-    s4Width = s4.getFont().getStringWidth (s4.getTextValue().toString());
-    s5Width = s5.getFont().getStringWidth (s5.getTextValue().toString());
-    s6Width = s6.getFont().getStringWidth (s6.getTextValue().toString());
-    
-    height = s1.getFont().getHeight();
-    width = s1Width + s2Width + s3Width + s4Width + s5Width + s6Width;
-    width *= 1.1; // to make up for caret in editor
-    
-    Component::setBounds (0, 0, width, height);
-    
-    s1.setBounds (0, 0, s1Width, height);
-    s2.setBounds (s1Width, 0, s2Width, height);
-    s3.setBounds (s1Width + s2Width, 0, s3Width, height);
-    s4.setBounds (s1Width + s2Width + s3Width, 0, s4Width, height);
-    s5.setBounds (s1Width + s2Width + s3Width + s4Width, 0, s5Width, height);
-    s6.setBounds (s1Width + s2Width + s3Width + s4Width + s5Width, 0, s6Width, height);
-    
-    ed.setBounds (0, 0, width, height);
 }
 
 void TempoSpinner::setSpinnersText (String val, NotificationType notification)
@@ -134,10 +106,25 @@ void TempoSpinner::detachListener(Label::Listener *listener)
 
 void TempoSpinner::resized()
 {
-    fitBounds();
+    s1Width = s1.getFont().getStringWidth (s1.getTextValue().toString());
+    s2Width = s2.getFont().getStringWidth (s2.getTextValue().toString());
+    s3Width = s3.getFont().getStringWidth (s3.getTextValue().toString());
+    s4Width = s4.getFont().getStringWidth (s4.getTextValue().toString());
+    s5Width = s5.getFont().getStringWidth (s5.getTextValue().toString());
+    s6Width = s6.getFont().getStringWidth (s6.getTextValue().toString());
     
-    if (getParentComponent())
-        getParentComponent()->resized();
+    height = s1.getFont().getHeight();
+    width = s1Width + s2Width + s3Width + s4Width + s5Width + s6Width;
+    width *= 1.1; // to make up for caret in editor
+    
+    s1.setBounds (0, 0, s1Width, height);
+    s2.setBounds (s1Width, 0, s2Width, height);
+    s3.setBounds (s1Width + s2Width, 0, s3Width, height);
+    s4.setBounds (s1Width + s2Width + s3Width, 0, s4Width, height);
+    s5.setBounds (s1Width + s2Width + s3Width + s4Width, 0, s5Width, height);
+    s6.setBounds (s1Width + s2Width + s3Width + s4Width + s5Width, 0, s6Width, height);
+    
+    ed.setBounds (0, 0, width, height);
 }
 
 void TempoSpinner::mouseDoubleClick (const MouseEvent &e)
@@ -205,7 +192,7 @@ void TempoSpinner::setFontHeight (float fontHeight)
     
     ed.setFont (Font (fontHeight));
     
-    fitBounds();
+    resized();
 }
 
 void TempoSpinner::setBackgroundColour (Colour colour)

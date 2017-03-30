@@ -14,17 +14,7 @@
     <GROUP id="{8E453A34-B25A-3B41-04E5-C3C5747C63C8}" name="Source">
       <FILE id="x0EjG2" name="ToggleTextButton.cpp" compile="1" resource="0"
             file="Source/ToggleTextButton.cpp"/>
-      <FILE id="Qmbwjg" name="ButtonPanel.cpp" compile="1" resource="0" file="Source/ButtonPanel.cpp"/>
-      <FILE id="XQT6f3" name="Container.cpp" compile="1" resource="0" file="Source/Container.cpp"/>
       <FILE id="ktN4Uv" name="Fraction.cpp" compile="1" resource="0" file="Source/Fraction.cpp"/>
-      <FILE id="xcNOt5" name="OutputPanel.cpp" compile="1" resource="0" file="Source/OutputPanel.cpp"/>
-      <FILE id="YmicfV" name="Tempo.cpp" compile="1" resource="0" file="Source/Tempo.cpp"/>
-      <FILE id="nkh97x" name="ModeButtons.cpp" compile="1" resource="0" file="Source/ModeButtons.cpp"/>
-      <FILE id="lhdh4z" name="Header.cpp" compile="1" resource="0" file="Source/Header.cpp"/>
-      <FILE id="NCb6hr" name="NewDisplay.cpp" compile="1" resource="0" file="Source/NewDisplay.cpp"/>
-      <FILE id="bYhgvm" name="metronome.svg" compile="0" resource="1" file="Source/metronome.svg"/>
-      <FILE id="HOuLwS" name="note.svg" compile="0" resource="1" file="Source/note.svg"/>
-      <FILE id="JbVcPk" name="clipboard.svg" compile="0" resource="1" file="Source/clipboard.svg"/>
       <FILE id="lS3fey" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
       <FILE id="wN6EYw" name="PluginProcessor.h" compile="0" resource="0"
@@ -39,11 +29,6 @@
       <FILE id="AubRvi" name="NoteSpinner.h" compile="0" resource="0" file="Source/NoteSpinner.h"/>
       <FILE id="qQqXV9" name="Spinner.cpp" compile="1" resource="0" file="Source/Spinner.cpp"/>
       <FILE id="yf0Tig" name="Spinner.h" compile="0" resource="0" file="Source/Spinner.h"/>
-      <FILE id="yGiD04" name="Display.cpp" compile="1" resource="0" file="Source/Display.cpp"/>
-      <FILE id="RybrTs" name="CustomTableCell.cpp" compile="1" resource="0"
-            file="Source/CustomTableCell.cpp"/>
-      <FILE id="F29zOg" name="CustomTableCell.h" compile="0" resource="0"
-            file="Source/CustomTableCell.h"/>
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>

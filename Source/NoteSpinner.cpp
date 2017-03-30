@@ -20,8 +20,6 @@ NoteSpinner::NoteSpinner()  :   s1 {Spinner::SpinnerType::NOTE, 0, 11},
     s1.setText (0, dontSendNotification);
     s2.setText (3, dontSendNotification);
     
-    fitBounds();
-    
     addAndMakeVisible (s1);
     addAndMakeVisible (s2);
     
@@ -45,23 +43,6 @@ NoteSpinner::~NoteSpinner()
 String NoteSpinner::toString()
 {
     return s1.getTextValue().toString() + s2.getTextValue().toString();
-}
-
-void NoteSpinner::fitBounds()
-{
-    s1Width = font.getStringWidth (s1.getTextValue().toString());
-    s2Width = font.getStringWidth (s2.getTextValue().toString());
-    
-    height = font.getHeight();
-    width = s1Width + s2Width;
-    width *= 1.1; // to make up for caret in editor
-    
-    Component::setBounds (0, 0, width, height);
-    
-    s1.setBounds (0, 0, s1Width, height);
-    s2.setBounds (s1Width, 0, s2Width, height);
-    
-    ed.setBounds (0, 0, width, height);
 }
 
 void NoteSpinner::setSpinnersText (String val, NotificationType notification)
@@ -103,10 +84,17 @@ void NoteSpinner::detachListener(Label::Listener *listener)
 
 void NoteSpinner::resized()
 {
-    fitBounds();
+    s1Width = font.getStringWidth (s1.getTextValue().toString());
+    s2Width = font.getStringWidth (s2.getTextValue().toString());
     
-    if (getParentComponent())
-        getParentComponent()->resized();
+    height = font.getHeight();
+    width = s1Width + s2Width;
+    width *= 1.1; // to make up for caret in editor
+    
+    s1.setBounds (0, 0, s1Width, height);
+    s2.setBounds (s1Width, 0, s2Width, height);
+    
+    ed.setBounds (0, 0, width, height);
 }
 
 void NoteSpinner::mouseDoubleClick (const MouseEvent &e)
@@ -206,7 +194,7 @@ void NoteSpinner::setFontHeight (float fontHeight)
     
     ed.setFont (Font ("Roboto", fontHeight, Font::plain));
     
-    fitBounds();
+    resized();
 }
 
 void NoteSpinner::setTextColour (Colour colour)

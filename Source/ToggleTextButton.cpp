@@ -60,8 +60,8 @@ private:
     
     void drawButtonBackground (Graphics& g, Button& button, const Colour& backgroundColour,
                                                bool isMouseOverButton, bool isButtonDown) override
-    {
-        Colour baseColour (backgroundColour.withMultipliedSaturation (button.hasKeyboardFocus (true) ? 1.3f : 0.9f)
+    { 
+        Colour baseColour (LookAndFeel::findColour(TextButton::ColourIds::buttonColourId).withMultipliedSaturation (button.hasKeyboardFocus (true) ? 1.3f : 0.9f)
                            .withMultipliedAlpha (button.isEnabled() ? 0.9f : 0.5f));
         
         if (isButtonDown || isMouseOverButton)
@@ -95,9 +95,6 @@ private:
             const float mainBrightness = baseColour.getBrightness();
             const float mainAlpha = baseColour.getFloatAlpha();
             
-            g.setGradientFill (ColourGradient (baseColour.brighter (0.2f), 0.0f, 0.0f, baseColour.darker (0.25f), 0.0f, height, false));
-            //g.fillPath (outline);
-            
             g.setColour (Colours::white.withAlpha (0.4f * mainAlpha * mainBrightness * mainBrightness));
             g.strokePath (outline, PathStrokeType (1.0f), AffineTransform::translation (0.0f, 1.0f)
                           .scaled (1.0f, (height - 1.6f) / height));
@@ -106,6 +103,7 @@ private:
             g.strokePath (outline, PathStrokeType (1.0f));
         }
     }
+
     
     Font getTextButtonFont (TextButton&, int buttonHeight) override
     {
