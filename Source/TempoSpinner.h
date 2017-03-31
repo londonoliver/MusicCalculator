@@ -14,10 +14,7 @@
 
 class TempoSpinner : public Component, private Label::Listener, private LookAndFeel_V3
 {
-public:
-    int width;
-    int height;
-    
+public:    
     Font font;
     String f;
     

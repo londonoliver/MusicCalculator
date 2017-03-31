@@ -18,7 +18,7 @@ Spinner::Spinner (SpinnerType type, int min, int max)
     this->min = min;
     this->max = max;
     
-    font = (Font ("Arial", 50, Font::plain));
+    font = getFont();
     setFont (font);
     
     setJustificationType (Justification::right);
@@ -41,7 +41,7 @@ Spinner::Spinner (SpinnerType type, Array<int> a)
     this->min = 0;
     this->max = a.size() - 1;
     
-    font = (Font ("Arial", 50, Font::plain));
+    font = getFont();
     setFont (font);
     
     setJustificationType (Justification::right);

@@ -58,12 +58,13 @@ public:
     //
     Label conversionLabel;
     Label conversionValueLabel;
-    Label conversionUnitsLabel;
     TextButton copy;
     Checkmark check;
     //
     
     Point<int> p1, p2, p3, p4, p5;
+    
+    int initialWidth, initialHeight;
     
     MusicCalculatorAudioProcessorEditor (MusicCalculatorAudioProcessor&);
     ~MusicCalculatorAudioProcessorEditor();
@@ -80,7 +81,7 @@ private:
     MusicCalculatorAudioProcessor& processor;
     
     void timerCallback() override;
-    void setConversion();
+    String setConversion();
     void labelTextChanged (Label *label) override;
     
     void buttonClicked (Button *) override;

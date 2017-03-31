@@ -15,9 +15,6 @@
 class NoteSpinner : public Component, private LabelListener
 {
 public:
-    int width;
-    int height;
-    
     Font font;
     
     Spinner s1;

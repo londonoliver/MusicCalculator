@@ -15,7 +15,7 @@ using namespace std;
 NoteSpinner::NoteSpinner()  :   s1 {Spinner::SpinnerType::NOTE, 0, 11},
                                 s2 {Spinner::SpinnerType::NUMBER, 0, 8}
 {
-    font = Font ("Roboto", 50, Font::plain);
+    font = s1.getFont();
     
     s1.setText (0, dontSendNotification);
     s2.setText (3, dontSendNotification);
@@ -87,14 +87,14 @@ void NoteSpinner::resized()
     s1Width = font.getStringWidth (s1.getTextValue().toString());
     s2Width = font.getStringWidth (s2.getTextValue().toString());
     
-    height = font.getHeight();
-    width = s1Width + s2Width;
+    int height = font.getHeight();
+    int width = s1Width + s2Width;
     width *= 1.1; // to make up for caret in editor
     
-    s1.setBounds (0, 0, s1Width, height);
-    s2.setBounds (s1Width, 0, s2Width, height);
+    s1.setBounds ((getWidth() - width)/2, 0, s1Width, height);
+    s2.setBounds (s1.getX() + s1.getWidth(), 0, s2Width, height);
     
-    ed.setBounds (0, 0, width, height);
+    ed.setBounds ((getWidth() - width)/2, 0, width, height);
 }
 
 void NoteSpinner::mouseDoubleClick (const MouseEvent &e)
@@ -189,10 +189,10 @@ void NoteSpinner::setFontHeight (float fontHeight)
 {
     font.setHeight (fontHeight);
     
-    s1.setFont (Font ("Roboto", fontHeight, Font::plain));
-    s2.setFont (Font ("Roboto", fontHeight, Font::plain));
+    s1.setFont (Font (fontHeight));
+    s2.setFont (Font (fontHeight));
     
-    ed.setFont (Font ("Roboto", fontHeight, Font::plain));
+    ed.setFont (Font (fontHeight));
     
     resized();
 }

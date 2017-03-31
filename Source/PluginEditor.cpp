@@ -20,19 +20,19 @@ using namespace std;
 MusicCalculatorAudioProcessorEditor::MusicCalculatorAudioProcessorEditor (MusicCalculatorAudioProcessor& p)
 : AudioProcessorEditor (&p), processor (p)
 {
-    int width = 300;
-    int height = 1.167 * width;
+    initialWidth = 200;
+    initialHeight = (4.0 / 3.0) * initialWidth;
     
     setResizable(true, true);
-    setResizeLimits(width, height, 3 * width, 3 * height);
-    setSize (width, height);
-    getConstrainer()->setFixedAspectRatio ( (double) width / (double) height );
+    setResizeLimits(initialWidth, initialHeight, 3 * initialWidth, 3 * initialHeight);
+    setSize (initialWidth, initialHeight);
+    getConstrainer()->setFixedAspectRatio ( (double) initialWidth / (double) initialHeight );
     setConstrainer(this);
     
     
     addAndMakeVisible (container);
     {
-        toggleLabel.setText("Conversion Type:", dontSendNotification);
+        toggleLabel.setText("Type:", dontSendNotification);
         toggleLabel.setBorderSize (BorderSize<int> (0));
         container.addAndMakeVisible (toggleLabel);
         
@@ -53,6 +53,10 @@ MusicCalculatorAudioProcessorEditor::MusicCalculatorAudioProcessorEditor (MusicC
         container.addAndMakeVisible (noteToggle);
     }
     {
+        displayLabel.setBorderSize (BorderSize<int> (0));
+        displayLabel.setJustificationType (Justification::centred);
+        container.addAndMakeVisible (displayLabel);
+        
         tempoSpinner.attachListener (this);
         tempoSpinner.setSpinnersText (processor.tempo, dontSendNotification);
         container.addChildComponent (tempoSpinner);
@@ -60,9 +64,6 @@ MusicCalculatorAudioProcessorEditor::MusicCalculatorAudioProcessorEditor (MusicC
         noteSpinner.attachListener (this);
         noteSpinner.setSpinnersText (processor.note, dontSendNotification);
         container.addChildComponent (noteSpinner);
-        
-        displayLabel.setBorderSize (BorderSize<int> (0));
-        container.addAndMakeVisible (displayLabel);
     }
     {
         tempoSyncButton.setToggleText ("HOST", "OFF");
@@ -107,13 +108,12 @@ MusicCalculatorAudioProcessorEditor::MusicCalculatorAudioProcessorEditor (MusicC
     {
         conversionLabel.setText ("Conversion", dontSendNotification);
         conversionLabel.setBorderSize (BorderSize<int> (0));
+        conversionLabel.setJustificationType (Justification::centred);
         container.addAndMakeVisible (conversionLabel);
         
         conversionValueLabel.setBorderSize (BorderSize<int> (0));
+        conversionValueLabel.setJustificationType (Justification::centred);
         container.addAndMakeVisible (conversionValueLabel);
-        
-        conversionUnitsLabel.setBorderSize (BorderSize<int> (0));
-        container.addAndMakeVisible (conversionUnitsLabel);
         
         copy.setButtonText ("Copy");
         copy.setName ("Copy");
@@ -149,14 +149,14 @@ MusicCalculatorAudioProcessorEditor::~MusicCalculatorAudioProcessorEditor()
 //==============================================================================
 void MusicCalculatorAudioProcessorEditor::paint (Graphics& g)
 {
-    Colour displayColour = Colours::maroon;
+    Colour displayColour = Colours::coral;
     Colour skinColour = Colour (82, 87, 88);
     Colour skinTextColour = Colour (242, 242, 242);
     Colour displayTextColour = Colour (254, 236, 220);
     Colour brighter = skinColour.brighter();
     Colour darker = skinColour.darker();
     
-    g.fillAll(Colours::black);
+    g.fillAll(Colours::coral);
     
     // set colours
     toggleLabel.setColour (Label::ColourIds::textColourId, skinTextColour);
@@ -167,7 +167,6 @@ void MusicCalculatorAudioProcessorEditor::paint (Graphics& g)
     midiSyncLabel.setColour (Label::ColourIds::textColourId, skinTextColour);
     conversionLabel.setColour (Label::ColourIds::textColourId, skinTextColour);
     conversionValueLabel.setColour (Label::ColourIds::textColourId, skinTextColour);
-    conversionUnitsLabel.setColour (Label::ColourIds::textColourId, skinTextColour);
     tempoToggle.setColour(ToggleButton::ColourIds::textColourId, skinTextColour);
     noteToggle.setColour(ToggleButton::ColourIds::textColourId, skinTextColour);
     tempoSpinner.setTextColour (skinTextColour);
@@ -180,16 +179,29 @@ void MusicCalculatorAudioProcessorEditor::paint (Graphics& g)
     midiSyncButton.setColour (skinTextColour);
     
     Rectangle<int> r (container.getX(), container.getY(), container.getWidth(), container.getHeight());
-    int cornersize = 0.01 * getWidth();
-    int lineThickness = getHeight() / 350;
+    int cornerSize = 0.02 * getWidth();
+    int lineThickness = getHeight() / initialHeight;
     
     // gradient fill
-    g.setGradientFill (ColourGradient (skinColour.brighter(0.25f), r.getX(), r.getY(), skinColour, r.getX(), r.getY() + r.getHeight(), false));
-    g.fillRoundedRectangle(r.toFloat(), cornersize);
+    //g.setGradientFill (ColourGradient (skinColour.brighter(0.25f), r.getX(), r.getY(), skinColour, r.getX(), r.getY() + r.getHeight(), false));
+    g.setColour(skinColour);
+    g.fillRoundedRectangle(r.toFloat(), cornerSize);
+    
+    // display
+    g.setColour(displayColour);
+    //g.fillRect(r.getX(), p1.getY(), r.getWidth(), p2.getY() - p1.getY());
+    
+    // buttons
+    g.setGradientFill (ColourGradient (skinColour.brighter(0.25f), r.getX(), p2.getY(), skinColour.brighter(0.05f), r.getX(), p5.getY(), false));
+    g.fillRect(r.getX(), p2.getY(), r.getWidth(), p5.getY() - p2.getY());
+    Path outline;
+    outline.addRoundedRectangle (r.getX(), p5.getY(), r.getWidth(), r.getY() + r.getHeight() - p5.getY(), cornerSize, cornerSize, false, false, true, true);
+    g.setGradientFill (ColourGradient (skinColour.brighter(0.25f), r.getX(), p5.getY(), skinColour.brighter(0.05f), r.getX(), r.getHeight(), false));
+    g.fillPath (outline);
     
     // bevel lines
-    g.setGradientFill (ColourGradient (brighter, r.getX(), r.getY(), darker, r.getX() + r.getWidth(), r.getY(), false));
-    g.drawRoundedRectangle(r.toFloat(), cornersize, lineThickness);
+    g.setColour(brighter.brighter());
+    g.drawRoundedRectangle(r.toFloat(), cornerSize, lineThickness);
     g.setColour (darker);
     g.fillRect(r.getX(), p1.getY() - lineThickness, r.getWidth(), lineThickness);
     g.fillRect(r.getX(), p2.getY() - lineThickness, r.getWidth(), lineThickness);
@@ -225,101 +237,183 @@ void MusicCalculatorAudioProcessorEditor::resized()
     int width = container.getWidth();
     int height = container.getHeight();
     
+    int togglePanelHeight = (0.4 / 4.0) * height;
+    int panelHeight = (1.2 / 4.0) * height;
+    int margin = togglePanelHeight / 4;
     
-    int margin = (3.0 / 40.0) * height;
-    int smallPanelHeight = (1.0 / 20.0) * height;
-    int bigPanelHeight = (2.0 / 10.0) * height;
-    int toggleMargin = width * 0.02;
-    {
-        int toggleWidth = 0.2 * width;
-        toggleLabel.setFont (Font (smallPanelHeight * 0.75f));
-        int toggleLabelWidth = toggleLabel.getFont().getStringWidth (toggleLabel.getText());
-        toggleLabel.setBounds(toggleMargin, toggleMargin, toggleLabelWidth, smallPanelHeight);
-        tempoToggle.setBounds (toggleLabel.getX() + toggleLabel.getWidth(), toggleMargin, toggleWidth, smallPanelHeight);
-        noteToggle.setBounds (tempoToggle.getX() + tempoToggle.getWidth(), toggleMargin, toggleWidth, smallPanelHeight);
-        
-        p1.setY (container.getY() + toggleLabel.getY() + toggleLabel.getHeight() + toggleMargin);
-    }
-    {
-        int displayLabelHeight = (1.0 / 5.0) * bigPanelHeight;
-        displayLabel.setFont (Font (displayLabelHeight));
-        int displayLabelWidth =  displayLabel.getFont().getStringWidth (displayLabel.getText());
-        
-        displayLabel.setBounds ((width - displayLabelWidth)/2, smallPanelHeight + margin + toggleMargin, displayLabelWidth, displayLabelHeight);
+    int panel1Height = (0.4 / 4.0) * height;
+    int panel2Height = (1.1 / 4.0) * height;
+    int panel3Height = (1.1 / 4.0) * height;
+    int panel4Height = (1.4 / 4.0) * height;
     
-        int displayHeight = (3.0 / 5.0) * bigPanelHeight;
-        
-        tempoSpinner.setFontHeight ((float) displayHeight);
-        tempoSpinner.setBounds ((width - tempoSpinner.width)/2, displayLabel.getY() + 1.5 * displayLabel.getHeight(), tempoSpinner.width, displayHeight);
-        
-        noteSpinner.setFontHeight ((float) displayHeight);
-        noteSpinner.setBounds ((width - noteSpinner.width)/2, displayLabel.getY() + 1.5 * displayLabel.getHeight(), noteSpinner.width, displayHeight);
-        
-        p2.setY (container.getY() + tempoSpinner.getY() + tempoSpinner.getHeight() + margin/2);
-    }
+    Rectangle<int> panel1 (0, 0, width, panel1Height);
+    Rectangle<int> panel2 (0, panel1.getY() + panel1.getHeight(), width, panel2Height);
+    Rectangle<int> panel3 (0, panel2.getY() + panel2.getHeight(), width, panel3Height);
+    Rectangle<int> panel4 (0, panel3.getY() + panel3.getHeight(), width, panel4Height);
+
+
+    
+    /*     __________________________
+     *    |                          |  <- panel1
+     * p1 X--------------------------|
+     *    |                          |
+     *    |                          |  <- panel2
+     *    |        p3       p4       |
+     * p2 X--------X--------X--------|
+     *    |        |        |        |
+     *    |        |        |        |  <- panel3
+     *    |        |        |        |
+     * p5 X--------------------------|
+     *    |                          |
+     *    |                          |  <- panel4
+     *    |                          |
+     *     --------------------------
+     */
+     
+    
+    p1.setY (panel1.getY() + panel1.getHeight());
+    p2.setY (panel3.getY());
+    p3.setX ((1.0 / 3.0) * width);
+    p4.setX ((2.0 / 3.0) * width);
+    p5.setY (panel4.getY());
+    
+    // toggle
     {
-        int buttonLabelHeight = (1.0 / 5.0) * bigPanelHeight;
-        int buttonHeight = (3.0 / 5.0) * bigPanelHeight;
-        int buttonWidth = (1.0 / 6.0) * width;
-        
-        tempoSyncLabel.setFont (Font (buttonLabelHeight));
-        tempoSyncLabel.setBounds (buttonWidth/2, tempoSpinner.getY() + tempoSpinner.getHeight() + margin, buttonWidth, buttonLabelHeight);
-        
-        tempoFractionLabel.setFont (Font (buttonLabelHeight));
-        tempoFractionLabel.setBounds (tempoSyncLabel.getX() + 2 * buttonWidth, tempoSpinner.getY() + tempoSpinner.getHeight() + margin, buttonWidth, buttonLabelHeight);
-        
-        tempoUnitsLabel.setFont (Font (buttonLabelHeight));
-        tempoUnitsLabel.setBounds (tempoFractionLabel.getX() + 2 * buttonWidth, tempoSpinner.getY() + tempoSpinner.getHeight() + margin, buttonWidth, buttonLabelHeight);
-        
-        midiSyncLabel.setFont (Font (buttonLabelHeight));
-        midiSyncLabel.setBounds (tempoSyncLabel.getX() + 2 * buttonWidth, tempoSpinner.getY() + tempoSpinner.getHeight() + margin, buttonWidth, buttonLabelHeight);
-        
-        tempoSyncButton.setBounds (buttonWidth/2, tempoSyncLabel.getY() + 2 * buttonLabelHeight, buttonWidth, buttonHeight);
-        
-        tempoFraction.setBounds (tempoSyncButton.getX() + 2 * buttonWidth, tempoSyncLabel.getY() + 2 * buttonLabelHeight, buttonWidth, buttonHeight);
-        
-        tempoUnitsButton.setBounds (tempoFraction.getX() + 2 * buttonWidth, tempoSyncLabel.getY() + 2 * buttonLabelHeight, buttonWidth, buttonHeight);
-        
-        midiSyncButton.setBounds (tempoSyncButton.getX() + 2 * buttonWidth, tempoSyncLabel.getY() + 2 * buttonLabelHeight, buttonWidth, buttonHeight);
-        
-        p3.setX(container.getX() + tempoSyncButton.getX() + tempoSyncButton.getWidth() + buttonWidth/2);
-        p4.setX(container.getX() + tempoFraction.getX() + tempoFraction.getWidth() + buttonWidth/2);
+        Rectangle<int> r (panel1);
+        r.reduce(margin, margin);
+        tempoToggle.setBounds (r.getX(), r.getY(), r.getWidth()/2, r.getHeight());
+        noteToggle.setBounds (r.getWidth()/2, r.getY(), r.getWidth()/2, r.getHeight());
     }
+    // display
     {
-        int conversionLabelHeight = (1.0 / 5.0) * bigPanelHeight;
-        int conversionValueLabelHeight = (2.0 / 5.0) * bigPanelHeight;
-        conversionLabel.setFont (Font (conversionLabelHeight));
-        conversionValueLabel.setFont (Font (conversionValueLabelHeight));
-        conversionUnitsLabel.setFont (Font (conversionValueLabelHeight));
-        int conversionLabelWidth = conversionLabel.getFont().getStringWidth (conversionLabel.getText());
-        int spaceWidth = conversionValueLabel.getFont().getStringWidth(" ");
-        int conversionValueLabelWidth = conversionValueLabel.getFont().getStringWidth (conversionValueLabel.getText());
-        int conversionUnitsLabelWidth = conversionValueLabel.getFont().getStringWidth (conversionUnitsLabel.getText());
-        int copyWidth = conversionLabelWidth;
-        int copyHeight = 2 * conversionLabelHeight;
+        /*             panel2
+         *   __________________________
+         *  |            r1            |
+         *  |--------------------------|
+         *  |            r2            |
+         *  |                          |
+         *   --------------------------
+         */
         
-        conversionLabel.setBounds ((width - conversionLabelWidth)/2, tempoSyncButton.getY() + tempoSyncButton.getHeight() + margin, conversionLabelWidth, conversionLabelHeight);
+        Rectangle<int> r (panel2);
+        Rectangle<int> r1 (r.getX(), r.getY(), width, (1.0 / 3.0) * r.getHeight());
+        Rectangle<int> r2 (r.getX(), r1.getY() + r1.getHeight(), width, r.getHeight() - r1.getHeight());
         
-        copy.setBounds ((width - copyWidth)/2, conversionLabel.getY() + 2 * conversionLabel.getHeight(), copyWidth, copyHeight);
+        r1.reduce(margin, margin);
+        r2.reduce(margin, margin);
         
-        check.setBounds (copy.getX() + copy.getWidth() + copyHeight/2, copy.getY(), copyHeight/1.5, copyHeight/1.5);
+        // r1
+        displayLabel.setFont (Font (r1.getHeight()));
+        displayLabel.setBounds (r1.getX(), r1.getY(), r1.getWidth(), r1.getHeight());
         
-        conversionValueLabel.setBounds ((width - conversionValueLabelWidth - spaceWidth - conversionUnitsLabelWidth)/2, copy.getY() + 3 * conversionLabelHeight, conversionValueLabelWidth, conversionValueLabelHeight);
-        
-        conversionUnitsLabel.setBounds (conversionValueLabel.getX() + conversionValueLabelWidth + spaceWidth, copy.getY() + 3 * conversionLabelHeight, conversionUnitsLabelWidth, conversionValueLabelHeight);
-        
-        p5.setY(container.getY() + conversionLabel.getY() - margin/2);
+        // r2
+        tempoSpinner.setFontHeight (r2.getHeight());
+        tempoSpinner.setBounds (r2.getX(), r2.getY(), r2.getWidth(), r2.getHeight());
+    
+        noteSpinner.setFontHeight (r2.getHeight());
+        noteSpinner.setBounds (r2.getX(), r2.getY(), r2.getWidth(), r2.getHeight());
     }
+    // buttons
+    {
+        /*               panel3
+         *     --------------------------
+         *    |   r1   |   r2   |   r3   |
+         *    |--------|--------|--------|
+         *    |   r4   |   r5   |   r6   |
+         *    |        |        |        |
+         *     --------------------------
+         */
+        
+        Rectangle<int> r (panel3);
+        Rectangle<int> r1 (r.getX(), r.getY(), (1.0 / 3.0) * r.getWidth(), (1.0 / 3.0) * r.getHeight());
+        Rectangle<int> r2 (p3.getX(), r1.getY(), (1.0 / 3.0) * r.getWidth(), r1.getHeight());
+        Rectangle<int> r3 (p4.getX(), r1.getY(), (1.0 / 3.0) * r.getWidth(), r1.getHeight());
+        Rectangle<int> r4 (r.getX(), r1.getY() + r1.getHeight(), r1.getWidth(), r.getHeight() - r1.getHeight());
+        Rectangle<int> r5 (p3.getX(), r4.getY(), r2.getWidth(), r4.getHeight());
+        Rectangle<int> r6 (p4.getX(), r4.getY(), r3.getWidth(), r4.getHeight());
+        
+        r1.reduce (margin, margin);
+        r2.reduce (margin, margin);
+        r3.reduce (margin, margin);
+        r4.reduce (margin, margin);
+        r5.reduce (margin, margin);
+        r6.reduce (margin, margin);
+        
+        // r1
+        tempoSyncLabel.setFont (Font (r1.getHeight()));
+        tempoSyncLabel.setBounds (r1.getX(), r1.getY(), r1.getWidth(), r1.getHeight());
+        
+        // r2
+        tempoFractionLabel.setFont (Font (r2.getHeight()));
+        tempoFractionLabel.setBounds (r2.getX(), r2.getY(), r2.getWidth(), r2.getHeight());
+        
+        midiSyncLabel.setFont (Font (r2.getHeight()));
+        midiSyncLabel.setBounds (r2.getX(), r2.getY(), r2.getWidth(), r2.getHeight());
+        
+        // r3
+        tempoUnitsLabel.setFont (Font (r3.getHeight()));
+        tempoUnitsLabel.setBounds (r3.getX(), r3.getY(), r3.getWidth(), r3.getHeight());
+        
+        // r4
+        tempoSyncButton.setBounds (r4.getX() + (r4.getWidth() - r4.getHeight())/2, r4.getY(), r4.getHeight(), r4.getHeight());
+        
+        // r5
+        tempoFraction.setBounds (r5.getX() + (r5.getWidth() - r5.getHeight())/2, r5.getY(), r5.getHeight(), r5.getHeight());
+        
+        midiSyncButton.setBounds (r5.getX() + (r5.getWidth() - r5.getHeight())/2, r5.getY(), r5.getHeight(), r5.getHeight());
+        
+        // r6
+        tempoUnitsButton.setBounds (r6.getX() + (r6.getWidth() - r6.getHeight())/2, r6.getY(), r6.getHeight(), r6.getHeight());
+    }
+    // conversion
+    {
+        /*             panel4
+         *   __________________________
+         *  |            r1            |
+         *  |--------------------------|
+         *  |            r2            |
+         *  |--------------------------|
+         *  |            r3            |
+         *   --------------------------
+         */
+        
+        Rectangle<int> r (panel4);
+        Rectangle<int> r1 (r.getX(), r.getY(), r.getWidth(), (1.0 / 3.0) * r.getHeight());
+        Rectangle<int> r2 (r.getX(), r1.getY() + r1.getHeight(), r.getWidth(), (1.0 / 3.0) * r.getHeight());
+        Rectangle<int> r3 (r.getX(), r2.getY() + r2.getHeight(), r.getWidth(), (1.0 / 3.0) * r.getHeight());
+        
+        r1.reduce(margin, margin);
+        r2.reduce(margin, margin);
+        r2.reduce(r.getWidth()/2.75, 0);
+        r3.reduce(margin, margin);
+        
+        // r1
+        conversionLabel.setFont (Font (r1.getHeight()));
+        conversionLabel.setBounds (r1.getX(), r1.getY(), r1.getWidth(), r1.getHeight());
+        
+        // r2
+        copy.setBounds (r2.getX(), r2.getY(), r2.getWidth(), r2.getHeight());
+        //check.setBounds (copy.getX() + copy.getWidth() + copyHeight/2, copy.getY(), copyHeight/1.5, copyHeight/1.5);
+        
+        // r3
+        conversionValueLabel.setFont (Font (r3.getHeight()));
+        conversionValueLabel.setBounds (r3.getX(), r3.getY(), r3.getWidth(), r3.getHeight());
+    }
+    
+    p1.setY (p1.getY() + r.getY());
+    p2.setY (p2.getY() + r.getY());
+    p3.setX (p3.getX() + r.getX());
+    p4.setX (p4.getX() + r.getX());
+    p5.setY (p5.getY() + r.getY());
+    
+    repaint();
 }
 
 void MusicCalculatorAudioProcessorEditor::buttonClicked (Button *button)
 {
     if (button->getName() == copy.getName())
     {
-        conversionValueLabel.showEditor();
-        conversionValueLabel.getCurrentTextEditor()->selectAll();
-        conversionValueLabel.getCurrentTextEditor()->copyToClipboard();
-        conversionValueLabel.hideEditor (false);
+        SystemClipboard::copyTextToClipboard(setConversion());
 
         check.setVisible (true);
         check.setAlpha (1.0f);
@@ -333,7 +427,7 @@ void MusicCalculatorAudioProcessorEditor::buttonClicked (Button *button)
 
 void MusicCalculatorAudioProcessorEditor::labelTextChanged (Label *) {  setConversion();    }
 
-void MusicCalculatorAudioProcessorEditor::setConversion()
+String MusicCalculatorAudioProcessorEditor::setConversion()
 {
     double bpm = tempoSpinner.getValue();
     double bpm_ms = (1000.0 / (bpm / 60.0)) * 4.0 * tempoFraction.getFraction();
@@ -344,8 +438,10 @@ void MusicCalculatorAudioProcessorEditor::setConversion()
     double concertA = 440.0;
     double note_hz = concertA / pow (2.0, ((float) note + (float) (octave * 12.0)) / -12.0);
     
-    conversionValueLabel.setText ((tempoToggle.getToggleState()) ? (tempoUnitsButton.getToggleState() ? String (bpm_hz) : String (bpm_ms)) : String (note_hz), dontSendNotification);
-    conversionUnitsLabel.setText ((tempoToggle.getToggleState()) ? (tempoUnitsButton.getToggleState() ? "Hz": "Ms") : "Hz", dontSendNotification);
+    String conversion = (tempoToggle.getToggleState()) ? ((tempoUnitsButton.getToggleState()) ? String (bpm_hz) : String (bpm_ms)) : String (note_hz);
+    String units = (tempoToggle.getToggleState()) ? (tempoUnitsButton.getToggleState() ? " Hz": " Ms") : " Hz";
+    
+    conversionValueLabel.setText (String (conversion) + units, dontSendNotification);
     
     processor.mode = tempoToggle.getToggleState();
     processor.tempo = tempoSpinner.toString();
@@ -375,7 +471,8 @@ void MusicCalculatorAudioProcessorEditor::setConversion()
     }
     
     resized();
-    repaint();
+    
+    return conversion;
 }
 
 void MusicCalculatorAudioProcessorEditor::timerCallback()

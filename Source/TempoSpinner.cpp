@@ -113,18 +113,18 @@ void TempoSpinner::resized()
     s5Width = s5.getFont().getStringWidth (s5.getTextValue().toString());
     s6Width = s6.getFont().getStringWidth (s6.getTextValue().toString());
     
-    height = s1.getFont().getHeight();
-    width = s1Width + s2Width + s3Width + s4Width + s5Width + s6Width;
+    int height = s1.getFont().getHeight();
+    int width = s1Width + s2Width + s3Width + s4Width + s5Width + s6Width;
     width *= 1.1; // to make up for caret in editor
     
-    s1.setBounds (0, 0, s1Width, height);
-    s2.setBounds (s1Width, 0, s2Width, height);
-    s3.setBounds (s1Width + s2Width, 0, s3Width, height);
-    s4.setBounds (s1Width + s2Width + s3Width, 0, s4Width, height);
-    s5.setBounds (s1Width + s2Width + s3Width + s4Width, 0, s5Width, height);
-    s6.setBounds (s1Width + s2Width + s3Width + s4Width + s5Width, 0, s6Width, height);
+    s1.setBounds ((getWidth() - width)/2, 0, s1Width, height);
+    s2.setBounds (s1.getX() + s1.getWidth(), 0, s2Width, height);
+    s3.setBounds (s2.getX() + s2.getWidth(), 0, s3Width, height);
+    s4.setBounds (s3.getX() + s3.getWidth(), 0, s4Width, height);
+    s5.setBounds (s4.getX() + s4.getWidth(), 0, s5Width, height);
+    s6.setBounds (s5.getX() + s5.getWidth(), 0, s6Width, height);
     
-    ed.setBounds (0, 0, width, height);
+    ed.setBounds ((getWidth() - width)/2, 0, width, height);
 }
 
 void TempoSpinner::mouseDoubleClick (const MouseEvent &e)
