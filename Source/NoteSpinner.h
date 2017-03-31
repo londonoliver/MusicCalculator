@@ -42,6 +42,7 @@ public:
     void resized() override;
 private:
     void mouseDoubleClick (const MouseEvent &e) override;
+    void mouseDown (const MouseEvent &e) override;
     void setSpinnersVisible (bool visible);
     void editorHidden (Label *label, TextEditor &editor) override;
     void labelTextChanged (Label *labelThatHasChanged) override;

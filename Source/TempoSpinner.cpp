@@ -129,11 +129,14 @@ void TempoSpinner::resized()
 
 void TempoSpinner::mouseDoubleClick (const MouseEvent &e)
 {
-    setSpinnersVisible (false);
-    
-    ed.setVisible (true);
-    ed.setText (toString(), dontSendNotification);
-    ed.showEditor();
+    if (isEnabled())
+    {
+        setSpinnersVisible (false);
+        
+        ed.setVisible (true);
+        ed.setText (toString(), dontSendNotification);
+        ed.showEditor();
+    }
 }
 
 void TempoSpinner::mouseDown (const MouseEvent &e)

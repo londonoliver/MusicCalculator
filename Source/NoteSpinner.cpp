@@ -99,11 +99,23 @@ void NoteSpinner::resized()
 
 void NoteSpinner::mouseDoubleClick (const MouseEvent &e)
 {
-    setSpinnersVisible (false);
-    
-    ed.setVisible (true);
-    ed.setText (toString(), dontSendNotification);
-    ed.showEditor();
+    if (isEnabled())
+    {
+        setSpinnersVisible (false);
+        
+        ed.setVisible (true);
+        ed.setText (toString(), dontSendNotification);
+        ed.showEditor();
+    }
+}
+
+void NoteSpinner::mouseDown (const MouseEvent &e)
+{
+    if (e.mods.isCtrlDown())
+    {
+        s1.setText(0, sendNotification);
+        s2.setText(4, sendNotification);
+    }
 }
 
 void NoteSpinner::setSpinnersVisible (bool visible)
