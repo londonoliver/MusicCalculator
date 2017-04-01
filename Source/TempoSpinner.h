@@ -12,7 +12,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Spinner.h"
 
-class TempoSpinner : public Component, private Label::Listener, private LookAndFeel_V3
+class TempoSpinner : public Component, private Label::Listener, private LookAndFeel_V3, private TextEditorListener
 {
 public:    
     Font font;
@@ -53,6 +53,7 @@ private:
     void editorHidden (Label *label, TextEditor &editor) override;
     void labelTextChanged (Label *labelThatHasChanged) override;
     void editorShown (Label *, TextEditor &) override;
+    void textEditorTextChanged (TextEditor &ed) override;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TempoSpinner)
 };

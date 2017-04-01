@@ -13,7 +13,7 @@
 using namespace std;
 
 NoteSpinner::NoteSpinner()  :   s1 {Spinner::SpinnerType::NOTE, 0, 11},
-                                s2 {Spinner::SpinnerType::NUMBER, 0, 8}
+                                s2 {Spinner::SpinnerType::NUMBER, 0, 9}
 {
     font = s1.getFont();
     
@@ -94,7 +94,16 @@ void NoteSpinner::resized()
     s1.setBounds ((getWidth() - width)/2, 0, s1Width, height);
     s2.setBounds (s1.getX() + s1.getWidth(), 0, s2Width, height);
     
-    ed.setBounds ((getWidth() - width)/2, 0, width, height);
+    if (ed.isBeingEdited())
+    {
+        int edWidth = ed.getCurrentTextEditor()->getFont().getStringWidth(ed.getCurrentTextEditor()->getText()) * 1.1;
+        edWidth = jmax (edWidth, ed.getCurrentTextEditor()->getFont().getStringWidth("0"));
+        ed.setBounds((getWidth() - edWidth)/2, 0, edWidth, height);
+    }
+    else
+    {
+        ed.setBounds ((getWidth() - width)/2, 0, width, height);
+    }
 }
 
 void NoteSpinner::mouseDoubleClick (const MouseEvent &e)
@@ -111,7 +120,7 @@ void NoteSpinner::mouseDoubleClick (const MouseEvent &e)
 
 void NoteSpinner::mouseDown (const MouseEvent &e)
 {
-    if (e.mods.isCtrlDown())
+    if (e.mods.isCtrlDown() && isEnabled())
     {
         s1.setText(0, sendNotification);
         s2.setText(4, sendNotification);
@@ -131,6 +140,8 @@ void NoteSpinner::editorHidden (Label *label, TextEditor &editor)
     setSpinnersVisible (true);
     
     setSpinnersText (ed.getTextValue().toString().trim(), sendNotification);
+    
+    editor.removeListener (this);
 }
 
 void NoteSpinner::labelTextChanged (Label *labelThatHasChanged)
@@ -138,8 +149,16 @@ void NoteSpinner::labelTextChanged (Label *labelThatHasChanged)
     resized();
 }
 
-void NoteSpinner::editorShown (Label *l, TextEditor &ed)
+void NoteSpinner::editorShown (Label *label, TextEditor &editor)
 {
+    editor.addListener (this);
+    editor.setBorder (BorderSize<int> (0));
+    editor.setInputRestrictions(3, "abcdefgABCDEFG#1234567890");
+}
+
+void NoteSpinner::textEditorTextChanged (TextEditor &editor)
+{
+    resized();
 }
 
 bool NoteSpinner::isNumber (String val)

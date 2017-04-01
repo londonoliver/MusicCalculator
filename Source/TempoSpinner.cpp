@@ -50,7 +50,7 @@ TempoSpinner::TempoSpinner() :  s1 {Spinner::SpinnerType::NUMBER, 5, 990},
 TempoSpinner::~TempoSpinner()
 {
     detachListener (this);
-    ed.removeListener (this);
+    //ed.removeListener (this);
 }
 String TempoSpinner::toString()
 {
@@ -124,7 +124,16 @@ void TempoSpinner::resized()
     s5.setBounds (s4.getX() + s4.getWidth(), 0, s5Width, height);
     s6.setBounds (s5.getX() + s5.getWidth(), 0, s6Width, height);
     
-    ed.setBounds ((getWidth() - width)/2, 0, width, height);
+    if (ed.isBeingEdited())
+    {
+        int edWidth = ed.getCurrentTextEditor()->getFont().getStringWidth(ed.getCurrentTextEditor()->getText()) * 1.1;
+        edWidth = jmax (edWidth, ed.getCurrentTextEditor()->getFont().getStringWidth("0"));
+        ed.setBounds((getWidth() - edWidth)/2, 0, edWidth, height);
+    }
+    else
+    {
+        ed.setBounds((getWidth() - width)/2, 0, width, height);
+    }
 }
 
 void TempoSpinner::mouseDoubleClick (const MouseEvent &e)
@@ -141,13 +150,12 @@ void TempoSpinner::mouseDoubleClick (const MouseEvent &e)
 
 void TempoSpinner::mouseDown (const MouseEvent &e)
 {
-    if (e.mods.isCtrlDown())
+    if (e.mods.isCtrlDown() && isEnabled())
     {
         s3.setText(0, sendNotification);
         s4.setText(0, sendNotification);
         s5.setText(0, sendNotification);
         s6.setText(0, sendNotification);
-        
     }
 }
 
@@ -173,6 +181,8 @@ void TempoSpinner::editorHidden (Label *label, TextEditor &editor)
     {
         setSpinnersText (val, sendNotification);
     }
+    
+    editor.removeListener (this);
 }
 
 void TempoSpinner::labelTextChanged (Label *labelThatHasChanged)
@@ -180,8 +190,16 @@ void TempoSpinner::labelTextChanged (Label *labelThatHasChanged)
     resized();
 }
 
-void TempoSpinner::editorShown (Label *, TextEditor &)
+void TempoSpinner::editorShown (Label *, TextEditor &editor)
 {
+    editor.addListener (this);
+    editor.setBorder (BorderSize<int> (0));
+    editor.setInputRestrictions(8, "1234567890.");
+}
+
+void TempoSpinner::textEditorTextChanged (TextEditor &editor)
+{
+    resized();
 }
 
 void TempoSpinner::setFontHeight (float fontHeight)
@@ -220,4 +238,5 @@ void TempoSpinner::setTextColour (Colour colour)
     s6.setColour (Label::ColourIds::textColourId, colour);
     
     ed.setColour (Label::ColourIds::textWhenEditingColourId, colour);
+    ed.setColour (CaretComponent::ColourIds::caretColourId, colour);
 }

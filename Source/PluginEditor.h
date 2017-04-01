@@ -15,9 +15,9 @@
 #include "PluginProcessor.h"
 #include "TempoSpinner.h"
 #include "NoteSpinner.h"
-#include "Fraction.cpp"
-#include "ToggleTextButton.cpp"
-#include "Checkmark.cpp"
+#include "Fraction.h"
+#include "ToggleTextButton.h"
+#include "Checkmark.h"
 
 
 
@@ -76,6 +76,8 @@ public:
     
 
 private:
+    int note, octave;
+    
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
     MusicCalculatorAudioProcessor& processor;

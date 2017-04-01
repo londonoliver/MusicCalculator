@@ -458,8 +458,8 @@ String MusicCalculatorAudioProcessorEditor::setConversion()
     double bpm_ms = (1000.0 / (bpm / 60.0)) * 4.0 * tempoFraction.getFraction();
     double bpm_hz = (bpm / 60.0) / 4.0 / tempoFraction.getFraction();
     
-    int note = noteSpinner.getNote() - 9;
-    int octave = noteSpinner.getOctave() - 4;
+    note = noteSpinner.getNote() - 9;
+    octave = noteSpinner.getOctave() - 4;
     double concertA = 440.0;
     double note_hz = concertA / pow (2.0, ((float) note + (float) (octave * 12.0)) / -12.0);
     
@@ -509,7 +509,11 @@ void MusicCalculatorAudioProcessorEditor::timerCallback()
     if (tempoToggle.getToggleState() && tempoSyncButton.getToggleState())
         tempoSpinner.setSpinnersText (String (processor.tempo), sendNotification);
     else if (noteToggle.getToggleState() && midiSyncButton.getToggleState())
+    {
         setMidiInput(0);
+        if (midiSyncButton.getToggleState())
+            noteSpinner.setSpinnersText (Spinner::getNote (note) + String(octave), sendNotification);
+    }
 }
 
 
@@ -540,9 +544,14 @@ void MusicCalculatorAudioProcessorEditor::handleNoteOn (MidiKeyboardState*, int 
 {
     if (midiSyncButton.getToggleState() && isPositiveAndBelow (midiNoteNumber, 128))
     {
-        int note = midiNoteNumber % 12;
-        int octave = midiNoteNumber / 12 + (3 - 5);  // octave = midiNoteNumber / 12 + (middleC - 5)
-        noteSpinner.setSpinnersText (Spinner::getNote (note) + String(octave), sendNotification);
+        note = midiNoteNumber % 12;
+        octave = midiNoteNumber / 12 + (3 - 5);  // octave = midiNoteNumber / 12 + (middleC - 5)
+        
+        /* Dont set notespinner text from here - this is in another thread and requires a thread lock
+         * which can cause plugin to lock up if there are too many noteOn events at one time.
+         *
+         * Instead, set class variables note and octave and then set notespinner text from timerCallback() method
+         */
     }
 }
 

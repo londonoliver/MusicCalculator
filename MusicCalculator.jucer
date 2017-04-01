@@ -12,6 +12,7 @@
               jucerVersion="4.3.1">
   <MAINGROUP id="QSE8F7" name="MusicCalculator">
     <GROUP id="{8E453A34-B25A-3B41-04E5-C3C5747C63C8}" name="Source">
+      <FILE id="B0aKmy" name="Checkmark.cpp" compile="1" resource="0" file="Source/Checkmark.cpp"/>
       <FILE id="x0EjG2" name="ToggleTextButton.cpp" compile="1" resource="0"
             file="Source/ToggleTextButton.cpp"/>
       <FILE id="ktN4Uv" name="Fraction.cpp" compile="1" resource="0" file="Source/Fraction.cpp"/>

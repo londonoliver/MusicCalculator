@@ -12,7 +12,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Spinner.h"
 
-class NoteSpinner : public Component, private LabelListener
+class NoteSpinner : public Component, private LabelListener, private TextEditorListener
 {
 public:
     Font font;
@@ -47,6 +47,7 @@ private:
     void editorHidden (Label *label, TextEditor &editor) override;
     void labelTextChanged (Label *labelThatHasChanged) override;
     void editorShown (Label *, TextEditor &) override;
+    void textEditorTextChanged (TextEditor &ed) override;
     bool isNumber (String val);
     int noteIndex (String val);
     
