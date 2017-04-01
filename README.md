@@ -2,7 +2,7 @@
 
 ## Music Calculator is an audio plugin for Mac OSX.
 
-![Alt text](/ScreenShot.png)
+![Alt text](/ScreenShot.png width="280")
 
 ## Features
 
