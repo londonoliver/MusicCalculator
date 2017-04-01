@@ -1,6 +1,6 @@
 # MusicCalculator
 
-Music Calculator is an audio plugin for Mac OSX.
+Music Calculator is an audio plugin for Mac OSX created using the [JUCE framework](https://github.com/julianstorer/JUCE).
 
 ![Alt text](/ScreenShot.png)
 
