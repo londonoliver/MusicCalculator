@@ -2,11 +2,9 @@
 
 ## Music Calculator is an audio plugin for Mac OSX.
 
-***
-
 ![Alt text](/ScreenShot.png)
 
-### Features
+## Features
 
 * Convert fraction of tempo to hz/ms
 * Convert note to hz
