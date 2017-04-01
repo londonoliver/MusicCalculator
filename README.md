@@ -6,4 +6,5 @@ Music Calculator is an audio plugin for Mac OSX created using the [JUCE framewor
 * Sync tempo to DAW
 * Sync note to MIDI
 * Resizable GUI
+
 ![Alt text](/ScreenShot.png)
