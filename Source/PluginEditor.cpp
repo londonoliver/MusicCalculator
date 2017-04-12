@@ -75,7 +75,7 @@ MusicCalculatorAudioProcessorEditor::MusicCalculatorAudioProcessorEditor (MusicC
         tempoFraction.setFraction (processor.numerator, processor.denominator);
         container.addChildComponent (tempoFraction);
         
-        tempoUnitsButton.setToggleText ("HZ", "MS");
+        tempoUnitsButton.setToggleText ("Hz", "ms");
         tempoUnitsButton.addListener (this);
         tempoUnitsButton.setToggleState (processor.units, dontSendNotification);
         container.addChildComponent (tempoUnitsButton);
@@ -464,7 +464,7 @@ String MusicCalculatorAudioProcessorEditor::setConversion()
     double note_hz = concertA / pow (2.0, ((float) note + (float) (octave * 12.0)) / -12.0);
     
     String conversion = (tempoToggle.getToggleState()) ? ((tempoUnitsButton.getToggleState()) ? String (bpm_hz) : String (bpm_ms)) : String (note_hz);
-    String units = (tempoToggle.getToggleState()) ? (tempoUnitsButton.getToggleState() ? " Hz": " Ms") : " Hz";
+    String units = (tempoToggle.getToggleState()) ? (tempoUnitsButton.getToggleState() ? " Hz": " ms") : " Hz";
     
     conversionValueLabel.setText (String (conversion) + units, dontSendNotification);
     
