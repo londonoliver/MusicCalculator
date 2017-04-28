@@ -106,13 +106,13 @@ void Spinner::mouseDown(const MouseEvent &event)
     if (getParentComponent()) getParentComponent()->mouseDown (event);
     
     enabled = false;
-    mousePoint.setY(event.y);
+    mousePoint.setY (event.y);
 }
 
 void Spinner::setBgColour (Colour colour)
 {
     bgColour = colour;
-    setColour(ColourIds::backgroundColourId, bgColour);
+    setColour (ColourIds::backgroundColourId, bgColour);
 }
 
 void Spinner::setHighlightColour (Colour colour)

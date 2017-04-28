@@ -522,16 +522,18 @@ void MusicCalculatorAudioProcessorEditor::setMidiInput (int index)
 {
     const StringArray list (MidiInput::getDevices());
     
-    deviceManager.removeMidiInputCallback (list[lastInputIndex], this);
-    
-    const String newInput (list[index]);
-    
-    if (! deviceManager.isMidiInputEnabled (newInput))
-        deviceManager.setMidiInputEnabled (newInput, true);
-    
-    deviceManager.addMidiInputCallback (newInput, this);
-    
-    lastInputIndex = index;
+    // listens to all midi devices ("omni")
+    for  (int i = 0; i < list.size(); i++)
+    {
+        deviceManager.removeMidiInputCallback (list[i], this);
+        
+        const String newInput (list[i]);
+        
+        if (! deviceManager.isMidiInputEnabled (newInput))
+            deviceManager.setMidiInputEnabled (newInput, true);
+        
+        deviceManager.addMidiInputCallback (newInput, this);
+    }
 }
 
 // These methods handle callbacks from the midi device + on-screen keyboard..
